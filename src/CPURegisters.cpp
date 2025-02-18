@@ -1,6 +1,5 @@
 #include <CPURegisters.hpp>
 
-
 uint8_t CPURegisters::getRegister(Register reg) const noexcept {
     const auto combinedRegister{ registers_m[RegisterIndexToCombinedRegisterIndex[registerToIndex(reg)]] };
 
