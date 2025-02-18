@@ -1,4 +1,4 @@
-#include "Registers.hpp"
+#include "CPURegisters.hpp"
 #include <gtest/gtest.h>
 #include <utility>
 
@@ -21,66 +21,70 @@ static constexpr bool InitialNFlag{ true };
 static constexpr bool InitialHFlag{ true };
 static constexpr bool InitialCFlag{ false };
 
-class CombinedRegisterTest : public ::testing::Test, public ::testing::WithParamInterface<std::pair<Registers::CombinedRegisters, uint8_t> > {
+class CombinedRegisterTest : public ::testing::Test, public ::testing::WithParamInterface<std::tuple<CPURegisters::CombinedRegisters, uint8_t, CPURegisters::CombinedRegisters> > {
 protected:
-    Registers registers_m;
+    CPURegisters registers_m;
 };
 
-class StandaloneRegisterTest : public ::testing::Test, public ::testing::WithParamInterface<std::pair<Registers::Register, uint8_t> > {
+class StandaloneRegisterTest : public ::testing::Test, public ::testing::WithParamInterface<std::tuple<CPURegisters::Register, uint8_t, CPURegisters::Register> > {
 protected:
-    Registers registers_m;
+    CPURegisters registers_m;
 };
 
-class FlagTest : public ::testing::Test, public ::testing::WithParamInterface<std::pair<Registers::Flags, bool> > {
+class FlagTest : public ::testing::Test, public ::testing::WithParamInterface<std::tuple<CPURegisters::Flags, bool, CPURegisters::Flags> > {
 protected:
-    Registers registers_m;
+    CPURegisters registers_m;
 } ;
 
 TEST_P(CombinedRegisterTest, SetGetCombinedRegisterWorks) {
-    const auto [combinedRegister, expectedValue] = GetParam();
+    const auto [combinedRegister, expectedValue, unexpectedValue] = GetParam();
 
     registers_m.setCombinedRegister(combinedRegister, expectedValue);
 
     EXPECT_EQ(registers_m.getCombinedRegister(combinedRegister), expectedValue);
+    EXPECT_NE(registers_m.getCombinedRegister(combinedRegister), registers_m.getCombinedRegister(unexpectedValue));
 }
 
 TEST_P(StandaloneRegisterTest, SetGetRegisterWorks) {
-    const auto [standaloneRegister, expectedValue] = GetParam();
+    const auto [standaloneRegister, expectedValue, unexpectedEquality] = GetParam();
 
     registers_m.setRegister(standaloneRegister, expectedValue);
 
     EXPECT_EQ(registers_m.getRegister(standaloneRegister), expectedValue);
+    EXPECT_NE(registers_m.getRegister(standaloneRegister), registers_m.getRegister(unexpectedEquality));
 }
 
 TEST_P(FlagTest, SetGetFlagWorks) {
-    const auto [flag, expectedValue] = GetParam();
+    const auto [flag, expectedValue, unexpectedValue] = GetParam();
 
     registers_m.setFlag(flag, expectedValue);
+    registers_m.setFlag(unexpectedValue, !expectedValue);
 
     EXPECT_EQ(registers_m.getFlag(flag), expectedValue);
+    EXPECT_NE(registers_m.getFlag(flag), registers_m.getFlag(unexpectedValue));
 }
 
 INSTANTIATE_TEST_SUITE_P(CombinedRegisters, CombinedRegisterTest, ::testing::Values(
-    std::make_pair(Registers::CombinedRegisters::AF, InitialAF),
-    std::make_pair(Registers::CombinedRegisters::BC, InitialBC),
-    std::make_pair(Registers::CombinedRegisters::DE, InitialDE),
-    std::make_pair(Registers::CombinedRegisters::HL, InitialHL)
+    std::make_tuple(CPURegisters::CombinedRegisters::AF, InitialAF, CPURegisters::CombinedRegisters::BC),
+    std::make_tuple(CPURegisters::CombinedRegisters::BC, InitialBC, CPURegisters::CombinedRegisters::AF),
+    std::make_tuple(CPURegisters::CombinedRegisters::DE, InitialDE, CPURegisters::CombinedRegisters::HL),
+    std::make_tuple(CPURegisters::CombinedRegisters::HL, InitialHL, CPURegisters::CombinedRegisters::DE)
 ));
 
 INSTANTIATE_TEST_SUITE_P(StandaloneRegisters, StandaloneRegisterTest, ::testing::Values(
-    std::make_pair(Registers::Register::A, InitialA),
-    std::make_pair(Registers::Register::F, InitialF),
-    std::make_pair(Registers::Register::B, InitialB),
-    std::make_pair(Registers::Register::C, InitialC),
-    std::make_pair(Registers::Register::D, InitialD),
-    std::make_pair(Registers::Register::E, InitialE),
-    std::make_pair(Registers::Register::H, InitialH),
-    std::make_pair(Registers::Register::L, InitialL)
+    std::make_tuple(CPURegisters::Register::A, InitialA, CPURegisters::Register::F),
+    std::make_tuple(CPURegisters::Register::F, InitialF, CPURegisters::Register::A),
+    std::make_tuple(CPURegisters::Register::B, InitialB, CPURegisters::Register::C),
+    std::make_tuple(CPURegisters::Register::C, InitialC, CPURegisters::Register::B),
+    std::make_tuple(CPURegisters::Register::D, InitialD, CPURegisters::Register::E),
+    std::make_tuple(CPURegisters::Register::E, InitialE, CPURegisters::Register::D),
+    std::make_tuple(CPURegisters::Register::H, InitialH, CPURegisters::Register::L),
+    std::make_tuple(CPURegisters::Register::L, InitialL, CPURegisters::Register::H)
 ));
 
 INSTANTIATE_TEST_SUITE_P(Flags, FlagTest, ::testing::Values(
-    std::make_pair(Registers::Flags::Z, InitialZFlag),
-    std::make_pair(Registers::Flags::N, InitialNFlag),
-    std::make_pair(Registers::Flags::H, InitialHFlag),
-    std::make_pair(Registers::Flags::C, InitialCFlag)
+    std::make_tuple(CPURegisters::Flags::Z, InitialZFlag, CPURegisters::Flags::N),
+    std::make_tuple(CPURegisters::Flags::N, InitialNFlag, CPURegisters::Flags::Z),
+    std::make_tuple(CPURegisters::Flags::H, InitialHFlag, CPURegisters::Flags::C),
+    std::make_tuple(CPURegisters::Flags::C, InitialCFlag, CPURegisters::Flags::H)
 ));
