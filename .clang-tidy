@@ -1,0 +1,13 @@
+Checks: >
+    modernize-*,
+    -modernize-use-trailing-return-type,
+    readability-*,
+    -readability-suspicious-call-argument,
+    bugprone-*,
+    clang-analyzer-*,
+    concurrency-*,
+    cppcoreguidelines-*,
+    -cppcoreguidelines-pro-bounds-constant-array-index,
+    performance-*,
+    portability-*,
+HeaderFilterRegex: '.*'
