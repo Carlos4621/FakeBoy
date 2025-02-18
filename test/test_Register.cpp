@@ -7,6 +7,8 @@ static constexpr uint16_t InitialBC{ 0x5678 };
 static constexpr uint16_t InitialDE{ 0x9ABC };
 static constexpr uint16_t InitialHL{ 0xDEF0 };
 
+static constexpr uint16_t MaskedAF{ InitialAF & 0xFFF0 };
+
 static constexpr uint8_t InitialA{ 0x12 };
 static constexpr uint8_t InitialF{ 0x34 };
 static constexpr uint8_t InitialB{ 0x56 };
@@ -15,6 +17,8 @@ static constexpr uint8_t InitialD{ 0x9A };
 static constexpr uint8_t InitialE{ 0xBC };
 static constexpr uint8_t InitialH{ 0xDE };
 static constexpr uint8_t InitialL{ 0xF0 };
+
+static constexpr uint8_t MaskedF{ InitialF & 0xF0 };
 
 static constexpr bool InitialZFlag{ false };
 static constexpr bool InitialNFlag{ true };
@@ -34,7 +38,12 @@ protected:
 class FlagTest : public ::testing::Test, public ::testing::WithParamInterface<std::tuple<CPURegisters::Flags, bool, CPURegisters::Flags> > {
 protected:
     CPURegisters registers_m;
-} ;
+};
+
+class FlagMaskTest : public ::testing::Test {
+protected:
+    CPURegisters registers_m;
+};
 
 TEST_P(CombinedRegisterTest, SetGetCombinedRegisterWorks) {
     const auto [combinedRegister, expectedValue, unexpectedValue] = GetParam();
@@ -64,8 +73,14 @@ TEST_P(FlagTest, SetGetFlagWorks) {
     EXPECT_NE(registers_m.getFlag(flag), registers_m.getFlag(unexpectedValue));
 }
 
+TEST_F(FlagMaskTest, FlagsMaskWorks) {
+    registers_m.setCombinedRegister(CPURegisters::CombinedRegisters::AF, InitialAF);
+
+    EXPECT_EQ(registers_m.getCombinedRegister(CPURegisters::CombinedRegisters::AF), MaskedAF);
+    EXPECT_EQ(registers_m.getRegister(CPURegisters::Register::F), MaskedF);
+}
+
 INSTANTIATE_TEST_SUITE_P(CombinedRegisters, CombinedRegisterTest, ::testing::Values(
-    std::make_tuple(CPURegisters::CombinedRegisters::AF, InitialAF, CPURegisters::CombinedRegisters::BC),
     std::make_tuple(CPURegisters::CombinedRegisters::BC, InitialBC, CPURegisters::CombinedRegisters::AF),
     std::make_tuple(CPURegisters::CombinedRegisters::DE, InitialDE, CPURegisters::CombinedRegisters::HL),
     std::make_tuple(CPURegisters::CombinedRegisters::HL, InitialHL, CPURegisters::CombinedRegisters::DE)
@@ -73,7 +88,6 @@ INSTANTIATE_TEST_SUITE_P(CombinedRegisters, CombinedRegisterTest, ::testing::Val
 
 INSTANTIATE_TEST_SUITE_P(StandaloneRegisters, StandaloneRegisterTest, ::testing::Values(
     std::make_tuple(CPURegisters::Register::A, InitialA, CPURegisters::Register::F),
-    std::make_tuple(CPURegisters::Register::F, InitialF, CPURegisters::Register::A),
     std::make_tuple(CPURegisters::Register::B, InitialB, CPURegisters::Register::C),
     std::make_tuple(CPURegisters::Register::C, InitialC, CPURegisters::Register::B),
     std::make_tuple(CPURegisters::Register::D, InitialD, CPURegisters::Register::E),

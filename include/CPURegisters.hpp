@@ -32,6 +32,9 @@ private:
     static constexpr uint8_t LowByteMask{ 0x00FF};
     static constexpr uint8_t ByteDisplacement{ 8 };
 
+    static constexpr uint8_t FlagsMask_8_Bits{ 0xF0 };
+    static constexpr uint16_t FlagsMask_16_Bits{ 0xFFF0 };
+
     static constexpr uint8_t ZeroFlagMask{ 0b10000000 };
     static constexpr uint8_t SubtractionFlagMask{ 0b01000000 };
     static constexpr uint8_t HalfCarryFlagMask{ 0b00100000 };
@@ -62,6 +65,9 @@ private:
 
     [[nodiscard]]
     static constexpr uint8_t flagToIndex(Flags flag) noexcept;
+
+    static void removeLowerBits(uint8_t& value) noexcept;
+    static void removeLowerBits(uint16_t& value) noexcept;
 };
 
 #endif // !CPU_REGISTERS_HPP
