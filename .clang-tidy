@@ -4,10 +4,12 @@ Checks: >
     readability-*,
     -readability-suspicious-call-argument,
     bugprone-*,
+    -bugprone-easily-swappable-parameters,
     clang-analyzer-*,
     concurrency-*,
     cppcoreguidelines-*,
     -cppcoreguidelines-pro-bounds-constant-array-index,
+    -cppcoreguidelines-pro-type-reinterpret-cast,
     performance-*,
     portability-*,
 HeaderFilterRegex: '.*'

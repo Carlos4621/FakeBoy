@@ -29,7 +29,7 @@ add_executable(FakeBoy main.cpp ${SRC_FILES})
 
 enable_testing()
 
-file(GLOB TEST_FILES "test/*.cpp")
+file(GLOB TEST_FILES "test/*/*.cpp" "test/*.cpp")
 
 add_executable(tests ${TEST_FILES} ${SRC_FILES})
 
@@ -37,3 +37,19 @@ target_link_libraries(tests PRIVATE GTest::gtest_main)
 
 include(GoogleTest)
 gtest_discover_tests(tests)
+
+file(GLOB ASM_FILES "test/test_Cartridge/testingCartridges/*.asm")
+
+foreach(ASM_FILE ${ASM_FILES})
+    get_filename_component(ASM_NAME ${ASM_FILE} NAME_WE)
+    add_custom_command(
+        OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${ASM_NAME}.gb
+        COMMAND rgbasm -o ${CMAKE_CURRENT_BINARY_DIR}/${ASM_NAME}.o ${ASM_FILE}
+        COMMAND rgblink -o ${CMAKE_CURRENT_BINARY_DIR}/${ASM_NAME}.gb ${CMAKE_CURRENT_BINARY_DIR}/${ASM_NAME}.o
+        DEPENDS ${ASM_FILE}
+        COMMENT "Compilando ROM ${ASM_NAME}.gb"
+    )
+    list(APPEND ROM_FILES ${CMAKE_CURRENT_BINARY_DIR}/${ASM_NAME}.gb)
+endforeach()
+
+add_custom_target(rom ALL DEPENDS ${ROM_FILES})

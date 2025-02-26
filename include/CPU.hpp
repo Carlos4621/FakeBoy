@@ -6,6 +6,7 @@
 
 class CPU {
 public:
+    explicit CPU();
 
 private:
 
