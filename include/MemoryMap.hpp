@@ -27,7 +27,7 @@ static constexpr uint16_t RAM_Start_Address{ 0xA000 };
 static constexpr uint16_t RAM_End_Adress{ 0xBFFF };
 
 static constexpr uint16_t Work_RAM_Start_Address{ 0xC000 };
-static constexpr uint16_t Work_RAM_End_Address{ 0xCFFF };
+static constexpr uint16_t Work_RAM_End_Address{ 0xDFFF };
 
 static constexpr uint16_t Echo_RAM_Start_Address{ 0xE000 };
 static constexpr uint16_t Echo_RAM_End_Address{ 0xFDFF };
