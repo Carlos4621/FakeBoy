@@ -9,31 +9,40 @@ Cartridge::Cartridge(std::string_view romPath) {
 void Cartridge::write(uint16_t address, uint8_t value) {
     // REMINDER: Los distintos tipos de MBC tienen distintas direcciones para su registro, manejar correctamente
 
-    if (isOnRAM_range(address)) {
-        writeToRAM(address, value);
-    }
-    else if (isOnSwitchableBanks_range(address) || isOnBank_0_range(address)) {
+    switch (determineMemoryRange(address)) {
+    case MemoryRange::Bank_0:
+    case MemoryRange::SwitchableROMBanks:
         mbc_m->writeToRegisters(address, value);
-    }
-    else {
+        break;
+
+    case MemoryRange::ExternalRAM:
+        writeToRAM(address, value);
+        break;
+
+    default:
         throwInvalidAddress(address);
+        break;
     }
 }
 
 uint8_t Cartridge::read(uint16_t address) {
-    if (isOnBank_0_range(address)) {
+    switch (determineMemoryRange(address)) {
+    case MemoryRange::Bank_0:
         return readFromBank_0(address);
-    }
+        break;
     
-    if (isOnSwitchableBanks_range(address)) {
+    case MemoryRange::SwitchableROMBanks:
         return readFromSwitchableBank(address);
-    }
-    
-    if (isOnRAM_range(address)) {
+        break;
+
+    case MemoryRange::ExternalRAM:
         return readFromRAM(address);
+        break;
+    
+    default:
+        throwInvalidAddress(address);
+        break;
     }
-        
-    throwInvalidAddress(address);
 }
 
 uint8_t Cartridge::directReadToFile(uint16_t address) {
