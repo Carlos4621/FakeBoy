@@ -5,7 +5,6 @@
 #include <cstdint>
 #include <utility>
 
-// REMINDER: Remover el último elemento lo antes posible
 enum class MemoryRange : uint8_t {
     Bank_0 = 0,
     SwitchableROMBanks,
