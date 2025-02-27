@@ -15,7 +15,7 @@ SECTION "Header", ROM0[$0100]
     db $DD, $DC, $99, $9F, $BB, $B9, $33, $3E
 
     ; Título del juego (máximo 16 bytes, rellenar con 0 si es necesario)
-    db "TestingROM_1",0
+    db "TestingROM_2",0
 
     ; Datos de fabricante u otros (en este ejemplo se dejan en 0)
     db 0,0,0,0

@@ -38,7 +38,7 @@ target_link_libraries(tests PRIVATE GTest::gtest_main)
 include(GoogleTest)
 gtest_discover_tests(tests)
 
-file(GLOB ASM_FILES "test/test_Cartridge/testingCartridges/*.asm")
+file(GLOB ASM_FILES "test/testingCartridges/*.asm")
 
 foreach(ASM_FILE ${ASM_FILES})
     get_filename_component(ASM_NAME ${ASM_FILE} NAME_WE)

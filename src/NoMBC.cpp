@@ -14,5 +14,5 @@ uint16_t NoMBC::getRedirected_ROM_address(uint16_t address) const noexcept {
 }
 
 uint16_t NoMBC::getRedirected_RAM_address(uint16_t address) const noexcept {
-    return (address - RAM_Start_Address);
+    return (address - External_RAM_Start_Address);
 }

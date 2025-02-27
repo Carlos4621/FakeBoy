@@ -10,6 +10,7 @@
 #include <vector>
 #include "MemoryMap.hpp"
 
+// TODO: Una vez terminados las clases de manejo de memoria, hacer superclase de estos
 class Cartridge {
 public:
 

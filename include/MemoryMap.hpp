@@ -8,6 +8,7 @@
 enum class MemoryRange : uint8_t {
     Bank_0 = 0,
     SwitchableROMBanks,
+    VRAM,
     ExternalRAM,
     Work_RAM,
     Echo_RAM,
@@ -23,8 +24,11 @@ static constexpr uint16_t Bank_0_End_Address{ 0x3FFF };
 static constexpr uint16_t Switchable_Bank_Start_Address{ 0x4000 };
 static constexpr uint16_t Switchable_Bank_End_Address{ 0x7FFF };
 
-static constexpr uint16_t RAM_Start_Address{ 0xA000 };
-static constexpr uint16_t RAM_End_Adress{ 0xBFFF };
+static constexpr uint16_t VRAM_Start_Address{ 0x8000 };
+static constexpr uint16_t VRAM_End_Address{ 0x9FFF };
+
+static constexpr uint16_t External_RAM_Start_Address{ 0xA000 };
+static constexpr uint16_t External_RAM_End_Adress{ 0xBFFF };
 
 static constexpr uint16_t Work_RAM_Start_Address{ 0xC000 };
 static constexpr uint16_t Work_RAM_End_Address{ 0xDFFF };
@@ -58,7 +62,11 @@ static constexpr bool isOnSwitchableROMBank_range(uint16_t address) noexcept {
 }
 
 static constexpr bool isOnExternalRAM_range(uint16_t address) noexcept {
-    return (address >= RAM_Start_Address) && (address <= RAM_End_Adress);
+    return (address >= External_RAM_Start_Address) && (address <= External_RAM_End_Adress);
+}
+
+static constexpr bool isOnVRAM_range(uint16_t address) noexcept {
+    return (address >= VRAM_Start_Address) && (address <= VRAM_End_Address);
 }
 
 static constexpr bool isOnWorkRAM_range(uint16_t address) noexcept {
@@ -98,9 +106,13 @@ static constexpr MemoryRange determineMemoryRange(uint16_t address) noexcept {
         return MemoryRange::SwitchableROMBanks;
     }
 
+    if (isOnVRAM_range(address)) {
+        return MemoryRange::VRAM;
+    }
+
     if (isOnExternalRAM_range(address)) {
         return MemoryRange::ExternalRAM;
-    }    
+    }
 
     if (isOnWorkRAM_range(address)) {
         return MemoryRange::Work_RAM;
@@ -126,11 +138,7 @@ static constexpr MemoryRange determineMemoryRange(uint16_t address) noexcept {
         return MemoryRange::High_RAM;
     }
 
-    if (isOnInterruptEnableRegister_range(address)) {
-        return MemoryRange::Interrupt_Enable_Register;
-    }
-
-    std::unreachable();
+    return MemoryRange::Interrupt_Enable_Register;
 }
 
 #endif // !MEMORY_MAP_HPP
