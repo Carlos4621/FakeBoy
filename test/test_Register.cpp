@@ -30,7 +30,7 @@ protected:
     CPURegisters registers_m;
 };
 
-class StandaloneRegisterTest : public ::testing::Test, public ::testing::WithParamInterface<std::tuple<CPURegisters::Register, uint8_t, CPURegisters::Register> > {
+class StandaloneRegisterTest : public ::testing::Test, public ::testing::WithParamInterface<std::tuple<CPURegisters::Registers, uint8_t, CPURegisters::Registers> > {
 protected:
     CPURegisters registers_m;
 };
@@ -77,7 +77,7 @@ TEST_F(FlagMaskTest, FlagsMaskWorks) {
     registers_m.setCombinedRegister(CPURegisters::CombinedRegisters::AF, InitialAF);
 
     EXPECT_EQ(registers_m.getCombinedRegister(CPURegisters::CombinedRegisters::AF), MaskedAF);
-    EXPECT_EQ(registers_m.getRegister(CPURegisters::Register::F), MaskedF);
+    EXPECT_EQ(registers_m.getRegister(CPURegisters::Registers::F), MaskedF);
 }
 
 INSTANTIATE_TEST_SUITE_P(CombinedRegisters, CombinedRegisterTest, ::testing::Values(
@@ -87,13 +87,13 @@ INSTANTIATE_TEST_SUITE_P(CombinedRegisters, CombinedRegisterTest, ::testing::Val
 ));
 
 INSTANTIATE_TEST_SUITE_P(StandaloneRegisters, StandaloneRegisterTest, ::testing::Values(
-    std::make_tuple(CPURegisters::Register::A, InitialA, CPURegisters::Register::F),
-    std::make_tuple(CPURegisters::Register::B, InitialB, CPURegisters::Register::C),
-    std::make_tuple(CPURegisters::Register::C, InitialC, CPURegisters::Register::B),
-    std::make_tuple(CPURegisters::Register::D, InitialD, CPURegisters::Register::E),
-    std::make_tuple(CPURegisters::Register::E, InitialE, CPURegisters::Register::D),
-    std::make_tuple(CPURegisters::Register::H, InitialH, CPURegisters::Register::L),
-    std::make_tuple(CPURegisters::Register::L, InitialL, CPURegisters::Register::H)
+    std::make_tuple(CPURegisters::Registers::A, InitialA, CPURegisters::Registers::F),
+    std::make_tuple(CPURegisters::Registers::B, InitialB, CPURegisters::Registers::C),
+    std::make_tuple(CPURegisters::Registers::C, InitialC, CPURegisters::Registers::B),
+    std::make_tuple(CPURegisters::Registers::D, InitialD, CPURegisters::Registers::E),
+    std::make_tuple(CPURegisters::Registers::E, InitialE, CPURegisters::Registers::D),
+    std::make_tuple(CPURegisters::Registers::H, InitialH, CPURegisters::Registers::L),
+    std::make_tuple(CPURegisters::Registers::L, InitialL, CPURegisters::Registers::H)
 ));
 
 INSTANTIATE_TEST_SUITE_P(Flags, FlagTest, ::testing::Values(

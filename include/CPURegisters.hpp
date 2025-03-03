@@ -5,16 +5,17 @@
 #include <cstdint>
 #include <stdexcept>
 #include <array>
+#include <utility>
 
 class CPURegisters {
 public:
 
-    enum class Register : uint8_t{ A = 0, F, B, C, D, E, H, L };
+    enum class Registers : uint8_t{ A = 0, F, B, C, D, E, H, L };
     enum class CombinedRegisters : uint8_t{ AF = 0, BC, DE, HL };
     enum class Flags : uint8_t{ Z = 0, N, H, C };
 
     [[nodiscard]]
-    uint8_t getRegister(Register reg) const noexcept;
+    uint8_t getRegister(Registers reg) const noexcept;
 
     [[nodiscard]]
     uint16_t getCombinedRegister(CombinedRegisters reg) const noexcept;
@@ -22,7 +23,7 @@ public:
     [[nodiscard]]
     bool getFlag(Flags flag) const noexcept;
 
-    void setRegister(Register reg, uint8_t value) noexcept;
+    void setRegister(Registers reg, uint8_t value) noexcept;
     void setCombinedRegister(CombinedRegisters reg, uint16_t value) noexcept;
     void setFlag(Flags flag, bool value) noexcept;
 
@@ -55,10 +56,10 @@ private:
     static void setLowByte(uint16_t& value, uint8_t lowByte) noexcept;
 
     [[nodiscard]]
-    static constexpr bool isHighByteRegister(Register reg) noexcept;
+    static constexpr bool isHighByteRegister(Registers reg) noexcept;
 
     [[nodiscard]]
-    static constexpr uint8_t registerToIndex(Register reg) noexcept;
+    static constexpr uint8_t registerToIndex(Registers reg) noexcept;
 
     [[nodiscard]]
     static constexpr uint8_t combinedRegisterToIndex(CombinedRegisters combinedReg) noexcept;

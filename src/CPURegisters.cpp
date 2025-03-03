@@ -1,6 +1,6 @@
 #include <CPURegisters.hpp>
 
-uint8_t CPURegisters::getRegister(Register reg) const noexcept {
+uint8_t CPURegisters::getRegister(Registers reg) const noexcept {
     const auto combinedRegister{ registers_m[RegisterIndexToCombinedRegisterIndex[registerToIndex(reg)]] };
 
     return isHighByteRegister(reg) ? getHighByte(combinedRegister) : getLowByte(combinedRegister);
@@ -11,13 +11,13 @@ uint16_t CPURegisters::getCombinedRegister(CombinedRegisters reg) const noexcept
 }
 
 bool CPURegisters::getFlag(Flags flag) const noexcept {    
-    return (getRegister(Register::F) & FlagMaskTable[flagToIndex(flag)]) != 0;
+    return (getRegister(Registers::F) & FlagMaskTable[flagToIndex(flag)]) != 0;
 }
 
-void CPURegisters::setRegister(Register reg, uint8_t value) noexcept {
+void CPURegisters::setRegister(Registers reg, uint8_t value) noexcept {
     auto& combinedRegister{ registers_m[RegisterIndexToCombinedRegisterIndex[registerToIndex(reg)]] };
 
-    if (reg == Register::F) {
+    if (reg == Registers::F) {
         removeLowerBits(value);
     }
 
@@ -37,7 +37,7 @@ void CPURegisters::setCombinedRegister(CombinedRegisters reg, uint16_t value) no
 }
 
 void CPURegisters::setFlag(Flags flag, bool value) noexcept {
-    uint8_t F_register{ getRegister(Register::F) };
+    uint8_t F_register{ getRegister(Registers::F) };
 
     if (const uint8_t flagIndex{ flagToIndex(flag) }; value) {
         F_register |= FlagMaskTable[flagIndex];
@@ -45,7 +45,7 @@ void CPURegisters::setFlag(Flags flag, bool value) noexcept {
         F_register &= ~FlagMaskTable[flagIndex];
     }
 
-    setRegister(Register::F, F_register);
+    setRegister(Registers::F, F_register);
 }
 
 constexpr uint8_t CPURegisters::getHighByte(uint16_t value) noexcept {
@@ -64,20 +64,20 @@ void CPURegisters::setLowByte(uint16_t &value, uint8_t lowByte) noexcept {
     value = (value & HighByteMask) | lowByte;
 }
 
-constexpr bool CPURegisters::isHighByteRegister(Register reg) noexcept {
+constexpr bool CPURegisters::isHighByteRegister(Registers reg) noexcept {
     return (registerToIndex(reg) % 2) == 0;
 }
 
-constexpr uint8_t CPURegisters::registerToIndex(Register reg) noexcept {
-    return static_cast<uint8_t>(reg);
+constexpr uint8_t CPURegisters::registerToIndex(Registers reg) noexcept {
+    return std::to_underlying(reg);
 }
 
 constexpr uint8_t CPURegisters::combinedRegisterToIndex(CombinedRegisters combinedReg) noexcept {
-    return static_cast<uint8_t>(combinedReg);
+    return std::to_underlying(combinedReg);
 }
 
 constexpr uint8_t CPURegisters::flagToIndex(Flags flag) noexcept {
-    return static_cast<uint8_t>(flag);
+    return std::to_underlying(flag);
 }
 
 void CPURegisters::removeLowerBits(uint8_t &value) noexcept {
