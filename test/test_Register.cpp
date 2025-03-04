@@ -2,12 +2,16 @@
 #include <gtest/gtest.h>
 #include <utility>
 
-static constexpr uint16_t InitialAF{ 0x1234 };
+static constexpr uint16_t InitialAF{ 0x1230 };
+static constexpr uint16_t toMaskAF{ 0xFFFF };
+
 static constexpr uint16_t InitialBC{ 0x5678 };
 static constexpr uint16_t InitialDE{ 0x9ABC };
 static constexpr uint16_t InitialHL{ 0xDEF0 };
+static constexpr uint16_t InitialPC{ 0x0101 };
+static constexpr uint16_t InitialSP{ 0x1111 };
 
-static constexpr uint16_t MaskedAF{ InitialAF & 0xFFF0 };
+static constexpr uint16_t MaskedAF{ toMaskAF & 0xFFF0 };
 
 static constexpr uint8_t InitialA{ 0x12 };
 static constexpr uint8_t InitialF{ 0x34 };
@@ -17,8 +21,12 @@ static constexpr uint8_t InitialD{ 0x9A };
 static constexpr uint8_t InitialE{ 0xBC };
 static constexpr uint8_t InitialH{ 0xDE };
 static constexpr uint8_t InitialL{ 0xF0 };
+static constexpr uint8_t InitialPC_Low{ 0x99 };
+static constexpr uint8_t InitialPC_Up{ 0x22 };
+static constexpr uint8_t InitialSP_Low{ 0x11 };
+static constexpr uint8_t InitialSP_Up{ 0xFE };
 
-static constexpr uint8_t MaskedF{ InitialF & 0xF0 };
+static constexpr uint8_t MaskedF{ toMaskAF & 0xF0 };
 
 static constexpr bool InitialZFlag{ false };
 static constexpr bool InitialNFlag{ true };
@@ -74,7 +82,7 @@ TEST_P(FlagTest, SetGetFlagWorks) {
 }
 
 TEST_F(FlagMaskTest, FlagsMaskWorks) {
-    registers_m.setCombinedRegister(CPURegisters::CombinedRegisters::AF, InitialAF);
+    registers_m.setCombinedRegister(CPURegisters::CombinedRegisters::AF, toMaskAF);
 
     EXPECT_EQ(registers_m.getCombinedRegister(CPURegisters::CombinedRegisters::AF), MaskedAF);
     EXPECT_EQ(registers_m.getRegister(CPURegisters::Registers::F), MaskedF);
@@ -83,7 +91,10 @@ TEST_F(FlagMaskTest, FlagsMaskWorks) {
 INSTANTIATE_TEST_SUITE_P(CombinedRegisters, CombinedRegisterTest, ::testing::Values(
     std::make_tuple(CPURegisters::CombinedRegisters::BC, InitialBC, CPURegisters::CombinedRegisters::AF),
     std::make_tuple(CPURegisters::CombinedRegisters::DE, InitialDE, CPURegisters::CombinedRegisters::HL),
-    std::make_tuple(CPURegisters::CombinedRegisters::HL, InitialHL, CPURegisters::CombinedRegisters::DE)
+    std::make_tuple(CPURegisters::CombinedRegisters::HL, InitialHL, CPURegisters::CombinedRegisters::DE),
+    std::make_tuple(CPURegisters::CombinedRegisters::AF, InitialAF, CPURegisters::CombinedRegisters::BC),
+    std::make_tuple(CPURegisters::CombinedRegisters::PC, InitialPC, CPURegisters::CombinedRegisters::SP),
+    std::make_tuple(CPURegisters::CombinedRegisters::SP, InitialSP, CPURegisters::CombinedRegisters::PC)
 ));
 
 INSTANTIATE_TEST_SUITE_P(StandaloneRegisters, StandaloneRegisterTest, ::testing::Values(
@@ -93,7 +104,11 @@ INSTANTIATE_TEST_SUITE_P(StandaloneRegisters, StandaloneRegisterTest, ::testing:
     std::make_tuple(CPURegisters::Registers::D, InitialD, CPURegisters::Registers::E),
     std::make_tuple(CPURegisters::Registers::E, InitialE, CPURegisters::Registers::D),
     std::make_tuple(CPURegisters::Registers::H, InitialH, CPURegisters::Registers::L),
-    std::make_tuple(CPURegisters::Registers::L, InitialL, CPURegisters::Registers::H)
+    std::make_tuple(CPURegisters::Registers::L, InitialL, CPURegisters::Registers::H),
+    std::make_tuple(CPURegisters::Registers::PC_Up, InitialPC_Up, CPURegisters::Registers::PC_Low),
+    std::make_tuple(CPURegisters::Registers::PC_Low, InitialPC_Low, CPURegisters::Registers::PC_Up),
+    std::make_tuple(CPURegisters::Registers::SP_Up, InitialL, CPURegisters::Registers::SP_Low),
+    std::make_tuple(CPURegisters::Registers::SP_Low, InitialL, CPURegisters::Registers::SP_Up)
 ));
 
 INSTANTIATE_TEST_SUITE_P(Flags, FlagTest, ::testing::Values(

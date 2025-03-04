@@ -10,8 +10,8 @@
 class CPURegisters {
 public:
 
-    enum class Registers : uint8_t{ A = 0, F, B, C, D, E, H, L };
-    enum class CombinedRegisters : uint8_t{ AF = 0, BC, DE, HL };
+    enum class Registers : uint8_t{ A = 0, F, B, C, D, E, H, L, PC_Up, PC_Low, SP_Up, SP_Low };
+    enum class CombinedRegisters : uint8_t{ AF = 0, BC, DE, HL, PC, SP };
     enum class Flags : uint8_t{ Z = 0, N, H, C };
 
     [[nodiscard]]
@@ -41,11 +41,21 @@ private:
     static constexpr uint8_t HalfCarryFlagMask{ 0b00100000 };
     static constexpr uint8_t CarryFlagMask{ 0b00010000 };
 
-    static constexpr std::array<uint8_t, 4> FlagMaskTable{ ZeroFlagMask, SubtractionFlagMask, HalfCarryFlagMask, CarryFlagMask };
-    static constexpr std::array<uint8_t, 8> RegisterIndexToCombinedRegisterIndex{ 0, 0, 1, 1, 2, 2, 3, 3 };
+    static constexpr uint8_t TotalRegisters{ 6 };
+
+    static constexpr uint16_t InitialAFRegister{ 0x01B0 };
+    static constexpr uint16_t InitialBCRegister{ 0x0013 };
+    static constexpr uint16_t InitialDERegister{ 0x00D8 };
+    static constexpr uint16_t InitialHLRegister{ 0x014D };
+    
+    static constexpr uint16_t InitialPCRegister{ 0x0100 };
+    static constexpr uint16_t InitialSPRegister{ 0xFFFE };
+
+    static constexpr std::array FlagMaskTable{ ZeroFlagMask, SubtractionFlagMask, HalfCarryFlagMask, CarryFlagMask };
+    static constexpr std::array<uint8_t, 12> RegisterIndexToCombinedRegisterIndex{ 0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5 };
 
     // REMINDER: Estas son las flags para el DMG, si quiero actualizar a CGB tengo que cambiar esto
-    std::array<uint16_t, 4> registers_m{ 0x01B0, 0x0013, 0x00D8, 0x014D };
+    std::array<uint16_t, TotalRegisters> registers_m{ InitialAFRegister, InitialBCRegister, InitialDERegister, InitialHLRegister, InitialPCRegister, InitialSPRegister };
 
     [[nodiscard]]
     static constexpr uint8_t getHighByte(uint16_t value) noexcept;
