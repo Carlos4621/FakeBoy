@@ -4,7 +4,7 @@
 #include <iostream>
 
 static constexpr std::string_view CartidgePath{ "NoMBC_LD_R_u8_Test_ROM.gb" };
-static constexpr uint16_t MinimumTCyclesNeeded{ 216 };
+static constexpr uint16_t MinimumTCyclesNeeded{ 208 };
 
 static constexpr std::array ExpectedValues {
     0xAA, 0xBB, 0xCC, 0xDD, 0xEE, 0xFE, 0xFF
