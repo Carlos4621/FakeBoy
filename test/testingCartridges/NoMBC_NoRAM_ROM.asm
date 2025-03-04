@@ -24,6 +24,8 @@ SECTION "Header", ROM0[$0100]
     ; 0x00 indica ROM sin MBC
     db $00
 
+    db $00
+
     ; Campo de Tamaño de ROM (dirección $0148)
     ; 0x00 indica una ROM de 32KB (sin banking)
     db $00
