@@ -44,7 +44,8 @@ private:
     static constexpr std::array<uint8_t, 4> FlagMaskTable{ ZeroFlagMask, SubtractionFlagMask, HalfCarryFlagMask, CarryFlagMask };
     static constexpr std::array<uint8_t, 8> RegisterIndexToCombinedRegisterIndex{ 0, 0, 1, 1, 2, 2, 3, 3 };
 
-    std::array<uint16_t, 4> registers_m{};
+    // REMINDER: Estas son las flags para el DMG, si quiero actualizar a CGB tengo que cambiar esto
+    std::array<uint16_t, 4> registers_m{ 0x01B0, 0x0013, 0x00D8, 0x014D };
 
     [[nodiscard]]
     static constexpr uint8_t getHighByte(uint16_t value) noexcept;
