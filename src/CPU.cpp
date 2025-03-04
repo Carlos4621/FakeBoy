@@ -67,6 +67,8 @@ void CPU::initializeOpcodeTable() noexcept {
     initialize_LD_R_u8_Opcodes();
     initializeMisceallenousOpcodes();
     initialize_LD_RR_u16_Opcodes();
+    initialize_LD_R_addressRR_Opcodes();
+    initialize_LD_addressRR_R_Opcodes();
 }
 
 void CPU::initialize_LD_R_R_Opcodes() noexcept {
@@ -168,6 +170,12 @@ void CPU::initialize_LD_addressRR_R_Opcodes() noexcept {
     opcodeTable[LD_address_HL_E_Opcode] = &CPU::LD_addressRR_R<CPU::Registers::H, CPU::Registers::L, CPU::Registers::E>;
     opcodeTable[LD_address_HL_H_Opcode] = &CPU::LD_addressRR_R<CPU::Registers::H, CPU::Registers::L, CPU::Registers::H>;
     opcodeTable[LD_address_HL_L_Opcode] = &CPU::LD_addressRR_R<CPU::Registers::H, CPU::Registers::L, CPU::Registers::L>;
+}
+
+void CPU::initialize_LD_R_addressRR_Opcodes() noexcept {
+    opcodeTable[LD_A_address_BC_Opcode] = &CPU::LD_R_addressRR<CPU::Registers::B, CPU::Registers::C, CPU::Registers::A>;
+    opcodeTable[LD_A_address_DE_Opcode] = &CPU::LD_R_addressRR<CPU::Registers::D, CPU::Registers::E, CPU::Registers::A>;
+    opcodeTable[LD_A_address_HL_Opcode] = &CPU::LD_R_addressRR<CPU::Registers::H, CPU::Registers::L, CPU::Registers::A>;
 }
 
 void CPU::readNextByteAsLowerByte() {

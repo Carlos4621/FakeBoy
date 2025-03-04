@@ -66,6 +66,7 @@ private:
     static void initializeMisceallenousOpcodes() noexcept;
     static void initialize_LD_RR_u16_Opcodes() noexcept;
     static void initialize_LD_addressRR_R_Opcodes() noexcept;
+    static void initialize_LD_R_addressRR_Opcodes() noexcept;
     
     static uint16_t combineBytes(uint8_t lowerByte, uint8_t higherByte) noexcept;
 
@@ -89,8 +90,14 @@ private:
     template<CPU::Registers UpperRegister, CPU::Registers LowerRegister, CPU::Registers ToRegister>
     void asignAddressRRToR();
 
+    template<CPU::Registers UpperRegister, CPU::Registers LowerRegister, CPU::Registers FromRegister>
+    void asignRToAddressRR();
+
     template<CPU::Registers UpperRegister, CPU::Registers LowerRegister, CPU::Registers ToRegister, bool Decrement>
     void asignAddressRRToR_And_IncrementOrDecrementRR();
+
+    template<CPU::Registers FromRegister, CPU::Registers UpperRegister, CPU::Registers LowerRegister, bool Decrement>
+    void asignRToAddressRR_And_IncremetOrDecrementRR();
 
     template<CPU::Registers ToRegister, CPU::Registers FromRegister>
     void LD_R_R();
@@ -105,6 +112,9 @@ private:
 
     template<CPU::Registers UpperRegister, CPU::Registers LowerRegister, CPU::Registers ToRegister>
     void LD_addressRR_R();
+
+    template<CPU::Registers FromRegister, CPU::Registers UpperRegister, CPU::Registers LowerRegister>
+    void LD_R_addressRR();
 
     void JP_u16();
 
@@ -133,9 +143,23 @@ inline void CPU::asignAddressRRToR() {
     incrementPC();
 }
 
+template <CPU::Registers UpperRegister, CPU::Registers LowerRegister, CPU::Registers FromRegister>
+inline void CPU::asignRToAddressRR() {
+    const auto address{ combineBytes(registers_m.getRegister(LowerRegister), registers_m.getRegister(UpperRegister)) };
+    memoryBus_m->write(address, registers_m.getRegister(FromRegister));
+    
+    incrementPC();
+}
+
 template <CPU::Registers UpperRegister, CPU::Registers LowerRegister, CPU::Registers ToRegister, bool Decrement>
 inline void CPU::asignAddressRRToR_And_IncrementOrDecrementRR() {
     asignAddressRRToR<UpperRegister, LowerRegister, ToRegister>();
+    registers_m.setRegister(LowerRegister, registers_m.getRegister(LowerRegister) + (Decrement ? -1 : 1));
+}
+
+template <CPU::Registers FromRegister, CPU::Registers UpperRegister, CPU::Registers LowerRegister, bool Decrement>
+inline void CPU::asignRToAddressRR_And_IncremetOrDecrementRR() {
+    asignRToAddressRR<FromRegister, UpperRegister, LowerRegister>();
     registers_m.setRegister(LowerRegister, registers_m.getRegister(LowerRegister) + (Decrement ? -1 : 1));
 }
 
@@ -159,7 +183,12 @@ inline void CPU::LD_RR_u16() {
 
 template <CPU::Registers UpperRegister, CPU::Registers LowerRegister, CPU::Registers ToRegister>
 inline void CPU::LD_addressRR_R() {
-    operationsQueue_m.push(&CPU::asignAddressRRToR<UpperRegister, LowerRegister, ToRegister>);
+    operationsQueue_m.push(&CPU::asignRToAddressRR<UpperRegister, LowerRegister, ToRegister>);
+}
+
+template <CPU::Registers UpperRegister, CPU::Registers LowerRegister, CPU::Registers FromRegister>
+inline void CPU::LD_R_addressRR() {
+    operationsQueue_m.push(&CPU::asignAddressRRToR<UpperRegister, LowerRegister, FromRegister>);
 }
 
 #endif // !CPU_HPP

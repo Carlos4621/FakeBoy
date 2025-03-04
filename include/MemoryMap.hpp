@@ -51,7 +51,8 @@ static constexpr uint16_t High_RAM_End_Address{ 0xFFFE };
 static constexpr uint16_t Interrupt_Enable_Register_Address{ 0xFFFF };
 
 static constexpr uint16_t MBC_Identifier_Address{ 0x147 };
-static constexpr uint16_t RAM_Size_Address{ 0x148 };
+static constexpr uint16_t RAM_Size_Address{ 0x149 };
+static constexpr uint16_t LY_Register_Address{ 0xFF44 };
 
 static constexpr bool isOnBank_0_range(uint16_t address) noexcept{
     return (address <= Bank_0_End_Address);
