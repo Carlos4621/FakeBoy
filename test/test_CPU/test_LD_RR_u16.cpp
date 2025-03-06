@@ -29,7 +29,7 @@ protected:
      }
 };
 
-TEST_F(CPU_LD_RR_u16_Test, LD_R_R_OpcodesWorks) {
+TEST_F(CPU_LD_RR_u16_Test, LD_R_u16_OpcodesWorks) {
     for (size_t i{ 0 }; i < ExpectedValues.size(); ++i) {
         const auto address{ 0xA000 + i };
 

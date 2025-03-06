@@ -19,11 +19,11 @@ else()
     message(WARNING "clang-tidy no encontrado. Análisis estático desactivado.")
 endif()
 
-include_directories(include)
+include_directories(include include/*)
 
 find_package(GTest REQUIRED)
 
-file(GLOB SRC_FILES "src/*.cpp")
+file(GLOB SRC_FILES "src/*.cpp" "src/*/*.cpp")
 
 add_executable(FakeBoy main.cpp ${SRC_FILES})
 
@@ -32,6 +32,8 @@ enable_testing()
 file(GLOB TEST_FILES "test/*/*.cpp" "test/*.cpp")
 
 add_executable(tests ${TEST_FILES} ${SRC_FILES})
+# Desactivar clang-tidy específicamente para el target de tests
+set_target_properties(tests PROPERTIES CXX_CLANG_TIDY "")
 
 target_link_libraries(tests PRIVATE GTest::gtest_main)
 

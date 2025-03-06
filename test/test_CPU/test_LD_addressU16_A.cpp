@@ -3,14 +3,14 @@
 #include <gtest/gtest.h>
 #include <iostream>
 
-static constexpr std::string_view CartidgePath{ "NoMBC_LD_R_u8_Test_ROM.gb" };
+static constexpr std::string_view CartidgePath{ "NoMBC_LD_addressU16_A_Test_ROM.gb" };
 static constexpr uint16_t MinimumTCyclesNeeded{ 208 };
 
 static constexpr std::array ExpectedValues {
     0xAA, 0xBB, 0xCC, 0xDD, 0xEE, 0xFE, 0xFF
 };
 
-class CPU_LD_R_u8_Test : public ::testing::Test {
+class CPU_LD_AddressU16_A : public ::testing::Test {
 protected:
     Cartridge cartridge_m{ CartidgePath };
     VideoRAM videoRAM_m;
@@ -29,7 +29,7 @@ protected:
      }
 };
 
-TEST_F(CPU_LD_R_u8_Test, LD_R_u8_OpcodesWorks) {
+TEST_F(CPU_LD_AddressU16_A, LD_addressU16_A_OpcodesWorks) {
     for (size_t i{ 0 }; i < ExpectedValues.size(); ++i) {
         const auto address{ 0xA000 + i };
 
