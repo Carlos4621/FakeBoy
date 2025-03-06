@@ -141,7 +141,7 @@ inline void CPU::asignNextByteToRegisterAndIncrementPC() {
 
 template <CPU::CombinedRegisters FromRegisters, CPU::Registers ToRegister>
 inline void CPU::asign_AddressRR_To_R() {
-    registers_m.setRegister(ToRegister, registers_m.getCombinedRegister(FromRegisters));
+    registers_m.setRegister(ToRegister, memoryBus_m->read(registers_m.getCombinedRegister(FromRegisters)));
     
     incrementPC();
 }
