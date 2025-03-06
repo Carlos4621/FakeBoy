@@ -28,7 +28,7 @@ void CPU::processTCycle() {
         operationsQueue_m.pop();
     }
     else {
-        const auto opcode{ readFromPC() };
+        const auto opcode{ read_PC_Address() };
         const auto& operation{ opcodeTable[opcode] };
 
         (this->*operation)();
@@ -145,7 +145,7 @@ void CPU::initialize_JP_Opcodes() noexcept {
     opcodeTable[JP_u16_Opcode] = &CPU::JP_u16;
 }
 
-uint16_t CPU::combineBytes(uint8_t hightByte, uint8_t lowByte) noexcept {
+uint16_t CPU::getCombinedBytes(uint8_t hightByte, uint8_t lowByte) noexcept {
     return (static_cast<uint16_t>(hightByte) << ByteDisplacement) | lowByte;
 }
 
@@ -193,30 +193,30 @@ void CPU::initialize_LD_addressHL_u8_Opcode() noexcept {
 
 void CPU::readNextByteAsLowerByte() {
     incrementPC();
-    lowerByteAuxiliaryRegister_m = readFromPC();
+    lowerByteAuxiliaryRegister_m = read_PC_Address();
 }
 
 void CPU::readNextByteAsHigherByte() {
     incrementPC();
-    higherByteAuxiliaryRegister_m = readFromPC();
+    higherByteAuxiliaryRegister_m = read_PC_Address();
 }
 
-void CPU::asign_addressU16_from_A() {
-    const auto address{ combineBytes(higherByteAuxiliaryRegister_m, lowerByteAuxiliaryRegister_m) };
+void CPU::from_A_assignTo_addressU16() {
+    const auto address{ getCombinedBytes(higherByteAuxiliaryRegister_m, lowerByteAuxiliaryRegister_m) };
     memoryBus_m->write(address, registers_m.getRegister(CPURegisters::Registers::A));
     incrementPC();
 }
 
-void CPU::assign_PC_from_u16() {
-    setPC(combineBytes(higherByteAuxiliaryRegister_m, lowerByteAuxiliaryRegister_m));
+void CPU::from_addressU16_assign_ToPC() {
+    setPC(getCombinedBytes(higherByteAuxiliaryRegister_m, lowerByteAuxiliaryRegister_m));
 }
 
-void CPU::assign_AddressHL_from_u8() {
+void CPU::from_U8_assignTo_addressHL() {
     memoryBus_m->write(registers_m.getCombinedRegister(CPU::CombinedRegisters::HL), lowerByteAuxiliaryRegister_m);
     incrementPC();
 }
 
-uint8_t CPU::readFromPC() const {
+uint8_t CPU::read_PC_Address() const {
     return memoryBus_m->read(registers_m.getCombinedRegister(CombinedRegisters::PC));
 }
 
@@ -231,18 +231,22 @@ void CPU::setPC(uint16_t address) {
 void CPU::LD_addressU16_A() {
     operationsQueue_m.push(&CPU::readNextByteAsLowerByte);
     operationsQueue_m.push(&CPU::readNextByteAsHigherByte);
-    operationsQueue_m.push(&CPU::asign_addressU16_from_A);
+    operationsQueue_m.push(&CPU::from_A_assignTo_addressU16);
 }
 
 void CPU::LD_addressHL_u8() {
     operationsQueue_m.push(&CPU::readNextByteAsLowerByte);
-    operationsQueue_m.push(&CPU::assign_AddressHL_from_u8);
+    operationsQueue_m.push(&CPU::from_U8_assignTo_addressHL);
+}
+
+void CPU::LDI_addressHL_A() {
+    operationsQueue_m.push(&CPU::from_addressRR_asignTo_R_and_incrementOrDecrementRR<CPU::CombinedRegisters::HL, CPU::Registers::A, false>);
 }
 
 void CPU::JP_u16() {
     operationsQueue_m.push(&CPU::readNextByteAsLowerByte);
     operationsQueue_m.push(&CPU::readNextByteAsHigherByte);
-    operationsQueue_m.push(&CPU::assign_PC_from_u16);
+    operationsQueue_m.push(&CPU::from_addressU16_assign_ToPC);
 }
 
 void CPU::NOP() {
@@ -251,5 +255,5 @@ void CPU::NOP() {
 }
 
 void CPU::invalidOpcode() {
-    throw std::runtime_error{ std::string{ "Invalid opcode: " } + std::to_string(readFromPC()) };
+    throw std::runtime_error{ std::string{ "Invalid opcode: " } + std::to_string(read_PC_Address()) };
 }

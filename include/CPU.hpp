@@ -69,16 +69,16 @@ private:
     static void initialize_LD_R_addressRR_Opcodes() noexcept;
     static void initialize_LD_addressHL_u8_Opcode() noexcept;
     
-    static uint16_t combineBytes(uint8_t hightByte, uint8_t lowByte) noexcept;
+    static uint16_t getCombinedBytes(uint8_t hightByte, uint8_t lowByte) noexcept;
 
     void readNextByteAsLowerByte();
     void readNextByteAsHigherByte();
-    void asign_addressU16_from_A();
-    void assign_PC_from_u16();
-    void assign_AddressHL_from_u8();
+    void from_A_assignTo_addressU16();
+    void from_addressU16_assign_ToPC();
+    void from_U8_assignTo_addressHL();
 
     [[nodiscard]]
-    uint8_t readFromPC() const;
+    uint8_t read_PC_Address() const;
 
     void incrementPC();
     void setPC(uint16_t address);
@@ -90,18 +90,17 @@ private:
     void asignNextByteToRegisterAndIncrementPC();
 
     template<CPU::CombinedRegisters FromRegisters, CPU::Registers ToRegister>
-    void asign_AddressRR_To_R();
+    void from_addressRR_asignTo_R();
 
     template<CPU::CombinedRegisters ToRegisters, CPU::Registers FromRegister>
-    void asign_R_To_AddressRR();
+    void from_R_asignTo_addressRR();
 
-    template<CPU::Registers UpperRegister, CPU::Registers LowerRegister, CPU::Registers ToRegister, bool Decrement>
-    void asign_AddressRR_To_R_And_IncrementOrDecrement_RR();
+    template<CPU::CombinedRegisters FromRegisters, CPU::Registers ToRegister, bool Decrement>
+    void from_addressRR_asignTo_R_and_incrementOrDecrementRR();
 
-    template<CPU::Registers FromRegister, CPU::Registers UpperRegister, CPU::Registers LowerRegister, bool Decrement>
-    void asign_R_ToAddressRR_And_IncremetOrDecrement_RR();
+    template<CPU::CombinedRegisters ToRegisters, CPU::Registers FromRegister, bool Decrement>
+    void from_R_assignTo_address_and_incrementOrDecrementRR();
 
-    
     template<CPU::Registers ToRegister, CPU::Registers FromRegister>
     void LD_R_R();
 
@@ -120,6 +119,12 @@ private:
     void LD_R_addressRR();
 
     void LD_addressHL_u8();
+
+    void LDI_addressHL_A();
+    void LDD_addressHL_A();
+
+    void LDI_A_addressHL();
+    void LDD_A_addressHL();
 
     void JP_u16();
 
@@ -141,29 +146,29 @@ inline void CPU::asignNextByteToRegisterAndIncrementPC() {
 }
 
 template <CPU::CombinedRegisters FromRegisters, CPU::Registers ToRegister>
-inline void CPU::asign_AddressRR_To_R() {
+inline void CPU::from_addressRR_asignTo_R() {
     registers_m.setRegister(ToRegister, memoryBus_m->read(registers_m.getCombinedRegister(FromRegisters)));
     
     incrementPC();
 }
 
 template <CPU::CombinedRegisters ToRegisters, CPU::Registers FromRegister>
-inline void CPU::asign_R_To_AddressRR() {
+inline void CPU::from_R_asignTo_addressRR() {
     memoryBus_m->write(registers_m.getCombinedRegister(ToRegisters), registers_m.getRegister(FromRegister));
     
     incrementPC();
 }
 
-template <CPU::Registers UpperRegister, CPU::Registers LowerRegister, CPU::Registers ToRegister, bool Decrement>
-inline void CPU::asign_AddressRR_To_R_And_IncrementOrDecrement_RR() {
-    asign_AddressRR_To_R<UpperRegister, LowerRegister, ToRegister>();
-    registers_m.setRegister(LowerRegister, registers_m.getRegister(LowerRegister) + (Decrement ? -1 : 1));
+template <CPU::CombinedRegisters FromRegisters, CPU::Registers ToRegister, bool Decrement>
+inline void CPU::from_addressRR_asignTo_R_and_incrementOrDecrementRR() {
+    from_addressRR_asignTo_R<FromRegisters, ToRegister>();
+    registers_m.setCombinedRegister(FromRegisters, registers_m.getCombinedRegister(FromRegisters) + (Decrement ? -1 : 1));
 }
 
-template <CPU::Registers FromRegister, CPU::Registers UpperRegister, CPU::Registers LowerRegister, bool Decrement>
-inline void CPU::asign_R_ToAddressRR_And_IncremetOrDecrement_RR() {
-    asign_R_To_AddressRR<FromRegister, UpperRegister, LowerRegister>();
-    registers_m.setRegister(LowerRegister, registers_m.getRegister(LowerRegister) + (Decrement ? -1 : 1));
+template <CPU::CombinedRegisters ToRegisters, CPU::Registers FromRegister, bool Decrement>
+inline void CPU::from_R_assignTo_address_and_incrementOrDecrementRR() {
+    from_R_asignTo_addressRR<ToRegisters, FromRegister>();
+    registers_m.setCombinedRegister(ToRegisters, registers_m.getCombinedRegister(ToRegisters) + (Decrement ? -1 : 1));
 }
 
 template <CPU::Registers ToRegister, CPU::Registers FromRegister>
@@ -186,12 +191,12 @@ inline void CPU::LD_RR_u16() {
 
 template <CPU::CombinedRegisters ToRegisters, CPU::Registers FromRegister>
 inline void CPU::LD_addressRR_R() {
-    operationsQueue_m.push(&CPU::asign_R_To_AddressRR<ToRegisters, FromRegister>);
+    operationsQueue_m.push(&CPU::from_R_asignTo_addressRR<ToRegisters, FromRegister>);
 }
 
 template <CPU::CombinedRegisters FromRegisters, CPU::Registers ToRegister>
 inline void CPU::LD_R_addressRR() {
-    operationsQueue_m.push(&CPU::asign_AddressRR_To_R<FromRegisters, ToRegister>);
+    operationsQueue_m.push(&CPU::from_addressRR_asignTo_R<FromRegisters, ToRegister>);
 }
 
 #endif // !CPU_HPP
