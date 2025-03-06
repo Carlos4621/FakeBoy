@@ -67,6 +67,7 @@ private:
     static void initialize_LD_RR_u16_Opcodes() noexcept;
     static void initialize_LD_addressRR_R_Opcodes() noexcept;
     static void initialize_LD_R_addressRR_Opcodes() noexcept;
+    static void initialize_LD_addressHL_u8_Opcode() noexcept;
     
     static uint16_t combineBytes(uint8_t hightByte, uint8_t lowByte) noexcept;
 

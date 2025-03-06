@@ -99,7 +99,7 @@ static constexpr uint16_t LD_E_address_HL_Opcode{ 0x5E };
 static constexpr uint16_t LD_H_address_HL_Opcode{ 0x66 };
 static constexpr uint16_t LD_L_address_HL_Opcode{ 0x6E };
 
-static constexpr uint16_t LD_address_HL_u8{ 0x36 };
+static constexpr uint16_t LD_address_HL_u8_Opcode{ 0x36 };
 
 static constexpr uint16_t LDD_A_address_HL_Opcode{ 0x3A };
 static constexpr uint16_t LDI_A_address_HL_Opcode{ 0x2A };

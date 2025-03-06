@@ -67,6 +67,7 @@ void CPU::initializeOpcodeTable() noexcept {
     initialize_LD_RR_u16_Opcodes();
     initialize_LD_R_addressRR_Opcodes();
     initialize_LD_addressRR_R_Opcodes();
+    initialize_LD_addressHL_u8_Opcode();
 
     initialize_JP_Opcodes();
     initializeMisceallenousOpcodes();
@@ -186,6 +187,10 @@ void CPU::initialize_LD_R_addressRR_Opcodes() noexcept {
     opcodeTable[LD_L_address_HL_Opcode] = &CPU::LD_R_addressRR<CPU::CombinedRegisters::HL, CPU::Registers::L>;
 }
 
+void CPU::initialize_LD_addressHL_u8_Opcode() noexcept {
+    opcodeTable[LD_address_HL_u8_Opcode] = &CPU::LD_addressHL_u8;
+}
+
 void CPU::readNextByteAsLowerByte() {
     incrementPC();
     lowerByteAuxiliaryRegister_m = readFromPC();
@@ -207,8 +212,7 @@ void CPU::assign_PC_from_u16() {
 }
 
 void CPU::assign_AddressHL_from_u8() {
-    const auto address{ registers_m.getCombinedRegister(CPU::CombinedRegisters::HL) };
-    memoryBus_m->write(address, lowerByteAuxiliaryRegister_m);
+    memoryBus_m->write(registers_m.getCombinedRegister(CPU::CombinedRegisters::HL), lowerByteAuxiliaryRegister_m);
     incrementPC();
 }
 
