@@ -75,6 +75,7 @@ private:
     void readNextByteAsLowerByte();
     void readNextByteAsHigherByte();
     void from_A_assignTo_addressU16();
+    void from_addressU16_assign_ToA();
     void from_addressU16_assign_ToPC();
     void from_U8_assignTo_addressHL();
 
@@ -106,6 +107,8 @@ private:
     void LD_R_R();
 
     void LD_addressU16_A();
+
+    void LD_A_addressU16();
 
     template<CPU::Registers ToRegister>
     void LD_R_u8();

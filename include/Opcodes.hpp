@@ -61,6 +61,7 @@ static constexpr uint16_t LD_A_L_Opcode{ 0x7D };
 static constexpr uint16_t LD_A_A_Opcode{ 0x7F };
 
 static constexpr uint16_t LD_addressU16_A_Opcode{ 0xEA };
+static constexpr uint16_t LD_A_addressU16_Opcode{ 0xFA };
 
 static constexpr uint16_t LD_A_u8_Opcode{ 0x3E };
 static constexpr uint16_t LD_B_u8_Opcode{ 0x06 };
