@@ -29,7 +29,7 @@ protected:
      }
 };
 
-TEST_F(CPU_LDD_LDI_A_HL, LD_addressU16_A_OpcodesWorks) {
+TEST_F(CPU_LDD_LDI_A_HL, LDD_LDI_addressHL_A_OpcodesWorks) {
     for (size_t i{ 0 }; i < ExpectedValues.size(); ++i) {
         const auto address{ 0xA000 + i };
 
