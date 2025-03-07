@@ -68,6 +68,7 @@ void CPU::initializeOpcodeTable() noexcept {
     initialize_LD_R_addressRR_Opcodes();
     initialize_LD_addressRR_R_Opcodes();
     initialize_LD_addressHL_u8_Opcode();
+    initialize_LDI_LDD_Opcodes();
 
     initialize_JP_Opcodes();
     initializeMisceallenousOpcodes();
@@ -191,6 +192,14 @@ void CPU::initialize_LD_addressHL_u8_Opcode() noexcept {
     opcodeTable[LD_address_HL_u8_Opcode] = &CPU::LD_addressHL_u8;
 }
 
+void CPU::initialize_LDI_LDD_Opcodes() noexcept {
+    opcodeTable[LDI_address_HL_A_Opcode] = &CPU::LDI_addressHL_A;
+    opcodeTable[LDD_address_HL_A_Opcode] = &CPU::LDD_addressHL_A;
+
+    opcodeTable[LDI_A_address_HL_Opcode] = &CPU::LDI_A_addressHL;
+    opcodeTable[LDD_A_address_HL_Opcode] = &CPU::LDD_A_addressHL;
+}
+
 void CPU::readNextByteAsLowerByte() {
     incrementPC();
     lowerByteAuxiliaryRegister_m = read_PC_Address();
@@ -240,7 +249,20 @@ void CPU::LD_addressHL_u8() {
 }
 
 void CPU::LDI_addressHL_A() {
-    operationsQueue_m.push(&CPU::from_addressRR_asignTo_R_and_incrementOrDecrementRR<CPU::CombinedRegisters::HL, CPU::Registers::A, false>);
+    operationsQueue_m.push(&CPU::from_R_assignTo_addressHL_and_incrementOrDecrementRR<CPU::CombinedRegisters::HL, CPU::Registers::A, false>);
+}
+
+void CPU::LDD_addressHL_A() {
+    operationsQueue_m.push(&CPU::from_R_assignTo_addressHL_and_incrementOrDecrementRR<CPU::CombinedRegisters::HL, CPU::Registers::A, true>);
+}
+
+void CPU::LDI_A_addressHL() {
+    operationsQueue_m.push(&CPU::from_addressHL_asignTo_R_and_incrementOrDecrementRR<CPU::CombinedRegisters::HL, CPU::Registers::A, false>);
+}
+
+
+void CPU::LDD_A_addressHL() {
+    operationsQueue_m.push(&CPU::from_addressHL_asignTo_R_and_incrementOrDecrementRR<CPU::CombinedRegisters::HL, CPU::Registers::A, true>);
 }
 
 void CPU::JP_u16() {
