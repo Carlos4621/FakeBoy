@@ -3,8 +3,8 @@
 #include <gtest/gtest.h>
 #include <iostream>
 
-static constexpr std::string_view CartidgePath{ "NoMBC_LD_addressU16_A_Test_ROM.gb" };
-static constexpr uint16_t MinimumTCyclesNeeded{ 184 };
+static constexpr std::string_view CartidgePath{ "test_LD_addressU16_A_ROM.gb" };
+static constexpr uint16_t MinimumTCyclesNeeded{ 188 };
 
 static constexpr std::array ExpectedValues {
     0xAA, 0xBB, 0xCC, 0xDD, 0xEE, 0xFE, 0xFF

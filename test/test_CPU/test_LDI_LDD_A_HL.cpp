@@ -3,8 +3,8 @@
 #include <gtest/gtest.h>
 #include <iostream>
 
-static constexpr std::string_view CartidgePath{ "NoMBC_LDI_LDD_A_HL_Test_ROM.gb" };
-static constexpr uint16_t MinimumTCyclesNeeded{ 104 };
+static constexpr std::string_view CartidgePath{ "test_LDI_LDD_A_HL_ROM.gb" };
+static constexpr uint16_t MinimumTCyclesNeeded{ 252 };
 
 static constexpr std::array ExpectedValues {
     0xAA, 0xBB, 0xCC, 0xDD
@@ -29,7 +29,7 @@ protected:
      }
 };
 
-TEST_F(CPU_LDD_LDI_A_HL, LDD_LDI_addressHL_A_OpcodesWorks) {
+TEST_F(CPU_LDD_LDI_A_HL, LDD_LDI_A_HL_OpcodesWorks) {
     for (size_t i{ 0 }; i < ExpectedValues.size(); ++i) {
         const auto address{ 0xA000 + i };
 
