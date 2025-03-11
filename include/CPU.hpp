@@ -61,6 +61,8 @@ private:
     uint8_t currentTCycle_m{ 1 };
 
     static void initializeOpcodeTable() noexcept;
+
+    static void initialieLDsOpcodes() noexcept;
     static void initialize_LD_R_R_Opcodes() noexcept;
     static void initialize_LD_R_u8_Opcodes() noexcept;
     static void initialize_JP_Opcodes() noexcept;
@@ -75,6 +77,9 @@ private:
 
     template<typename... Ops>
     void pushOperationsToQueue(Ops... ops);
+
+    void fetchOpcode();
+    void processNextOperation();
     
     static uint16_t combineBytes(uint8_t highByte, uint8_t lowByte) noexcept;
 
@@ -176,8 +181,7 @@ inline void CPU::pushOperationsToQueue(Ops... ops) {
 }
 
 template <CPU::Registers SPRegiser, uint8_t offset>
-inline void CPU::from_SPLow_or_SpUp_assignTo_addressU16()
-{
+inline void CPU::from_SPLow_or_SpUp_assignTo_addressU16() {
     const auto address{ combineBytes(higherByteAuxiliaryRegister_m, lowerByteAuxiliaryRegister_m) + offset };
     memoryBus_m->write(address, registers_m.getRegister(SPRegiser));
 }
@@ -203,14 +207,12 @@ inline void CPU::assignNextByteToRegisterAndIncrementPC() {
 template <CPU::CombinedRegisters FromRegisters, CPU::Registers ToRegister>
 inline void CPU::from_addressRR_assignTo_R() {
     registers_m.setRegister(ToRegister, memoryBus_m->read(registers_m.getCombinedRegister(FromRegisters)));
-    
     incrementPC();
 }
 
 template <CPU::CombinedRegisters ToRegisters, CPU::Registers FromRegister>
 inline void CPU::from_R_assignTo_addressRR() {
     memoryBus_m->write(registers_m.getCombinedRegister(ToRegisters), registers_m.getRegister(FromRegister));
-    
     incrementPC();
 }
 

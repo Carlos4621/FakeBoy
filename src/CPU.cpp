@@ -1,6 +1,7 @@
 #include <CPU.hpp>
 
 std::array<CPU::MemberFunction, CPU::NumberOfOpcodes> CPU::opcodeTable{};
+
 bool CPU::isOpcodeTableInitialized{ false };
 
 CPU::CPU(MemoryBus *memoryBus) noexcept 
@@ -21,17 +22,10 @@ void CPU::processTCycle() {
     currentTCycle_m = 1;
 
     if (!operationsQueue_m.empty()) {
-        const auto& operation{ operationsQueue_m.front() };
-
-        (this->*operation)();
-
-        operationsQueue_m.pop();
+        processNextOperation();
     }
     else {
-        const auto opcode{ read_PC_Address() };
-        const auto& operation{ opcodeTable[opcode] };
-
-        (this->*operation)();
+        fetchOpcode();
     }
 }
 
@@ -62,6 +56,13 @@ bool CPU::isOperationsQueueEmpty() const noexcept {
 void CPU::initializeOpcodeTable() noexcept {
     opcodeTable.fill(&CPU::invalidOpcode);
 
+    initialieLDsOpcodes();
+
+    initialize_JP_Opcodes();
+    initializeMiscellaneousOpcodes();
+}
+
+void CPU::initialieLDsOpcodes() noexcept {
     initialize_LD_R_R_Opcodes();
     initialize_LD_R_u8_Opcodes();
     initialize_LD_RR_u16_Opcodes();
@@ -71,9 +72,6 @@ void CPU::initializeOpcodeTable() noexcept {
     initialize_LDI_LDD_Opcodes();
     initialize_LD_SPs_HLs_Opcodes();
     initialize_LDH_Opcodes();
-
-    initialize_JP_Opcodes();
-    initializeMiscellaneousOpcodes();
 }
 
 void CPU::initialize_LD_R_R_Opcodes() noexcept {
@@ -144,19 +142,15 @@ void CPU::initialize_LD_R_u8_Opcodes() noexcept {
     opcodeTable[LD_L_u8_Opcode] = &CPU::LD_R_u8<CPU::Registers::L>;
 }
 
-void CPU::initialize_JP_Opcodes() noexcept {
-    opcodeTable[JP_u16_Opcode] = &CPU::JP_u16;
-}
-
-uint16_t CPU::combineBytes(uint8_t highByte, uint8_t lowByte) noexcept {
-    return (static_cast<uint16_t>(highByte) << ByteDisplacement) | lowByte;
-}
-
 void CPU::initialize_LDH_Opcodes() {
     opcodeTable[LDH_A_addressU8_Opcode] = &CPU::LDH_A_addressU8;
     opcodeTable[LDH_addressU8_A_Opcode] = &CPU::LDH_addressU8_A;
     opcodeTable[LD_A_addressC_Opcode] = &CPU::LD_A_addressC;
     opcodeTable[LD_addressC_A_Opcode] = &CPU::LD_addressC_A;
+}
+
+void CPU::initialize_JP_Opcodes() noexcept {
+    opcodeTable[JP_u16_Opcode] = &CPU::JP_u16;
 }
 
 // REMINDER: colocar en su lugar correcto
@@ -214,6 +208,25 @@ void CPU::initialize_LDI_LDD_Opcodes() noexcept {
 void CPU::initialize_LD_SPs_HLs_Opcodes() noexcept {
     opcodeTable[LD_SP_HL_Opcode] = &CPU::LD_SP_HL;
     opcodeTable[LD_addressU16_SP_Opcode] = &CPU::LD_addressU16_SP;
+}
+
+void CPU::fetchOpcode() {
+    const auto opcode{ read_PC_Address() };
+    const auto& operation{ opcodeTable[opcode] };
+
+    (this->*operation)();
+}
+
+void CPU::processNextOperation() {
+    const auto& operation{ operationsQueue_m.front() };
+
+    (this->*operation)();
+
+    operationsQueue_m.pop();
+}
+
+uint16_t CPU::combineBytes(uint8_t highByte, uint8_t lowByte) noexcept {
+    return (static_cast<uint16_t>(highByte) << ByteDisplacement) | lowByte;
 }
 
 void CPU::loadNextByteToLower() {
