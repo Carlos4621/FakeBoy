@@ -148,8 +148,8 @@ void CPU::initialize_JP_Opcodes() noexcept {
     opcodeTable[JP_u16_Opcode] = &CPU::JP_u16;
 }
 
-uint16_t CPU::combineBytes(uint8_t hightByte, uint8_t lowByte) noexcept {
-    return (static_cast<uint16_t>(hightByte) << ByteDisplacement) | lowByte;
+uint16_t CPU::combineBytes(uint8_t highByte, uint8_t lowByte) noexcept {
+    return (static_cast<uint16_t>(highByte) << ByteDisplacement) | lowByte;
 }
 
 void CPU::initialize_LDH_Opcodes() {
