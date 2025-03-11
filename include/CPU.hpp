@@ -77,8 +77,10 @@ private:
 
     void loadNextByteToLower();
     void loadNextByteToUpper();
+
     void from_A_assignTo_addressU16();
     void from_addressU16_assignTo_A();
+
     void from_addressU16_assignTo_PC();
     void from_U8_assignTo_addressHL();
     void from_HL_assignTo_SP();
@@ -105,10 +107,10 @@ private:
     void setPC(uint16_t address);
 
     template<CPU::Registers ToRegister>
-    void asignNextByteToRegister();
+    void assignNextByteToRegister();
 
     template<CPU::Registers ToRegister>
-    void asignNextByteToRegisterAndIncrementPC();
+    void assignNextByteToRegisterAndIncrementPC();
 
     template<CPU::CombinedRegisters FromRegisters, CPU::Registers ToRegister>
     void from_addressRR_asignTo_R();
@@ -180,14 +182,14 @@ inline void CPU::from_addressU16_assignTo_SPLow_or_SPUp_and_increment() {
 }
 
 template <CPU::Registers ToRegister>
-inline void CPU::asignNextByteToRegister() {
+inline void CPU::assignNextByteToRegister() {
     loadNextByteToLower();
     registers_m.setRegister(ToRegister, lowerByteAuxiliaryRegister_m);
 }
 
 template <CPU::Registers ToRegister>
-inline void CPU::asignNextByteToRegisterAndIncrementPC() {
-    asignNextByteToRegister<ToRegister>();
+inline void CPU::assignNextByteToRegisterAndIncrementPC() {
+    assignNextByteToRegister<ToRegister>();
     incrementPC();
 }
 
@@ -226,13 +228,13 @@ inline void CPU::LD_R_R() {
 
 template <CPU::Registers ToRegister>
 inline void CPU::LD_R_u8() {
-    operationsQueue_m.push(&CPU::asignNextByteToRegisterAndIncrementPC<ToRegister>);
+    operationsQueue_m.push(&CPU::assignNextByteToRegisterAndIncrementPC<ToRegister>);
 }
 
 template <CPU::Registers UpperRegister, CPU::Registers LowerRegister>
 inline void CPU::LD_RR_u16() {
-    operationsQueue_m.push(&CPU::asignNextByteToRegister<LowerRegister>);
-    operationsQueue_m.push(&CPU::asignNextByteToRegisterAndIncrementPC<UpperRegister>);
+    operationsQueue_m.push(&CPU::assignNextByteToRegister<LowerRegister>);
+    operationsQueue_m.push(&CPU::assignNextByteToRegisterAndIncrementPC<UpperRegister>);
 }
 
 template <CPU::CombinedRegisters ToRegisters, CPU::Registers FromRegister>
