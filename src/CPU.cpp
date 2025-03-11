@@ -293,72 +293,78 @@ void CPU::setPC(uint16_t address) {
 }
 
 void CPU::LD_addressU16_A() {
-    operationsQueue_m.push(&CPU::loadNextByteToLower);
-    operationsQueue_m.push(&CPU::loadNextByteToUpper);
-    operationsQueue_m.push(&CPU::from_A_assignTo_addressU16);
+    pushOperationsToQueue(
+        &CPU::loadNextByteToLower,
+        &CPU::loadNextByteToUpper,
+        &CPU::from_A_assignTo_addressU16);
 }
 
 void CPU::LD_A_addressU16() {
-    operationsQueue_m.push(&CPU::loadNextByteToLower);
-    operationsQueue_m.push(&CPU::loadNextByteToUpper);
-    operationsQueue_m.push(&CPU::from_addressU16_assignTo_A);
+    pushOperationsToQueue(
+        &CPU::loadNextByteToLower,
+        &CPU::loadNextByteToUpper,
+        &CPU::from_addressU16_assignTo_A);
 }
 
 void CPU::LD_addressHL_u8() {
-    operationsQueue_m.push(&CPU::loadNextByteToLower);
-    operationsQueue_m.push(&CPU::from_U8_assignTo_addressHL);
+    pushOperationsToQueue(
+        &CPU::loadNextByteToLower,
+        &CPU::from_U8_assignTo_addressHL);
 }
 
 void CPU::LDI_addressHL_A() {
-    operationsQueue_m.push(&CPU::from_R_assignTo_addressHL_and_incrementOrDecrementRR<CPU::CombinedRegisters::HL, CPU::Registers::A, false>);
+    pushOperationsToQueue(&CPU::from_R_assignTo_addressHL_and_incrementOrDecrementRR<CPU::CombinedRegisters::HL, CPU::Registers::A, false>);
 }
 
 void CPU::LDD_addressHL_A() {
-    operationsQueue_m.push(&CPU::from_R_assignTo_addressHL_and_incrementOrDecrementRR<CPU::CombinedRegisters::HL, CPU::Registers::A, true>);
+    pushOperationsToQueue(&CPU::from_R_assignTo_addressHL_and_incrementOrDecrementRR<CPU::CombinedRegisters::HL, CPU::Registers::A, true>);
 }
 
 void CPU::LDI_A_addressHL() {
-    operationsQueue_m.push(&CPU::from_addressHL_asignTo_R_and_incrementOrDecrementRR<CPU::CombinedRegisters::HL, CPU::Registers::A, false>);
+   pushOperationsToQueue(&CPU::from_addressHL_asignTo_R_and_incrementOrDecrementRR<CPU::CombinedRegisters::HL, CPU::Registers::A, false>);
 }
 
 void CPU::LDD_A_addressHL() {
-    operationsQueue_m.push(&CPU::from_addressHL_asignTo_R_and_incrementOrDecrementRR<CPU::CombinedRegisters::HL, CPU::Registers::A, true>);
+    pushOperationsToQueue(&CPU::from_addressHL_asignTo_R_and_incrementOrDecrementRR<CPU::CombinedRegisters::HL, CPU::Registers::A, true>);
 }
 
 void CPU::LD_SP_HL() {
-    operationsQueue_m.push(&CPU::from_HL_assignTo_SP);
+    pushOperationsToQueue(&CPU::from_HL_assignTo_SP);
 }
 
 void CPU::LD_addressU16_SP() {
-    operationsQueue_m.push(&CPU::loadNextByteToLower);
-    operationsQueue_m.push(&CPU::loadNextByteToUpper);
-    operationsQueue_m.push(&CPU::from_SPLow_or_SpUp_assignTo_addressU16<CPU::Registers::SP_Low, 0>);
-    operationsQueue_m.push(&CPU::from_addressU16_assignTo_SPLow_or_SPUp_and_increment<CPU::Registers::SP_Up, 1>);
+    pushOperationsToQueue(
+        &CPU::loadNextByteToLower,
+        &CPU::loadNextByteToUpper,
+        &CPU::from_SPLow_or_SpUp_assignTo_addressU16<CPU::Registers::SP_Low, 0>,
+        &CPU::from_addressU16_assignTo_SPLow_or_SPUp_and_increment<CPU::Registers::SP_Up, 1>);
 }
 
 void CPU::LDH_A_addressU8() {
-    operationsQueue_m.push(&CPU::loadNextByteToLower);
-    operationsQueue_m.push(&CPU::from_0xFF00PlusU8_assignTo_A);
+    pushOperationsToQueue(
+        &CPU::loadNextByteToLower,
+        &CPU::from_0xFF00PlusU8_assignTo_A);
 }
 
 void CPU::LD_A_addressC() {
-    operationsQueue_m.push(&CPU::from_0xFF00PlusC_assignTo_A);
+    pushOperationsToQueue(&CPU::from_0xFF00PlusC_assignTo_A);
 }
 
 void CPU::LD_addressC_A() {
-    operationsQueue_m.push(&CPU::from_A_assignTo_0xFF00PlusC);
+    pushOperationsToQueue(&CPU::from_A_assignTo_0xFF00PlusC);
 }
 
-void CPU::LDH_addressU8_A()
-{
-    operationsQueue_m.push(&CPU::loadNextByteToLower);
-    operationsQueue_m.push(&CPU::from_A_assignTo_0xFF00PlusU8);
+void CPU::LDH_addressU8_A() {
+    pushOperationsToQueue(
+        &CPU::loadNextByteToLower,
+        &CPU::from_A_assignTo_0xFF00PlusU8);
 }
 
 void CPU::JP_u16() {
-    operationsQueue_m.push(&CPU::loadNextByteToLower);
-    operationsQueue_m.push(&CPU::loadNextByteToUpper);
-    operationsQueue_m.push(&CPU::from_addressU16_assignTo_PC);
+    pushOperationsToQueue(
+        &CPU::loadNextByteToLower,
+        &CPU::loadNextByteToUpper,
+        &CPU::from_addressU16_assignTo_PC);
 }
 
 void CPU::NOP() {

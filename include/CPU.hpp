@@ -72,6 +72,9 @@ private:
     static void initialize_LDI_LDD_Opcodes() noexcept;
     static void initialize_LD_SPs_HLs_Opcodes() noexcept;
     static void initialize_LDH_Opcodes();
+
+    template<typename... Ops>
+    void pushOperationsToQueue(Ops... ops);
     
     static uint16_t combineBytes(uint8_t hightByte, uint8_t lowByte) noexcept;
 
@@ -91,7 +94,6 @@ private:
     void from_0xFF00PlusC_assignTo_A();
 
     void fromAWriteToIORegisters(uint8_t offset);
-
     void fromIORegistersWriteToA(uint8_t offset);
 
     template<CPU::Registers SPRegiser, uint8_t offset>
@@ -156,7 +158,6 @@ private:
     void LD_addressU16_SP();
 
     void LDH_A_addressU8();
-
     void LDH_addressU8_A();
 
     void LD_A_addressC();
@@ -169,8 +170,14 @@ private:
     void invalidOpcode();
 };
 
+template <typename... Ops>
+inline void CPU::pushOperationsToQueue(Ops... ops) {
+    (operationsQueue_m.push(ops), ...);
+}
+
 template <CPU::Registers SPRegiser, uint8_t offset>
-inline void CPU::from_SPLow_or_SpUp_assignTo_addressU16() {
+inline void CPU::from_SPLow_or_SpUp_assignTo_addressU16()
+{
     const auto address{ combineBytes(higherByteAuxiliaryRegister_m, lowerByteAuxiliaryRegister_m) + offset };
     memoryBus_m->write(address, registers_m.getRegister(SPRegiser));
 }
@@ -228,23 +235,24 @@ inline void CPU::LD_R_R() {
 
 template <CPU::Registers ToRegister>
 inline void CPU::LD_R_u8() {
-    operationsQueue_m.push(&CPU::assignNextByteToRegisterAndIncrementPC<ToRegister>);
+    pushOperationsToQueue(&CPU::assignNextByteToRegisterAndIncrementPC<ToRegister>);
 }
 
 template <CPU::Registers UpperRegister, CPU::Registers LowerRegister>
 inline void CPU::LD_RR_u16() {
-    operationsQueue_m.push(&CPU::assignNextByteToRegister<LowerRegister>);
-    operationsQueue_m.push(&CPU::assignNextByteToRegisterAndIncrementPC<UpperRegister>);
+    pushOperationsToQueue(
+        &CPU::assignNextByteToRegister<LowerRegister>,
+        &CPU::assignNextByteToRegisterAndIncrementPC<UpperRegister>);
 }
 
 template <CPU::CombinedRegisters ToRegisters, CPU::Registers FromRegister>
 inline void CPU::LD_addressRR_R() {
-    operationsQueue_m.push(&CPU::from_R_asignTo_addressRR<ToRegisters, FromRegister>);
+    pushOperationsToQueue(&CPU::from_R_asignTo_addressRR<ToRegisters, FromRegister>);
 }
 
 template <CPU::CombinedRegisters FromRegisters, CPU::Registers ToRegister>
 inline void CPU::LD_R_addressRR() {
-    operationsQueue_m.push(&CPU::from_addressRR_asignTo_R<FromRegisters, ToRegister>);
+    pushOperationsToQueue(&CPU::from_addressRR_asignTo_R<FromRegisters, ToRegister>);
 }
 
 #endif // !CPU_HPP
