@@ -73,19 +73,24 @@ private:
     static void initialize_LD_SPs_HLs_Opcodes() noexcept;
     static void initialize_LDH_Opcodes();
     
-    static uint16_t getCombinedBytes(uint8_t hightByte, uint8_t lowByte) noexcept;
+    static uint16_t combineBytes(uint8_t hightByte, uint8_t lowByte) noexcept;
 
-    void readNextByteAsLowerByte();
-    void readNextByteAsHigherByte();
+    void loadNextByteToLower();
+    void loadNextByteToUpper();
     void from_A_assignTo_addressU16();
     void from_addressU16_assignTo_A();
     void from_addressU16_assignTo_PC();
     void from_U8_assignTo_addressHL();
     void from_HL_assignTo_SP();
+
     void from_0xFF00PlusU8_assignTo_A();
     void from_A_assignTo_0xFF00PlusU8();
     void from_A_assignTo_0xFF00PlusC();
     void from_0xFF00PlusC_assignTo_A();
+
+    void fromAWriteToIORegisters(uint8_t offset);
+
+    void fromIORegistersWriteToA(uint8_t offset);
 
     template<CPU::Registers SPRegiser, uint8_t offset>
     void from_SPLow_or_SpUp_assignTo_addressU16();
@@ -164,7 +169,7 @@ private:
 
 template <CPU::Registers SPRegiser, uint8_t offset>
 inline void CPU::from_SPLow_or_SpUp_assignTo_addressU16() {
-    const auto address{ getCombinedBytes(higherByteAuxiliaryRegister_m, lowerByteAuxiliaryRegister_m) + offset };
+    const auto address{ combineBytes(higherByteAuxiliaryRegister_m, lowerByteAuxiliaryRegister_m) + offset };
     memoryBus_m->write(address, registers_m.getRegister(SPRegiser));
 }
 
@@ -176,7 +181,7 @@ inline void CPU::from_addressU16_assignTo_SPLow_or_SPUp_and_increment() {
 
 template <CPU::Registers ToRegister>
 inline void CPU::asignNextByteToRegister() {
-    readNextByteAsLowerByte();
+    loadNextByteToLower();
     registers_m.setRegister(ToRegister, lowerByteAuxiliaryRegister_m);
 }
 
