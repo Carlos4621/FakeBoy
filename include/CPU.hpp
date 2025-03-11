@@ -64,7 +64,7 @@ private:
     static void initialize_LD_R_R_Opcodes() noexcept;
     static void initialize_LD_R_u8_Opcodes() noexcept;
     static void initialize_JP_Opcodes() noexcept;
-    static void initializeMisceallenousOpcodes() noexcept;
+    static void initializeMiscellaneousOpcodes() noexcept;
     static void initialize_LD_RR_u16_Opcodes() noexcept;
     static void initialize_LD_addressRR_R_Opcodes() noexcept;
     static void initialize_LD_R_addressRR_Opcodes() noexcept;
@@ -76,7 +76,7 @@ private:
     template<typename... Ops>
     void pushOperationsToQueue(Ops... ops);
     
-    static uint16_t combineBytes(uint8_t hightByte, uint8_t lowByte) noexcept;
+    static uint16_t combineBytes(uint8_t highByte, uint8_t lowByte) noexcept;
 
     void loadNextByteToLower();
     void loadNextByteToUpper();

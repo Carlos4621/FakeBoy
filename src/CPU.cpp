@@ -73,7 +73,7 @@ void CPU::initializeOpcodeTable() noexcept {
     initialize_LDH_Opcodes();
 
     initialize_JP_Opcodes();
-    initializeMisceallenousOpcodes();
+    initializeMiscellaneousOpcodes();
 }
 
 void CPU::initialize_LD_R_R_Opcodes() noexcept {
@@ -160,7 +160,7 @@ void CPU::initialize_LDH_Opcodes() {
 }
 
 // REMINDER: colocar en su lugar correcto
-void CPU::initializeMisceallenousOpcodes() noexcept {
+void CPU::initializeMiscellaneousOpcodes() noexcept {
     opcodeTable[LD_addressU16_A_Opcode] = &CPU::LD_addressU16_A;
     opcodeTable[LD_A_addressU16_Opcode] = &CPU::LD_A_addressU16;
 
