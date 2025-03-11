@@ -10,7 +10,7 @@ SECTION "Header", ROM0[$100]
     db $BB,$BB,$67,$63,$6E,$0E,$EC,$CC
     db $DD,$DC,$99,$9F,$BB,$B9,$33,$3E
 
-    db "LD (u16), A",0,0,0,0,0
+    db "LD A, (C)",0,0,0,0,0
 
     db "00"
 
