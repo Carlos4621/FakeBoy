@@ -154,6 +154,7 @@ uint16_t CPU::getCombinedBytes(uint8_t hightByte, uint8_t lowByte) noexcept {
 
 void CPU::initialize_LDH_Opcodes() {
     opcodeTable[LDH_A_addressU8_Opcode] = &CPU::LDH_A_addressU8;
+    opcodeTable[LDH_addressU8_A_Opcode] = &CPU::LDH_addressU8_A;
 }
 
 // REMINDER: colocar en su lugar correcto
@@ -255,6 +256,12 @@ void CPU::from_0xFF00PlusU8_assignTo_A() {
     incrementPC();
 }
 
+void CPU::from_A_assignTo_0xFF00PlusU8() {
+    const auto address{ 0xFF00 + lowerByteAuxiliaryRegister_m };
+    memoryBus_m->write(address, registers_m.getRegister(CPURegisters::Registers::A));
+    incrementPC();
+}
+
 uint8_t CPU::read_PC_Address() const {
     return memoryBus_m->read(registers_m.getCombinedRegister(CombinedRegisters::PC));
 }
@@ -314,6 +321,11 @@ void CPU::LD_addressU16_SP() {
 void CPU::LDH_A_addressU8() {
     operationsQueue_m.push(&CPU::readNextByteAsLowerByte);
     operationsQueue_m.push(&CPU::from_0xFF00PlusU8_assignTo_A);
+}
+
+void CPU::LDH_addressU8_A() {
+    operationsQueue_m.push(&CPU::readNextByteAsLowerByte);
+    operationsQueue_m.push(&CPU::from_A_assignTo_0xFF00PlusU8);
 }
 
 void CPU::JP_u16() {

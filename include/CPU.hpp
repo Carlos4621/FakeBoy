@@ -83,6 +83,7 @@ private:
     void from_U8_assignTo_addressHL();
     void from_HL_assignTo_SP();
     void from_0xFF00PlusU8_assignTo_A();
+    void from_A_assignTo_0xFF00PlusU8();
 
     template<CPU::Registers SPRegiser, uint8_t offset>
     void from_SPLow_or_SpUp_assignTo_addressU16();
@@ -146,6 +147,8 @@ private:
     void LD_addressU16_SP();
 
     void LDH_A_addressU8();
+
+    void LDH_addressU8_A();
 
     void JP_u16();
 
