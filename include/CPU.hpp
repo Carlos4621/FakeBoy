@@ -115,13 +115,13 @@ private:
     void assignNextByteToRegisterAndIncrementPC();
 
     template<CPU::CombinedRegisters FromRegisters, CPU::Registers ToRegister>
-    void from_addressRR_asignTo_R();
+    void from_addressRR_assignTo_R();
 
     template<CPU::CombinedRegisters ToRegisters, CPU::Registers FromRegister>
-    void from_R_asignTo_addressRR();
+    void from_R_assignTo_addressRR();
 
     template<CPU::CombinedRegisters FromRegisters, CPU::Registers ToRegister, bool Decrement>
-    void from_addressHL_asignTo_R_and_incrementOrDecrementRR();
+    void from_addressHL_assignTo_R_and_incrementOrDecrementRR();
 
     template<CPU::CombinedRegisters ToRegisters, CPU::Registers FromRegister, bool Decrement>
     void from_R_assignTo_addressHL_and_incrementOrDecrementRR();
@@ -201,28 +201,28 @@ inline void CPU::assignNextByteToRegisterAndIncrementPC() {
 }
 
 template <CPU::CombinedRegisters FromRegisters, CPU::Registers ToRegister>
-inline void CPU::from_addressRR_asignTo_R() {
+inline void CPU::from_addressRR_assignTo_R() {
     registers_m.setRegister(ToRegister, memoryBus_m->read(registers_m.getCombinedRegister(FromRegisters)));
     
     incrementPC();
 }
 
 template <CPU::CombinedRegisters ToRegisters, CPU::Registers FromRegister>
-inline void CPU::from_R_asignTo_addressRR() {
+inline void CPU::from_R_assignTo_addressRR() {
     memoryBus_m->write(registers_m.getCombinedRegister(ToRegisters), registers_m.getRegister(FromRegister));
     
     incrementPC();
 }
 
 template <CPU::CombinedRegisters FromRegisters, CPU::Registers ToRegister, bool Decrement>
-inline void CPU::from_addressHL_asignTo_R_and_incrementOrDecrementRR() {
-    from_addressRR_asignTo_R<FromRegisters, ToRegister>();
+inline void CPU::from_addressHL_assignTo_R_and_incrementOrDecrementRR() {
+    from_addressRR_assignTo_R<FromRegisters, ToRegister>();
     registers_m.setCombinedRegister(FromRegisters, registers_m.getCombinedRegister(FromRegisters) + (Decrement ? -1 : 1));
 }
 
 template <CPU::CombinedRegisters ToRegisters, CPU::Registers FromRegister, bool Decrement>
 inline void CPU::from_R_assignTo_addressHL_and_incrementOrDecrementRR() {
-    from_R_asignTo_addressRR<ToRegisters, FromRegister>();
+    from_R_assignTo_addressRR<ToRegisters, FromRegister>();
     registers_m.setCombinedRegister(ToRegisters, registers_m.getCombinedRegister(ToRegisters) + (Decrement ? -1 : 1));
 }
 
@@ -247,12 +247,12 @@ inline void CPU::LD_RR_u16() {
 
 template <CPU::CombinedRegisters ToRegisters, CPU::Registers FromRegister>
 inline void CPU::LD_addressRR_R() {
-    pushOperationsToQueue(&CPU::from_R_asignTo_addressRR<ToRegisters, FromRegister>);
+    pushOperationsToQueue(&CPU::from_R_assignTo_addressRR<ToRegisters, FromRegister>);
 }
 
 template <CPU::CombinedRegisters FromRegisters, CPU::Registers ToRegister>
 inline void CPU::LD_R_addressRR() {
-    pushOperationsToQueue(&CPU::from_addressRR_asignTo_R<FromRegisters, ToRegister>);
+    pushOperationsToQueue(&CPU::from_addressRR_assignTo_R<FromRegisters, ToRegister>);
 }
 
 #endif // !CPU_HPP

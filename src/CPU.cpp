@@ -321,11 +321,11 @@ void CPU::LDD_addressHL_A() {
 }
 
 void CPU::LDI_A_addressHL() {
-   pushOperationsToQueue(&CPU::from_addressHL_asignTo_R_and_incrementOrDecrementRR<CPU::CombinedRegisters::HL, CPU::Registers::A, false>);
+   pushOperationsToQueue(&CPU::from_addressHL_assignTo_R_and_incrementOrDecrementRR<CPU::CombinedRegisters::HL, CPU::Registers::A, false>);
 }
 
 void CPU::LDD_A_addressHL() {
-    pushOperationsToQueue(&CPU::from_addressHL_asignTo_R_and_incrementOrDecrementRR<CPU::CombinedRegisters::HL, CPU::Registers::A, true>);
+    pushOperationsToQueue(&CPU::from_addressHL_assignTo_R_and_incrementOrDecrementRR<CPU::CombinedRegisters::HL, CPU::Registers::A, true>);
 }
 
 void CPU::LD_SP_HL() {
