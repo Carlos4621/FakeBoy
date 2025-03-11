@@ -71,6 +71,7 @@ private:
     static void initialize_LD_addressHL_u8_Opcode() noexcept;
     static void initialize_LDI_LDD_Opcodes() noexcept;
     static void initialize_LD_SPs_HLs_Opcodes() noexcept;
+    static void initialize_LDH_Opcodes();
     
     static uint16_t getCombinedBytes(uint8_t hightByte, uint8_t lowByte) noexcept;
 
@@ -81,6 +82,7 @@ private:
     void from_addressU16_assignTo_PC();
     void from_U8_assignTo_addressHL();
     void from_HL_assignTo_SP();
+    void from_0xFF00PlusU8_assignTo_A();
 
     template<CPU::Registers SPRegiser, uint8_t offset>
     void from_SPLow_or_SpUp_assignTo_addressU16();
