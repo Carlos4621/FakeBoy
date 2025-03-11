@@ -13,7 +13,7 @@ CPU::CPU(MemoryBus *memoryBus) noexcept
 }
 
 void CPU::processTCycle() {
-    if (currentTCycle_m < 4) {
+    if (currentTCycle_m < TCyclesPerInstruction) {
         ++currentTCycle_m;
         return;
     }
@@ -69,6 +69,7 @@ void CPU::initializeOpcodeTable() noexcept {
     initialize_LD_addressRR_R_Opcodes();
     initialize_LD_addressHL_u8_Opcode();
     initialize_LDI_LDD_Opcodes();
+    initialize_LD_SPs_HLs_Opcodes();
 
     initialize_JP_Opcodes();
     initializeMisceallenousOpcodes();
@@ -202,6 +203,11 @@ void CPU::initialize_LDI_LDD_Opcodes() noexcept {
     opcodeTable[LDD_A_address_HL_Opcode] = &CPU::LDD_A_addressHL;
 }
 
+void CPU::initialize_LD_SPs_HLs_Opcodes() noexcept {
+    opcodeTable[LD_SP_HL_Opcode] = &CPU::LD_SP_HL;
+    opcodeTable[LD_addressU16_SP_Opcode] = &CPU::LD_addressU16_SP;
+}
+
 void CPU::readNextByteAsLowerByte() {
     incrementPC();
     lowerByteAuxiliaryRegister_m = read_PC_Address();
@@ -218,18 +224,23 @@ void CPU::from_A_assignTo_addressU16() {
     incrementPC();
 }
 
-void CPU::from_addressU16_assign_ToA() {
+void CPU::from_addressU16_assignTo_A() {
     const auto address{ getCombinedBytes(higherByteAuxiliaryRegister_m, lowerByteAuxiliaryRegister_m) };
     registers_m.setRegister(CPURegisters::Registers::A, memoryBus_m->read(address));
     incrementPC();
 }
 
-void CPU::from_addressU16_assign_ToPC() {
+void CPU::from_addressU16_assignTo_PC() {
     setPC(getCombinedBytes(higherByteAuxiliaryRegister_m, lowerByteAuxiliaryRegister_m));
 }
 
 void CPU::from_U8_assignTo_addressHL() {
     memoryBus_m->write(registers_m.getCombinedRegister(CPU::CombinedRegisters::HL), lowerByteAuxiliaryRegister_m);
+    incrementPC();
+}
+
+void CPU::from_HL_assignTo_SP() {
+    registers_m.setCombinedRegister(CPU::CombinedRegisters::SP, registers_m.getCombinedRegister(CPU::CombinedRegisters::HL));
     incrementPC();
 }
 
@@ -254,7 +265,7 @@ void CPU::LD_addressU16_A() {
 void CPU::LD_A_addressU16() {
     operationsQueue_m.push(&CPU::readNextByteAsLowerByte);
     operationsQueue_m.push(&CPU::readNextByteAsHigherByte);
-    operationsQueue_m.push(&CPU::from_addressU16_assign_ToA);
+    operationsQueue_m.push(&CPU::from_addressU16_assignTo_A);
 }
 
 void CPU::LD_addressHL_u8() {
@@ -274,15 +285,29 @@ void CPU::LDI_A_addressHL() {
     operationsQueue_m.push(&CPU::from_addressHL_asignTo_R_and_incrementOrDecrementRR<CPU::CombinedRegisters::HL, CPU::Registers::A, false>);
 }
 
-
 void CPU::LDD_A_addressHL() {
     operationsQueue_m.push(&CPU::from_addressHL_asignTo_R_and_incrementOrDecrementRR<CPU::CombinedRegisters::HL, CPU::Registers::A, true>);
+}
+
+void CPU::LD_SP_HL() {
+    operationsQueue_m.push(&CPU::from_HL_assignTo_SP);
+}
+
+void CPU::LD_addressU16_SP() {
+    operationsQueue_m.push(&CPU::readNextByteAsLowerByte);
+    operationsQueue_m.push(&CPU::readNextByteAsHigherByte);
+    operationsQueue_m.push(&CPU::from_SPLow_or_SpUp_assignTo_addressU16<CPU::Registers::SP_Low, 0>);
+    operationsQueue_m.push(&CPU::from_addressU16_assignTo_SPLow_or_SPUp_and_increment<CPU::Registers::SP_Up, 1>);
+}
+
+void CPU::LDH_A_addressU8() {
+    
 }
 
 void CPU::JP_u16() {
     operationsQueue_m.push(&CPU::readNextByteAsLowerByte);
     operationsQueue_m.push(&CPU::readNextByteAsHigherByte);
-    operationsQueue_m.push(&CPU::from_addressU16_assign_ToPC);
+    operationsQueue_m.push(&CPU::from_addressU16_assignTo_PC);
 }
 
 void CPU::NOP() {

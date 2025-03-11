@@ -44,6 +44,7 @@ private:
 
     static constexpr uint16_t NumberOfOpcodes{ 256 };
     static constexpr uint8_t ByteDisplacement{ 8 };
+    static constexpr uint8_t TCyclesPerInstruction{ 4 };
 
     static std::array<MemberFunction, NumberOfOpcodes> opcodeTable;
     static bool isOpcodeTableInitialized;
@@ -69,15 +70,23 @@ private:
     static void initialize_LD_R_addressRR_Opcodes() noexcept;
     static void initialize_LD_addressHL_u8_Opcode() noexcept;
     static void initialize_LDI_LDD_Opcodes() noexcept;
+    static void initialize_LD_SPs_HLs_Opcodes() noexcept;
     
     static uint16_t getCombinedBytes(uint8_t hightByte, uint8_t lowByte) noexcept;
 
     void readNextByteAsLowerByte();
     void readNextByteAsHigherByte();
     void from_A_assignTo_addressU16();
-    void from_addressU16_assign_ToA();
-    void from_addressU16_assign_ToPC();
+    void from_addressU16_assignTo_A();
+    void from_addressU16_assignTo_PC();
     void from_U8_assignTo_addressHL();
+    void from_HL_assignTo_SP();
+
+    template<CPU::Registers SPRegiser, uint8_t offset>
+    void from_SPLow_or_SpUp_assignTo_addressU16();
+
+    template <CPU::Registers SPRegiser, uint8_t offset>
+    void from_addressU16_assignTo_SPLow_or_SPUp_and_increment();
 
     [[nodiscard]]
     uint8_t read_PC_Address() const;
@@ -130,12 +139,30 @@ private:
     void LDI_A_addressHL();
     void LDD_A_addressHL();
 
+    void LD_SP_HL();
+
+    void LD_addressU16_SP();
+
+    void LDH_A_addressU8();
+
     void JP_u16();
 
     void NOP();
     
     void invalidOpcode();
 };
+
+template <CPU::Registers SPRegiser, uint8_t offset>
+inline void CPU::from_SPLow_or_SpUp_assignTo_addressU16() {
+    const auto address{ getCombinedBytes(higherByteAuxiliaryRegister_m, lowerByteAuxiliaryRegister_m) + offset };
+    memoryBus_m->write(address, registers_m.getRegister(SPRegiser));
+}
+
+template <CPU::Registers SPRegiser, uint8_t offset>
+inline void CPU::from_addressU16_assignTo_SPLow_or_SPUp_and_increment() {
+    from_SPLow_or_SpUp_assignTo_addressU16<SPRegiser, offset>();
+    incrementPC();
+}
 
 template <CPU::Registers ToRegister>
 inline void CPU::asignNextByteToRegister() {

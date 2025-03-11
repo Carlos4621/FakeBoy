@@ -63,6 +63,8 @@ static constexpr uint16_t LD_A_A_Opcode{ 0x7F };
 static constexpr uint16_t LD_addressU16_A_Opcode{ 0xEA };
 static constexpr uint16_t LD_A_addressU16_Opcode{ 0xFA };
 
+static constexpr uint16_t LD_SP_HL_Opcode{ 0xF9 };
+
 static constexpr uint16_t LD_A_u8_Opcode{ 0x3E };
 static constexpr uint16_t LD_B_u8_Opcode{ 0x06 };
 static constexpr uint16_t LD_C_u8_Opcode{ 0x0E };
@@ -104,6 +106,8 @@ static constexpr uint16_t LD_address_HL_u8_Opcode{ 0x36 };
 
 static constexpr uint16_t LDD_A_address_HL_Opcode{ 0x3A };
 static constexpr uint16_t LDI_A_address_HL_Opcode{ 0x2A };
+
+static constexpr uint16_t LD_addressU16_SP_Opcode{ 0x08 };
 
 static constexpr uint16_t JP_u16_Opcode{ 0xC3 };
 
