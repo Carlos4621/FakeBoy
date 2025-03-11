@@ -110,6 +110,9 @@ static constexpr uint16_t LDI_A_address_HL_Opcode{ 0x2A };
 static constexpr uint16_t LDH_A_addressU8_Opcode{ 0xF0 };
 static constexpr uint16_t LDH_addressU8_A_Opcode{ 0xE0 };
 
+static constexpr uint16_t LD_A_addressC_Opcode{ 0xF2 };
+static constexpr uint16_t LD_addressC_A_Opcode{ 0xE2 };
+
 static constexpr uint16_t LD_addressU16_SP_Opcode{ 0x08 };
 
 static constexpr uint16_t JP_u16_Opcode{ 0xC3 };
