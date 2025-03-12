@@ -2,7 +2,7 @@
 #include <gtest/gtest.h>
 #include "MemoryMap.hpp"
 
-static constexpr std::string_view CartidgePath{ "NoMBC_ROM.gb" };
+static constexpr std::string_view CartidgePath{ "test_NoMBC_ROM.gb" };
 
 static constexpr uint8_t Value_Test{ 0x44 };
 

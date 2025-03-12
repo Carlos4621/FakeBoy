@@ -1,7 +1,7 @@
 #include "Cartridge.hpp"
 #include <gtest/gtest.h>
 
-static constexpr std::string_view CartidgePath{ "NoMBC_NoRAM_ROM.gb" };
+static constexpr std::string_view CartidgePath{ "test_NoMBC_NoRAM_ROM.gb" };
 static constexpr std::string_view InexistentCartridgePath{ "inexxxistent.gb" };
 
 static constexpr uint8_t Expected_Bank_0_0x3000_Value{ 0xAA };
