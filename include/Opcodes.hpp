@@ -115,6 +115,14 @@ static constexpr uint8_t LD_addressC_A_Opcode{ 0xE2 };
 
 static constexpr uint8_t LD_addressU16_SP_Opcode{ 0x08 };
 
+static constexpr uint8_t INC_A_Opcode{ 0x3C };
+static constexpr uint8_t INC_B_Opcode{ 0x04 };
+static constexpr uint8_t INC_C_Opcode{ 0x0C };
+static constexpr uint8_t INC_D_Opcode{ 0x14 };
+static constexpr uint8_t INC_E_Opcode{ 0x1C };
+static constexpr uint8_t INC_H_Opcode{ 0x24 };
+static constexpr uint8_t INC_L_Opcode{ 0x2C };
+
 static constexpr uint8_t JP_u16_Opcode{ 0xC3 };
 
 #endif // !OPCODES_HPP

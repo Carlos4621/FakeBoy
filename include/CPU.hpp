@@ -41,6 +41,7 @@ private:
     using MemberFunction = void (CPU::*)();
     using Registers = CPURegisters::Registers;
     using CombinedRegisters = CPURegisters::CombinedRegisters;
+    using Flags = CPURegisters::Flags;
 
     static constexpr uint16_t NumberOfOpcodes{ 256 };
     static constexpr uint8_t ByteDisplacement{ 8 };
@@ -74,6 +75,11 @@ private:
     static void initialize_LDI_LDD_Opcodes() noexcept;
     static void initialize_LD_SPs_HLs_Opcodes() noexcept;
     static void initialize_LDH_Opcodes();
+
+    static void initializeINCsOpcodes() noexcept;
+
+    void setZeroFlagIfRegisterIsZero(CPU::Registers reg);
+    void setHalfCarryIfHalfCarryWillOcurrOnRegister(CPU::Registers reg, uint8_t valueToAdd);
 
     template<typename... Ops>
     void pushOperationsToQueue(Ops... ops);
@@ -168,6 +174,9 @@ private:
     void LD_A_addressC();
     void LD_addressC_A();
 
+    template<CPU::Registers Register>
+    void INC_R();
+
     void JP_u16();
 
     void NOP();
@@ -255,6 +264,18 @@ inline void CPU::LD_addressRR_R() {
 template <CPU::CombinedRegisters FromRegisters, CPU::Registers ToRegister>
 inline void CPU::LD_R_addressRR() {
     pushOperationsToQueue(&CPU::from_addressRR_assignTo_R<FromRegisters, ToRegister>);
+}
+
+template <CPU::Registers Register>
+inline void CPU::INC_R() {
+    setHalfCarryIfHalfCarryWillOcurrOnRegister(Register, 1);
+
+    registers_m.setRegister(Register, registers_m.getRegister(Register) + 1);
+
+    setZeroFlagIfRegisterIsZero(Register);
+    registers_m.setFlag(CPU::Flags::N, false);
+
+    incrementPC();
 }
 
 #endif // !CPU_HPP

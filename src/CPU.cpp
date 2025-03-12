@@ -57,6 +57,7 @@ void CPU::initializeOpcodeTable() noexcept {
     opcodeTable.fill(&CPU::invalidOpcode);
 
     initialieLDsOpcodes();
+    initializeINCsOpcodes();
 
     initialize_JP_Opcodes();
     initializeMiscellaneousOpcodes();
@@ -147,6 +148,27 @@ void CPU::initialize_LDH_Opcodes() {
     opcodeTable[LDH_addressU8_A_Opcode] = &CPU::LDH_addressU8_A;
     opcodeTable[LD_A_addressC_Opcode] = &CPU::LD_A_addressC;
     opcodeTable[LD_addressC_A_Opcode] = &CPU::LD_addressC_A;
+}
+
+void CPU::initializeINCsOpcodes() noexcept {
+    opcodeTable[INC_B_Opcode] = &CPU::INC_R<CPU::Registers::B>;
+    opcodeTable[INC_C_Opcode] = &CPU::INC_R<CPU::Registers::C>;
+    opcodeTable[INC_D_Opcode] = &CPU::INC_R<CPU::Registers::D>;
+    opcodeTable[INC_E_Opcode] = &CPU::INC_R<CPU::Registers::E>;
+    opcodeTable[INC_H_Opcode] = &CPU::INC_R<CPU::Registers::H>;
+    opcodeTable[INC_L_Opcode] = &CPU::INC_R<CPU::Registers::L>;
+    opcodeTable[INC_A_Opcode] = &CPU::INC_R<CPU::Registers::A>;
+}
+
+void CPU::setZeroFlagIfRegisterIsZero(CPU::Registers reg) {
+    registers_m.setFlag(Flags::Z, (registers_m.getRegister(reg) == 0));
+}
+
+void CPU::setHalfCarryIfHalfCarryWillOcurrOnRegister(CPU::Registers reg, uint8_t valueToAdd) {
+    const auto registerValue{ registers_m.getRegister(reg) };
+    const bool isHalfCarry{ (((registerValue & 0x0F) + valueToAdd) > 0x0F) };
+
+    registers_m.setFlag(Flags::H, isHalfCarry);
 }
 
 void CPU::initialize_JP_Opcodes() noexcept {
