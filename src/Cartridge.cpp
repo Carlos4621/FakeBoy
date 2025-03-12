@@ -102,7 +102,7 @@ void Cartridge::determineMBC() {
         break;
 
     default:
-        throw std::runtime_error{ "MBC not supported" + std::to_string(MBC_type) };
+        throw std::runtime_error{ "MBC not supported: " + std::to_string(MBC_type) };
         break;
     }
 }
