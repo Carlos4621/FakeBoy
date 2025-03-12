@@ -30,11 +30,11 @@ void CPU::processTCycle() {
 }
 
 uint16_t CPU::getPC() const noexcept {
-    return registers_m.getCombinedRegister(CPURegisters::CombinedRegisters::PC);
+    return registers_m.getCombinedRegister(CombinedRegisters::PC);
 }
 
 uint16_t CPU::getSP() const noexcept {
-    return registers_m.getCombinedRegister(CPURegisters::CombinedRegisters::SP);
+    return registers_m.getCombinedRegister(CombinedRegisters::SP);
 }
 
 CPURegisters CPU::getRegisters() const noexcept {
@@ -151,20 +151,20 @@ void CPU::initialize_LDH_Opcodes() {
 }
 
 void CPU::initializeINCsOpcodes() noexcept {
-    opcodeTable[INC_B_Opcode] = &CPU::INC_R<CPU::Registers::B>;
-    opcodeTable[INC_C_Opcode] = &CPU::INC_R<CPU::Registers::C>;
-    opcodeTable[INC_D_Opcode] = &CPU::INC_R<CPU::Registers::D>;
-    opcodeTable[INC_E_Opcode] = &CPU::INC_R<CPU::Registers::E>;
-    opcodeTable[INC_H_Opcode] = &CPU::INC_R<CPU::Registers::H>;
-    opcodeTable[INC_L_Opcode] = &CPU::INC_R<CPU::Registers::L>;
-    opcodeTable[INC_A_Opcode] = &CPU::INC_R<CPU::Registers::A>;
+    opcodeTable[INC_B_Opcode] = &CPU::INC_R<Registers::B>;
+    opcodeTable[INC_C_Opcode] = &CPU::INC_R<Registers::C>;
+    opcodeTable[INC_D_Opcode] = &CPU::INC_R<Registers::D>;
+    opcodeTable[INC_E_Opcode] = &CPU::INC_R<Registers::E>;
+    opcodeTable[INC_H_Opcode] = &CPU::INC_R<Registers::H>;
+    opcodeTable[INC_L_Opcode] = &CPU::INC_R<Registers::L>;
+    opcodeTable[INC_A_Opcode] = &CPU::INC_R<Registers::A>;
 }
 
-void CPU::setZeroFlagIfRegisterIsZero(CPU::Registers reg) {
+void CPU::setZeroFlagIfRegisterIsZero(Registers reg) {
     registers_m.setFlag(Flags::Z, (registers_m.getRegister(reg) == 0));
 }
 
-void CPU::setHalfCarryIfHalfCarryWillOcurrOnRegister(CPU::Registers reg, uint8_t valueToAdd) {
+void CPU::setHalfCarryIfHalfCarryWillOcurrOnRegister(Registers reg, uint8_t valueToAdd) {
     const auto registerValue{ registers_m.getRegister(reg) };
     const bool isHalfCarry{ (((registerValue & 0x0F) + valueToAdd) > 0x0F) };
 
@@ -184,35 +184,34 @@ void CPU::initializeMiscellaneousOpcodes() noexcept {
 }
 
 void CPU::initialize_LD_RR_u16_Opcodes() noexcept {
-    opcodeTable[LD_BC_u16_Opcode] = &CPU::LD_RR_u16<CPU::Registers::B, CPU::Registers::C>;
-    opcodeTable[LD_DE_u16_Opcode] = &CPU::LD_RR_u16<CPU::Registers::D, CPU::Registers::E>;
-    opcodeTable[LD_HL_u16_Opcode] = &CPU::LD_RR_u16<CPU::Registers::H, CPU::Registers::L>;
-    opcodeTable[LD_SP_u16_Opcode] = &CPU::LD_RR_u16<CPU::Registers::SP_Up, CPU::Registers::SP_Low>;
+    opcodeTable[LD_BC_u16_Opcode] = &CPU::LD_RR_u16<Registers::B, Registers::C>;
+    opcodeTable[LD_DE_u16_Opcode] = &CPU::LD_RR_u16<Registers::D, Registers::E>;
+    opcodeTable[LD_HL_u16_Opcode] = &CPU::LD_RR_u16<Registers::H, Registers::L>;
+    opcodeTable[LD_SP_u16_Opcode] = &CPU::LD_RR_u16<Registers::SP_Up, Registers::SP_Low>;
 }
 
 void CPU::initialize_LD_addressRR_R_Opcodes() noexcept {
-    opcodeTable[LD_address_BC_A_Opcode] = &CPU::LD_addressRR_R<CPU::CombinedRegisters::BC, CPU::Registers::A>;
-    opcodeTable[LD_address_DE_A_Opcode] = &CPU::LD_addressRR_R<CPU::CombinedRegisters::DE, CPU::Registers::A>;
-    opcodeTable[LD_address_HL_A_Opcode] = &CPU::LD_addressRR_R<CPU::CombinedRegisters::HL, CPU::Registers::A>;
-    opcodeTable[LD_address_HL_B_Opcode] = &CPU::LD_addressRR_R<CPU::CombinedRegisters::HL, CPU::Registers::B>;
-    opcodeTable[LD_address_HL_C_Opcode] = &CPU::LD_addressRR_R<CPU::CombinedRegisters::HL, CPU::Registers::C>;
-    opcodeTable[LD_address_HL_D_Opcode] = &CPU::LD_addressRR_R<CPU::CombinedRegisters::HL, CPU::Registers::D>;
-    opcodeTable[LD_address_HL_E_Opcode] = &CPU::LD_addressRR_R<CPU::CombinedRegisters::HL, CPU::Registers::E>;
-    opcodeTable[LD_address_HL_H_Opcode] = &CPU::LD_addressRR_R<CPU::CombinedRegisters::HL, CPU::Registers::H>;
-    opcodeTable[LD_address_HL_L_Opcode] = &CPU::LD_addressRR_R<CPU::CombinedRegisters::HL, CPU::Registers::L>;
+    opcodeTable[LD_address_BC_A_Opcode] = &CPU::LD_addressRR_R<CombinedRegisters::BC, Registers::A>;
+    opcodeTable[LD_address_DE_A_Opcode] = &CPU::LD_addressRR_R<CombinedRegisters::DE, Registers::A>;
+    opcodeTable[LD_address_HL_A_Opcode] = &CPU::LD_addressRR_R<CombinedRegisters::HL, Registers::A>;
+    opcodeTable[LD_address_HL_B_Opcode] = &CPU::LD_addressRR_R<CombinedRegisters::HL, Registers::B>;
+    opcodeTable[LD_address_HL_C_Opcode] = &CPU::LD_addressRR_R<CombinedRegisters::HL, Registers::C>;
+    opcodeTable[LD_address_HL_D_Opcode] = &CPU::LD_addressRR_R<CombinedRegisters::HL, Registers::D>;
+    opcodeTable[LD_address_HL_E_Opcode] = &CPU::LD_addressRR_R<CombinedRegisters::HL, Registers::E>;
+    opcodeTable[LD_address_HL_H_Opcode] = &CPU::LD_addressRR_R<CombinedRegisters::HL, Registers::H>;
+    opcodeTable[LD_address_HL_L_Opcode] = &CPU::LD_addressRR_R<CombinedRegisters::HL, Registers::L>;
 }
 
 void CPU::initialize_LD_R_addressRR_Opcodes() noexcept {
-    opcodeTable[LD_A_address_BC_Opcode] = &CPU::LD_R_addressRR<CPU::CombinedRegisters::BC, CPU::Registers::A>;
-    opcodeTable[LD_A_address_DE_Opcode] = &CPU::LD_R_addressRR<CPU::CombinedRegisters::DE, CPU::Registers::A>;
-    opcodeTable[LD_A_address_HL_Opcode] = &CPU::LD_R_addressRR<CPU::CombinedRegisters::HL, CPU::Registers::A>;
-
-    opcodeTable[LD_B_address_HL_Opcode] = &CPU::LD_R_addressRR<CPU::CombinedRegisters::HL, CPU::Registers::B>;
-    opcodeTable[LD_C_address_HL_Opcode] = &CPU::LD_R_addressRR<CPU::CombinedRegisters::HL, CPU::Registers::C>;
-    opcodeTable[LD_D_address_HL_Opcode] = &CPU::LD_R_addressRR<CPU::CombinedRegisters::HL, CPU::Registers::D>;
-    opcodeTable[LD_E_address_HL_Opcode] = &CPU::LD_R_addressRR<CPU::CombinedRegisters::HL, CPU::Registers::E>;
-    opcodeTable[LD_H_address_HL_Opcode] = &CPU::LD_R_addressRR<CPU::CombinedRegisters::HL, CPU::Registers::H>;
-    opcodeTable[LD_L_address_HL_Opcode] = &CPU::LD_R_addressRR<CPU::CombinedRegisters::HL, CPU::Registers::L>;
+    opcodeTable[LD_A_address_BC_Opcode] = &CPU::LD_R_addressRR<CombinedRegisters::BC, Registers::A>;
+    opcodeTable[LD_A_address_DE_Opcode] = &CPU::LD_R_addressRR<CombinedRegisters::DE, Registers::A>;
+    opcodeTable[LD_A_address_HL_Opcode] = &CPU::LD_R_addressRR<CombinedRegisters::HL, Registers::A>;
+    opcodeTable[LD_B_address_HL_Opcode] = &CPU::LD_R_addressRR<CombinedRegisters::HL, Registers::B>;
+    opcodeTable[LD_C_address_HL_Opcode] = &CPU::LD_R_addressRR<CombinedRegisters::HL, Registers::C>;
+    opcodeTable[LD_D_address_HL_Opcode] = &CPU::LD_R_addressRR<CombinedRegisters::HL, Registers::D>;
+    opcodeTable[LD_E_address_HL_Opcode] = &CPU::LD_R_addressRR<CombinedRegisters::HL, Registers::E>;
+    opcodeTable[LD_H_address_HL_Opcode] = &CPU::LD_R_addressRR<CombinedRegisters::HL, Registers::H>;
+    opcodeTable[LD_L_address_HL_Opcode] = &CPU::LD_R_addressRR<CombinedRegisters::HL, Registers::L>;
 }
 
 void CPU::initialize_LD_addressHL_u8_Opcode() noexcept {
@@ -247,43 +246,27 @@ void CPU::processNextOperation() {
     operationsQueue_m.pop();
 }
 
-uint16_t CPU::combineBytes(uint8_t highByte, uint8_t lowByte) noexcept {
-    return (static_cast<uint16_t>(highByte) << ByteDisplacement) | lowByte;
-}
-
 void CPU::loadNextByteToLower() {
     incrementPC();
-    lowerByteAuxiliaryRegister_m = read_PC_Address();
+    registers_m.setRegister(Registers::AuxiliaryLow, read_PC_Address());
 }
 
 void CPU::loadNextByteToUpper() {
     incrementPC();
-    higherByteAuxiliaryRegister_m = read_PC_Address();
-}
-
-void CPU::from_A_assignTo_addressU16() {
-    const auto address{ combineBytes(higherByteAuxiliaryRegister_m, lowerByteAuxiliaryRegister_m) };
-    memoryBus_m->write(address, registers_m.getRegister(CPURegisters::Registers::A));
-    incrementPC();
-}
-
-void CPU::from_addressU16_assignTo_A() {
-    const auto address{ combineBytes(higherByteAuxiliaryRegister_m, lowerByteAuxiliaryRegister_m) };
-    registers_m.setRegister(CPURegisters::Registers::A, memoryBus_m->read(address));
-    incrementPC();
+    registers_m.setRegister(Registers::AuxiliaryUp, read_PC_Address());
 }
 
 void CPU::from_addressU16_assignTo_PC() {
-    setPC(combineBytes(higherByteAuxiliaryRegister_m, lowerByteAuxiliaryRegister_m));
+    setPC(registers_m.getCombinedRegister(CombinedRegisters::Auxiliary));
 }
 
 void CPU::from_U8_assignTo_addressHL() {
-    memoryBus_m->write(registers_m.getCombinedRegister(CPU::CombinedRegisters::HL), lowerByteAuxiliaryRegister_m);
+    memoryBus_m->write(registers_m.getCombinedRegister(CombinedRegisters::HL), registers_m.getRegister(Registers::AuxiliaryLow));
     incrementPC();
 }
 
 void CPU::from_HL_assignTo_SP() {
-    registers_m.setCombinedRegister(CPU::CombinedRegisters::SP, registers_m.getCombinedRegister(CPU::CombinedRegisters::HL));
+    registers_m.setCombinedRegister(CombinedRegisters::SP, registers_m.getCombinedRegister(CombinedRegisters::HL));
     incrementPC();
 }
 
@@ -300,19 +283,19 @@ void CPU::fromIORegistersWriteToA(uint8_t offset) {
 }
 
 void CPU::from_A_assignTo_0xFF00PlusU8() {
-    fromAWriteToIORegisters(lowerByteAuxiliaryRegister_m);
+    fromAWriteToIORegisters(registers_m.getRegister(Registers::AuxiliaryLow));
 }
 
 void CPU::from_A_assignTo_0xFF00PlusC() {
-    fromAWriteToIORegisters(registers_m.getRegister(CPURegisters::Registers::C));
+    fromAWriteToIORegisters(registers_m.getRegister(Registers::C));
 }
 
 void CPU::from_0xFF00PlusU8_assignTo_A() {
-    fromIORegistersWriteToA(lowerByteAuxiliaryRegister_m);
+    fromIORegistersWriteToA(registers_m.getRegister(Registers::AuxiliaryLow));
 }
 
 void CPU::from_0xFF00PlusC_assignTo_A() {
-    fromIORegistersWriteToA(registers_m.getRegister(CPURegisters::Registers::C));
+    fromIORegistersWriteToA(registers_m.getRegister(Registers::C));
 }
 
 uint8_t CPU::read_PC_Address() const {
@@ -320,7 +303,7 @@ uint8_t CPU::read_PC_Address() const {
 }
 
 void CPU::incrementPC() {
-    registers_m.setCombinedRegister(CPURegisters::CombinedRegisters::PC, registers_m.getCombinedRegister(CombinedRegisters::PC) + 1);
+    registers_m.setCombinedRegister(CombinedRegisters::PC, registers_m.getCombinedRegister(CombinedRegisters::PC) + 1);
 }
 
 void CPU::setPC(uint16_t address) {
@@ -331,14 +314,14 @@ void CPU::LD_addressU16_A() {
     pushOperationsToQueue(
         &CPU::loadNextByteToLower,
         &CPU::loadNextByteToUpper,
-        &CPU::from_A_assignTo_addressU16);
+        &CPU::from_R_assignTo_addressU16_and_incrementPC<Registers::A>);
 }
 
 void CPU::LD_A_addressU16() {
     pushOperationsToQueue(
         &CPU::loadNextByteToLower,
         &CPU::loadNextByteToUpper,
-        &CPU::from_addressU16_assignTo_A);
+        &CPU::from_addressU16_assignTo_R_and_increment<Registers::A>);
 }
 
 void CPU::LD_addressHL_u8() {
@@ -348,19 +331,19 @@ void CPU::LD_addressHL_u8() {
 }
 
 void CPU::LDI_addressHL_A() {
-    pushOperationsToQueue(&CPU::from_R_assignTo_addressHL_and_incrementOrDecrementRR<CPU::CombinedRegisters::HL, CPU::Registers::A, false>);
+    pushOperationsToQueue(&CPU::from_R_assignTo_addressRR_and_incrementOrDecrementRR<CombinedRegisters::HL, Registers::A, false>);
 }
 
 void CPU::LDD_addressHL_A() {
-    pushOperationsToQueue(&CPU::from_R_assignTo_addressHL_and_incrementOrDecrementRR<CPU::CombinedRegisters::HL, CPU::Registers::A, true>);
+    pushOperationsToQueue(&CPU::from_R_assignTo_addressRR_and_incrementOrDecrementRR<CombinedRegisters::HL, Registers::A, true>);
 }
 
 void CPU::LDI_A_addressHL() {
-   pushOperationsToQueue(&CPU::from_addressHL_assignTo_R_and_incrementOrDecrementRR<CPU::CombinedRegisters::HL, CPU::Registers::A, false>);
+   pushOperationsToQueue(&CPU::from_addressRR_assignTo_R_and_incrementOrDecrementRR<CombinedRegisters::HL, Registers::A, false>);
 }
 
 void CPU::LDD_A_addressHL() {
-    pushOperationsToQueue(&CPU::from_addressHL_assignTo_R_and_incrementOrDecrementRR<CPU::CombinedRegisters::HL, CPU::Registers::A, true>);
+    pushOperationsToQueue(&CPU::from_addressRR_assignTo_R_and_incrementOrDecrementRR<CombinedRegisters::HL, Registers::A, true>);
 }
 
 void CPU::LD_SP_HL() {
@@ -371,8 +354,8 @@ void CPU::LD_addressU16_SP() {
     pushOperationsToQueue(
         &CPU::loadNextByteToLower,
         &CPU::loadNextByteToUpper,
-        &CPU::from_SPLow_or_SpUp_assignTo_addressU16<CPU::Registers::SP_Low, 0>,
-        &CPU::from_addressU16_assignTo_SPLow_or_SPUp_and_increment<CPU::Registers::SP_Up, 1>);
+        &CPU::from_R_assignTo_addressU16<Registers::SP_Low, 0>,
+        &CPU::from_R_assignTo_addressU16_and_incrementPC<Registers::SP_Up, 1>);
 }
 
 void CPU::LDH_A_addressU8() {
@@ -393,6 +376,10 @@ void CPU::LDH_addressU8_A() {
     pushOperationsToQueue(
         &CPU::loadNextByteToLower,
         &CPU::from_A_assignTo_0xFF00PlusU8);
+}
+
+void CPU::INC_adderessHL() {
+
 }
 
 void CPU::JP_u16() {
