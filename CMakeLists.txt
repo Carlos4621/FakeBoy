@@ -40,13 +40,15 @@ target_link_libraries(tests PRIVATE GTest::gtest_main)
 include(GoogleTest)
 gtest_discover_tests(tests)
 
-file(GLOB ASM_FILES "test/testingCartridges/*.asm")
+set(ASM_INCLUDE_DIR "${CMAKE_SOURCE_DIR}/test/testingCartridges/commons")
+
+file(GLOB ASM_FILES "test/testingCartridges/*.asm" "test/testingCartridges/commons/*.asm")
 
 foreach(ASM_FILE ${ASM_FILES})
     get_filename_component(ASM_NAME ${ASM_FILE} NAME_WE)
     add_custom_command(
         OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${ASM_NAME}.gb
-        COMMAND rgbasm -o ${CMAKE_CURRENT_BINARY_DIR}/${ASM_NAME}.o ${ASM_FILE}
+        COMMAND rgbasm -i "${ASM_INCLUDE_DIR}" -o ${CMAKE_CURRENT_BINARY_DIR}/${ASM_NAME}.o ${ASM_FILE}
         COMMAND rgblink -o ${CMAKE_CURRENT_BINARY_DIR}/${ASM_NAME}.gb ${CMAKE_CURRENT_BINARY_DIR}/${ASM_NAME}.o
         DEPENDS ${ASM_FILE}
         COMMENT "Compilando ROM ${ASM_NAME}.gb"
