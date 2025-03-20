@@ -75,7 +75,7 @@ private:
     static void initialize_LDH_Opcodes();
 
     static void initializeINCsOpcodes() noexcept;
-    static void initialiceDECsOpcodes() noexcept;
+    static void initializeDECsOpcodes() noexcept;
 
     void setZeroFlagIfRegisterIsZero(CPU::Registers reg);
     void setHalfCarryIfHalfCarryWillOcurr(CPU::Registers reg, uint8_t valueToAdd, bool isAdd);

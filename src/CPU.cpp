@@ -58,7 +58,7 @@ void CPU::initializeOpcodeTable() noexcept {
 
     initialieLDsOpcodes();
     initializeINCsOpcodes();
-    initialiceDECsOpcodes();
+    initializeDECsOpcodes();
 
     initialize_JP_Opcodes();
     initializeMiscellaneousOpcodes();
@@ -168,7 +168,7 @@ void CPU::initializeINCsOpcodes() noexcept {
     opcodeTable[INC_SP_Opcode] = &CPU::INC_RR<CombinedRegisters::SP>;
 }
 
-void CPU::initialiceDECsOpcodes() noexcept {
+void CPU::initializeDECsOpcodes() noexcept {
     opcodeTable[DEC_B_Opcode] = &CPU::DEC_R<Registers::B>;
     opcodeTable[DEC_C_Opcode] = &CPU::DEC_R<Registers::C>;
     opcodeTable[DEC_D_Opcode] = &CPU::DEC_R<Registers::D>;
