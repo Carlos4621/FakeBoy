@@ -20,5 +20,3 @@ Start:
     ld [$A001], a
 
     jp Start
-Loop:
-    jr Loop

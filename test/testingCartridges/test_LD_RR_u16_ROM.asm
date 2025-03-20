@@ -17,6 +17,5 @@ Start:
     ld a, $CC
     ld [hl], a
 
-    nop
     jp Start
     
