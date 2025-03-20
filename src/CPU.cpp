@@ -164,7 +164,7 @@ void CPU::setZeroFlagIfRegisterIsZero(Registers reg) {
     registers_m.setFlag(Flags::Z, (registers_m.getRegister(reg) == 0));
 }
 
-void CPU::setHalfCarryIfHalfCarryWillOcurrOnRegister(Registers reg, uint8_t valueToAdd) {
+void CPU::setHalfCarryIfHalfCarryWillOcurr(Registers reg, uint8_t valueToAdd) {
     const auto registerValue{ registers_m.getRegister(reg) };
     const bool isHalfCarry{ (((registerValue & 0x0F) + valueToAdd) > 0x0F) };
 
@@ -236,6 +236,8 @@ void CPU::fetchOpcode() {
     const auto& operation{ opcodeTable[opcode] };
 
     (this->*operation)();
+
+    incrementPC();
 }
 
 void CPU::processNextOperation() {
@@ -247,13 +249,13 @@ void CPU::processNextOperation() {
 }
 
 void CPU::loadNextByteToLower() {
-    incrementPC();
     registers_m.setRegister(Registers::AuxiliaryLow, read_PC_Address());
+    incrementPC();
 }
 
 void CPU::loadNextByteToUpper() {
-    incrementPC();
     registers_m.setRegister(Registers::AuxiliaryUp, read_PC_Address());
+    incrementPC();
 }
 
 void CPU::from_addressU16_assignTo_PC() {
@@ -262,24 +264,20 @@ void CPU::from_addressU16_assignTo_PC() {
 
 void CPU::from_U8_assignTo_addressHL() {
     memoryBus_m->write(registers_m.getCombinedRegister(CombinedRegisters::HL), registers_m.getRegister(Registers::AuxiliaryLow));
-    incrementPC();
 }
 
 void CPU::from_HL_assignTo_SP() {
     registers_m.setCombinedRegister(CombinedRegisters::SP, registers_m.getCombinedRegister(CombinedRegisters::HL));
-    incrementPC();
 }
 
 void CPU::fromAWriteToIORegisters(uint8_t offset) {
     const auto address{ 0xFF00 + offset };
     memoryBus_m->write(address, registers_m.getRegister(Registers::A));
-    incrementPC();
 }
 
 void CPU::fromIORegistersWriteToA(uint8_t offset) {
     const auto address{ 0xFF00 + offset };
     registers_m.setRegister(Registers::A, memoryBus_m->read(address));
-    incrementPC();
 }
 
 void CPU::from_A_assignTo_0xFF00PlusU8() {
@@ -310,18 +308,27 @@ void CPU::setPC(uint16_t address) {
     registers_m.setCombinedRegister(CombinedRegisters::PC, address);
 }
 
+void CPU::incrementRegister(CPU::Registers Register, uint8_t valueToAdd) {
+    setHalfCarryIfHalfCarryWillOcurr(Register, valueToAdd);
+
+    registers_m.setRegister(Register, registers_m.getRegister(Register) + valueToAdd);
+
+    setZeroFlagIfRegisterIsZero(Register);
+    registers_m.setFlag(CPU::Flags::N, false);
+}
+
 void CPU::LD_addressU16_A() {
     pushOperationsToQueue(
         &CPU::loadNextByteToLower,
         &CPU::loadNextByteToUpper,
-        &CPU::from_R_assignTo_addressU16_and_incrementPC<Registers::A>);
+        &CPU::from_R_assignTo_addressU16<Registers::A>);
 }
 
 void CPU::LD_A_addressU16() {
     pushOperationsToQueue(
         &CPU::loadNextByteToLower,
         &CPU::loadNextByteToUpper,
-        &CPU::from_addressU16_assignTo_R_and_increment<Registers::A>);
+        &CPU::from_addressU16_assignTo_R<Registers::A>);
 }
 
 void CPU::LD_addressHL_u8() {
@@ -355,7 +362,7 @@ void CPU::LD_addressU16_SP() {
         &CPU::loadNextByteToLower,
         &CPU::loadNextByteToUpper,
         &CPU::from_R_assignTo_addressU16<Registers::SP_Low, 0>,
-        &CPU::from_R_assignTo_addressU16_and_incrementPC<Registers::SP_Up, 1>);
+        &CPU::from_R_assignTo_addressU16<Registers::SP_Up, 1>);
 }
 
 void CPU::LDH_A_addressU8() {
@@ -378,8 +385,10 @@ void CPU::LDH_addressU8_A() {
         &CPU::from_A_assignTo_0xFF00PlusU8);
 }
 
-void CPU::INC_adderessHL() {
-
+void CPU::INC_addressHL() {
+    LD_addressRR_R<CombinedRegisters::HL, Registers::AuxiliaryLow>();
+    incrementRegister(Registers::AuxiliaryLow, 1);
+    memoryBus_m->write(registers_m.getCombinedRegister(CombinedRegisters::HL), registers_m.getRegister(Registers::AuxiliaryLow));
 }
 
 void CPU::JP_u16() {
@@ -391,7 +400,6 @@ void CPU::JP_u16() {
 
 void CPU::NOP() {
     // NADA
-    incrementPC();
 }
 
 void CPU::invalidOpcode() {

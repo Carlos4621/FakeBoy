@@ -76,7 +76,7 @@ private:
     static void initializeINCsOpcodes() noexcept;
 
     void setZeroFlagIfRegisterIsZero(CPU::Registers reg);
-    void setHalfCarryIfHalfCarryWillOcurrOnRegister(CPU::Registers reg, uint8_t valueToAdd);
+    void setHalfCarryIfHalfCarryWillOcurr(CPU::Registers reg, uint8_t valueToAdd);
 
     template<typename... Ops>
     void pushOperationsToQueue(Ops... ops);
@@ -102,14 +102,8 @@ private:
     template<CPU::Registers Register, uint8_t offset = 0>
     void from_R_assignTo_addressU16();
 
-    template <CPU::Registers Register, uint8_t offset = 0>
-    void from_R_assignTo_addressU16_and_incrementPC();
-
     template<CPU::Registers Register, uint8_t offset = 0>
     void from_addressU16_assignTo_R();
-
-    template<CPU::Registers Register, uint8_t offset = 0>
-    void from_addressU16_assignTo_R_and_increment();
 
     [[nodiscard]]
     uint8_t read_PC_Address() const;
@@ -119,9 +113,6 @@ private:
 
     template<CPU::Registers ToRegister>
     void assignNextByteToRegister();
-
-    template<CPU::Registers ToRegister>
-    void assignNextByteToRegisterAndIncrementPC();
 
     template<CPU::CombinedRegisters FromRegisters, CPU::Registers ToRegister>
     void from_addressRR_assignTo_R();
@@ -134,6 +125,8 @@ private:
 
     template<CPU::CombinedRegisters ToRegisters, CPU::Registers FromRegister, bool Decrement>
     void from_R_assignTo_addressRR_and_incrementOrDecrementRR();
+
+    void incrementRegister(CPU::Registers Register, uint8_t valueToAdd);
 
     template<CPU::Registers ToRegister, CPU::Registers FromRegister>
     void LD_R_R();
@@ -175,7 +168,7 @@ private:
     template<CPU::Registers Register>
     void INC_R();
 
-    void INC_adderessHL();
+    void INC_addressHL();
 
     void JP_u16();
 
@@ -196,21 +189,9 @@ inline void CPU::from_R_assignTo_addressU16() {
 }
 
 template <CPU::Registers Register, uint8_t offset>
-inline void CPU::from_R_assignTo_addressU16_and_incrementPC() {
-    from_R_assignTo_addressU16<Register, offset>();
-    incrementPC();
-}
-
-template <CPU::Registers Register, uint8_t offset>
 inline void CPU::from_addressU16_assignTo_R() {
     const auto address{ registers_m.getCombinedRegister(CombinedRegisters::Auxiliary) + offset };
     registers_m.setRegister(Register, memoryBus_m->read(address));
-}
-
-template <CPU::Registers Register, uint8_t offset>
-inline void CPU::from_addressU16_assignTo_R_and_increment() {
-    from_addressU16_assignTo_R<Register, offset>();
-    incrementPC();
 }
 
 template <CPU::Registers ToRegister>
@@ -219,22 +200,14 @@ inline void CPU::assignNextByteToRegister() {
     registers_m.setRegister(ToRegister, registers_m.getRegister(Registers::AuxiliaryLow));
 }
 
-template <CPU::Registers ToRegister>
-inline void CPU::assignNextByteToRegisterAndIncrementPC() {
-    assignNextByteToRegister<ToRegister>();
-    incrementPC();
-}
-
 template <CPU::CombinedRegisters FromRegisters, CPU::Registers ToRegister>
 inline void CPU::from_addressRR_assignTo_R() {
     registers_m.setRegister(ToRegister, memoryBus_m->read(registers_m.getCombinedRegister(FromRegisters)));
-    incrementPC();
 }
 
 template <CPU::CombinedRegisters ToRegisters, CPU::Registers FromRegister>
 inline void CPU::from_R_assignTo_addressRR() {
     memoryBus_m->write(registers_m.getCombinedRegister(ToRegisters), registers_m.getRegister(FromRegister));
-    incrementPC();
 }
 
 template <CPU::CombinedRegisters FromRegisters, CPU::Registers ToRegister, bool Decrement>
@@ -252,20 +225,18 @@ inline void CPU::from_R_assignTo_addressRR_and_incrementOrDecrementRR() {
 template <CPU::Registers ToRegister, CPU::Registers FromRegister>
 inline void CPU::LD_R_R() {
     registers_m.setRegister(ToRegister, registers_m.getRegister(FromRegister));
-    
-    incrementPC();
 }
 
 template <CPU::Registers ToRegister>
 inline void CPU::LD_R_u8() {
-    pushOperationsToQueue(&CPU::assignNextByteToRegisterAndIncrementPC<ToRegister>);
+    pushOperationsToQueue(&CPU::assignNextByteToRegister<ToRegister>);
 }
 
 template <CPU::Registers UpperRegister, CPU::Registers LowerRegister>
 inline void CPU::LD_RR_u16() {
     pushOperationsToQueue(
         &CPU::assignNextByteToRegister<LowerRegister>,
-        &CPU::assignNextByteToRegisterAndIncrementPC<UpperRegister>);
+        &CPU::assignNextByteToRegister<UpperRegister>);
 }
 
 template <CPU::CombinedRegisters ToRegisters, CPU::Registers FromRegister>
@@ -280,14 +251,7 @@ inline void CPU::LD_R_addressRR() {
 
 template <CPU::Registers Register>
 inline void CPU::INC_R() {
-    setHalfCarryIfHalfCarryWillOcurrOnRegister(Register, 1);
-
-    registers_m.setRegister(Register, registers_m.getRegister(Register) + 1);
-
-    setZeroFlagIfRegisterIsZero(Register);
-    registers_m.setFlag(CPU::Flags::N, false);
-
-    incrementPC();
+    incrementRegister(Register, 1);
 }
 
 #endif // !CPU_HPP

@@ -122,7 +122,7 @@ static constexpr uint8_t INC_D_Opcode{ 0x14 };
 static constexpr uint8_t INC_E_Opcode{ 0x1C };
 static constexpr uint8_t INC_H_Opcode{ 0x24 };
 static constexpr uint8_t INC_L_Opcode{ 0x2C };
-static constexpr uint8_t INC_address_HL_Opcode{ 0x34 };
+static constexpr uint8_t INC_addressHL_Opcode{ 0x34 };
 
 static constexpr uint8_t JP_u16_Opcode{ 0xC3 };
 
