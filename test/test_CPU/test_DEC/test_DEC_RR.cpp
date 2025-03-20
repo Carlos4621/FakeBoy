@@ -30,7 +30,7 @@ protected:
     }
 };
 
-TEST_F(CPU_DEC_RR, INC_RR_OpcodesWorks) {
+TEST_F(CPU_DEC_RR, DEC_RR_OpcodesWorks) {
     for (size_t i{ 0 }; i < ExpectedValues.size(); ++i) {
         const auto address{ 0xA000 + i };
 
