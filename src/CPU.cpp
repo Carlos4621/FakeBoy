@@ -367,19 +367,19 @@ void CPU::LD_addressHL_u8() {
 }
 
 void CPU::LDI_addressHL_A() {
-    pushOperationsToQueue(&CPU::from_R_assignTo_addressRR_and_incrementOrDecrementRR<CombinedRegisters::HL, Registers::A, false>);
-}
-
-void CPU::LDD_addressHL_A() {
     pushOperationsToQueue(&CPU::from_R_assignTo_addressRR_and_incrementOrDecrementRR<CombinedRegisters::HL, Registers::A, true>);
 }
 
+void CPU::LDD_addressHL_A() {
+    pushOperationsToQueue(&CPU::from_R_assignTo_addressRR_and_incrementOrDecrementRR<CombinedRegisters::HL, Registers::A, false>);
+}
+
 void CPU::LDI_A_addressHL() {
-   pushOperationsToQueue(&CPU::from_addressRR_assignTo_R_and_incrementOrDecrementRR<CombinedRegisters::HL, Registers::A, false>);
+   pushOperationsToQueue(&CPU::from_addressRR_assignTo_R_and_incrementOrDecrementRR<CombinedRegisters::HL, Registers::A, true>);
 }
 
 void CPU::LDD_A_addressHL() {
-    pushOperationsToQueue(&CPU::from_addressRR_assignTo_R_and_incrementOrDecrementRR<CombinedRegisters::HL, Registers::A, true>);
+    pushOperationsToQueue(&CPU::from_addressRR_assignTo_R_and_incrementOrDecrementRR<CombinedRegisters::HL, Registers::A, false>);
 }
 
 void CPU::LD_SP_HL() {

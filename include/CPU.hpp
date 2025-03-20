@@ -122,10 +122,10 @@ private:
     template<CPU::CombinedRegisters ToRegisters, CPU::Registers FromRegister>
     void from_R_assignTo_addressRR();
 
-    template<CPU::CombinedRegisters FromRegisters, CPU::Registers ToRegister, bool Decrement>
+    template<CPU::CombinedRegisters FromRegisters, CPU::Registers ToRegister, bool Increment>
     void from_addressRR_assignTo_R_and_incrementOrDecrementRR();
 
-    template<CPU::CombinedRegisters ToRegisters, CPU::Registers FromRegister, bool Decrement>
+    template<CPU::CombinedRegisters ToRegisters, CPU::Registers FromRegister, bool Increment>
     void from_R_assignTo_addressRR_and_incrementOrDecrementRR();
 
     void addOrSubstractToRegister(CPU::Registers Register, uint8_t valueToAdd, bool isAdd);
@@ -229,16 +229,16 @@ inline void CPU::from_R_assignTo_addressRR() {
     memoryBus_m->write(registers_m.getCombinedRegister(ToRegisters), registers_m.getRegister(FromRegister));
 }
 
-template <CPU::CombinedRegisters FromRegisters, CPU::Registers ToRegister, bool Decrement>
+template <CPU::CombinedRegisters FromRegisters, CPU::Registers ToRegister, bool Increment>
 inline void CPU::from_addressRR_assignTo_R_and_incrementOrDecrementRR() {
     from_addressRR_assignTo_R<FromRegisters, ToRegister>();
-    registers_m.setCombinedRegister(FromRegisters, registers_m.getCombinedRegister(FromRegisters) + (Decrement ? -1 : 1));
+    addOrSubstractToCombinedRegisters<FromRegisters, 1, Increment>();
 }
 
-template <CPU::CombinedRegisters ToRegisters, CPU::Registers FromRegister, bool Decrement>
+template <CPU::CombinedRegisters ToRegisters, CPU::Registers FromRegister, bool Increment>
 inline void CPU::from_R_assignTo_addressRR_and_incrementOrDecrementRR() {
     from_R_assignTo_addressRR<ToRegisters, FromRegister>();
-    registers_m.setCombinedRegister(ToRegisters, registers_m.getCombinedRegister(ToRegisters) + (Decrement ? -1 : 1));
+    addOrSubstractToCombinedRegisters<ToRegisters, 1, Increment>();
 }
 
 template <CPU::CombinedRegisters ToRegisters, CPU::Registers Register, uint8_t increment, bool isAdd>
