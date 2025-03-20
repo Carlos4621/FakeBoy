@@ -44,6 +44,8 @@ Start:
     ld a, l
     ld [$A006], a
 
+    nop
+
     ld a, $FF
     inc a
 

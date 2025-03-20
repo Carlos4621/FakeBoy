@@ -162,6 +162,7 @@ void CPU::initializeINCsOpcodes() noexcept {
 }
 
 void CPU::setZeroFlagIfRegisterIsZero(Registers reg) {
+    printf("%i\n", registers_m.getRegister(reg));
     registers_m.setFlag(Flags::Z, (registers_m.getRegister(reg) == 0));
 }
 
@@ -309,13 +310,13 @@ void CPU::setPC(uint16_t address) {
     registers_m.setCombinedRegister(CombinedRegisters::PC, address);
 }
 
-void CPU::incrementRegister(CPU::Registers Register, uint8_t valueToAdd) {
+void CPU::incrementRegister(Registers Register, uint8_t valueToAdd) {
     setHalfCarryIfHalfCarryWillOcurr(Register, valueToAdd);
 
     registers_m.setRegister(Register, registers_m.getRegister(Register) + valueToAdd);
 
     setZeroFlagIfRegisterIsZero(Register);
-    registers_m.setFlag(CPU::Flags::N, false);
+    registers_m.setFlag(Flags::N, false);
 }
 
 void CPU::LD_addressU16_A() {

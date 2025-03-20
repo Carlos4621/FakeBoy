@@ -13,4 +13,18 @@ Start:
     ld [hl], a
     inc [hl]
 
+    nop
+
+    ld a, $FF
+    ld hl, $A002
+    ld [hl], a
+    inc [hl]
+
+    nop 
+
+    ld a, $0F
+    ld hl, $A003
+    ld [hl], a
+    inc [hl]
+
     jp Start
