@@ -232,8 +232,7 @@ inline void CPU::incrementRegisterAndAssignToAddressRR() {
 }
 
 template <CPU::Registers ToRegister, CPU::Registers FromRegister>
-inline void CPU::LD_R_R()
-{
+inline void CPU::LD_R_R() {
     registers_m.setRegister(ToRegister, registers_m.getRegister(FromRegister));
 }
 

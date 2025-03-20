@@ -19,11 +19,11 @@ else()
     message(WARNING "clang-tidy no encontrado. Análisis estático desactivado.")
 endif()
 
-include_directories(include include/*)
+include_directories(include include/* test/test_CPU/TestingCPU)
 
 find_package(GTest REQUIRED)
 
-file(GLOB SRC_FILES "src/*.cpp" "src/*/*.cpp")
+file(GLOB SRC_FILES "src/*.cpp" "src/*/*.cpp" "test/test_CPU/TestingCPU/*.cpp")
 
 add_executable(FakeBoy main.cpp ${SRC_FILES})
 
