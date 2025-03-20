@@ -46,6 +46,7 @@ private:
     static constexpr uint16_t NumberOfOpcodes{ 256 };
     static constexpr uint8_t ByteDisplacement{ 8 };
     static constexpr uint8_t TCyclesPerInstruction{ 4 };
+    static constexpr uint8_t ByteMask{ 0x0F };
 
     static std::array<MemberFunction, NumberOfOpcodes> opcodeTable;
     static bool isOpcodeTableInitialized;
@@ -74,9 +75,10 @@ private:
     static void initialize_LDH_Opcodes();
 
     static void initializeINCsOpcodes() noexcept;
+    static void initialiceDECsOpcodes() noexcept;
 
     void setZeroFlagIfRegisterIsZero(CPU::Registers reg);
-    void setHalfCarryIfHalfCarryWillOcurr(CPU::Registers reg, uint8_t valueToAdd);
+    void setHalfCarryIfHalfCarryWillOcurr(CPU::Registers reg, uint8_t valueToAdd, bool isAdd);
 
     template<typename... Ops>
     void pushOperationsToQueue(Ops... ops);
@@ -126,7 +128,7 @@ private:
     template<CPU::CombinedRegisters ToRegisters, CPU::Registers FromRegister, bool Decrement>
     void from_R_assignTo_addressRR_and_incrementOrDecrementRR();
 
-    void incrementRegister(CPU::Registers Register, uint8_t valueToAdd);
+    void addOrSubstractToRegister(CPU::Registers Register, uint8_t valueToAdd, bool isAdd);
 
     template <CPU::CombinedRegisters ToRegisters, CPU::Registers Register, uint8_t increment>
     void incrementRegisterAndAssignToAddressRR();
@@ -178,6 +180,9 @@ private:
 
     template<CPU::CombinedRegisters Registers>
     void INC_RR();
+
+    template<CPU::Registers Register>
+    void DEC_R();
 
     void JP_u16();
 
@@ -233,7 +238,7 @@ inline void CPU::from_R_assignTo_addressRR_and_incrementOrDecrementRR() {
 
 template <CPU::CombinedRegisters ToRegisters, CPU::Registers Register, uint8_t increment>
 inline void CPU::incrementRegisterAndAssignToAddressRR() {
-    incrementRegister(Register, increment);
+    addOrSubstractToRegister(Register, increment, true);
     memoryBus_m->write(registers_m.getCombinedRegister(ToRegisters), registers_m.getRegister(Register));
 }
 
@@ -271,12 +276,17 @@ inline void CPU::LD_R_addressRR() {
 
 template <CPU::Registers Register>
 inline void CPU::INC_R() {
-    incrementRegister(Register, 1);
+    addOrSubstractToRegister(Register, 1, true);
 }
 
 template <CPU::CombinedRegisters Registers>
 inline void CPU::INC_RR() {
     pushOperationsToQueue(&CPU::incrementCombinedRegisters<Registers, 1>);
+}
+
+template <CPU::Registers Register>
+inline void CPU::DEC_R() {
+    addOrSubstractToRegister(Register, 1, false);
 }
 
 #endif // !CPU_HPP

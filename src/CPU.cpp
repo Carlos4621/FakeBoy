@@ -58,6 +58,7 @@ void CPU::initializeOpcodeTable() noexcept {
 
     initialieLDsOpcodes();
     initializeINCsOpcodes();
+    initialiceDECsOpcodes();
 
     initialize_JP_Opcodes();
     initializeMiscellaneousOpcodes();
@@ -167,15 +168,29 @@ void CPU::initializeINCsOpcodes() noexcept {
     opcodeTable[INC_SP_Opcode] = &CPU::INC_RR<CombinedRegisters::SP>;
 }
 
+void CPU::initialiceDECsOpcodes() noexcept {
+    opcodeTable[DEC_B_Opcode] = &CPU::DEC_R<Registers::B>;
+    opcodeTable[DEC_C_Opcode] = &CPU::DEC_R<Registers::C>;
+    opcodeTable[DEC_D_Opcode] = &CPU::DEC_R<Registers::D>;
+    opcodeTable[DEC_E_Opcode] = &CPU::DEC_R<Registers::E>;
+    opcodeTable[DEC_H_Opcode] = &CPU::DEC_R<Registers::H>;
+    opcodeTable[DEC_L_Opcode] = &CPU::DEC_R<Registers::L>;
+    opcodeTable[DEC_A_Opcode] = &CPU::DEC_R<Registers::A>;
+}
+
 void CPU::setZeroFlagIfRegisterIsZero(Registers reg) {
     registers_m.setFlag(Flags::Z, (registers_m.getRegister(reg) == 0));
 }
 
-void CPU::setHalfCarryIfHalfCarryWillOcurr(Registers reg, uint8_t valueToAdd) {
+void CPU::setHalfCarryIfHalfCarryWillOcurr(Registers reg, uint8_t valueToAdd, bool isAdd) {
     const auto registerValue{ registers_m.getRegister(reg) };
-    const bool isHalfCarry{ (((registerValue & 0x0F) + valueToAdd) > 0x0F) };
 
-    registers_m.setFlag(Flags::H, isHalfCarry);
+    if(isAdd) {
+        registers_m.setFlag(Flags::H, (((registerValue & ByteMask) + valueToAdd) > ByteMask));
+    }
+    else {
+        registers_m.setFlag(Flags::H, ((registerValue & ByteMask) < ((registerValue - valueToAdd) & ByteMask)));
+    }
 }
 
 void CPU::initialize_JP_Opcodes() noexcept {
@@ -315,13 +330,13 @@ void CPU::setPC(uint16_t address) {
     registers_m.setCombinedRegister(CombinedRegisters::PC, address);
 }
 
-void CPU::incrementRegister(Registers Register, uint8_t valueToAdd) {
-    setHalfCarryIfHalfCarryWillOcurr(Register, valueToAdd);
+void CPU::addOrSubstractToRegister(Registers Register, uint8_t valueToAdd, bool isAdd) {
+    setHalfCarryIfHalfCarryWillOcurr(Register, valueToAdd, isAdd);
 
-    registers_m.setRegister(Register, registers_m.getRegister(Register) + valueToAdd);
+    registers_m.setRegister(Register, registers_m.getRegister(Register) + (isAdd ? valueToAdd : -valueToAdd));
 
     setZeroFlagIfRegisterIsZero(Register);
-    registers_m.setFlag(Flags::N, false);
+    registers_m.setFlag(Flags::N, !isAdd);
 }
 
 void CPU::LD_addressU16_A() {

@@ -129,6 +129,14 @@ static constexpr uint8_t INC_DE_Opcode{ 0x13 };
 static constexpr uint8_t INC_HL_Opcode{ 0x23 };
 static constexpr uint8_t INC_SP_Opcode{ 0x33 };
 
+static constexpr uint8_t DEC_A_Opcode{ 0x3D };
+static constexpr uint8_t DEC_B_Opcode{ 0x05 };
+static constexpr uint8_t DEC_C_Opcode{ 0x0D };
+static constexpr uint8_t DEC_D_Opcode{ 0x15 };
+static constexpr uint8_t DEC_E_Opcode{ 0x1D };
+static constexpr uint8_t DEC_H_Opcode{ 0x25 };
+static constexpr uint8_t DEC_L_Opcode{ 0x2D };
+
 static constexpr uint8_t JP_u16_Opcode{ 0xC3 };
 
 #endif // !OPCODES_HPP
