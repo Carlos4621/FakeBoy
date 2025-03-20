@@ -29,7 +29,7 @@ add_executable(FakeBoy main.cpp ${SRC_FILES})
 
 enable_testing()
 
-file(GLOB TEST_FILES "test/*/*.cpp" "test/*.cpp")
+file(GLOB TEST_FILES "test/*/*.cpp" "test/*.cpp" "test/*/*/*.cpp")
 
 add_executable(tests ${TEST_FILES} ${SRC_FILES})
 # Desactivar clang-tidy específicamente para el target de tests
