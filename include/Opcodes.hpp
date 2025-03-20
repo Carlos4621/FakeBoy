@@ -124,6 +124,11 @@ static constexpr uint8_t INC_H_Opcode{ 0x24 };
 static constexpr uint8_t INC_L_Opcode{ 0x2C };
 static constexpr uint8_t INC_addressHL_Opcode{ 0x34 };
 
+static constexpr uint8_t INC_BC_Opcode{ 0x03 };
+static constexpr uint8_t INC_DE_Opcode{ 0x13 };
+static constexpr uint8_t INC_HL_Opcode{ 0x23 };
+static constexpr uint8_t INC_SP_Opcode{ 0x33 };
+
 static constexpr uint8_t JP_u16_Opcode{ 0xC3 };
 
 #endif // !OPCODES_HPP

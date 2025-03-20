@@ -158,11 +158,16 @@ void CPU::initializeINCsOpcodes() noexcept {
     opcodeTable[INC_H_Opcode] = &CPU::INC_R<Registers::H>;
     opcodeTable[INC_L_Opcode] = &CPU::INC_R<Registers::L>;
     opcodeTable[INC_A_Opcode] = &CPU::INC_R<Registers::A>;
+    
     opcodeTable[INC_addressHL_Opcode] = &CPU::INC_addressHL;
+
+    opcodeTable[INC_BC_Opcode] = &CPU::INC_RR<CombinedRegisters::BC>;
+    opcodeTable[INC_DE_Opcode] = &CPU::INC_RR<CombinedRegisters::DE>;
+    opcodeTable[INC_HL_Opcode] = &CPU::INC_RR<CombinedRegisters::HL>;
+    opcodeTable[INC_SP_Opcode] = &CPU::INC_RR<CombinedRegisters::SP>;
 }
 
 void CPU::setZeroFlagIfRegisterIsZero(Registers reg) {
-    printf("%i\n", registers_m.getRegister(reg));
     registers_m.setFlag(Flags::Z, (registers_m.getRegister(reg) == 0));
 }
 

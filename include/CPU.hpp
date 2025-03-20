@@ -131,6 +131,9 @@ private:
     template <CPU::CombinedRegisters ToRegisters, CPU::Registers Register, uint8_t increment>
     void incrementRegisterAndAssignToAddressRR();
 
+    template<CPU::CombinedRegisters Registers, uint8_t Increment>
+    void incrementCombinedRegisters();
+
     template<CPU::Registers ToRegister, CPU::Registers FromRegister>
     void LD_R_R();
 
@@ -172,6 +175,9 @@ private:
     void INC_R();
 
     void INC_addressHL();
+
+    template<CPU::CombinedRegisters Registers>
+    void INC_RR();
 
     void JP_u16();
 
@@ -231,6 +237,11 @@ inline void CPU::incrementRegisterAndAssignToAddressRR() {
     memoryBus_m->write(registers_m.getCombinedRegister(ToRegisters), registers_m.getRegister(Register));
 }
 
+template <CPU::CombinedRegisters Registers, uint8_t Increment>
+inline void CPU::incrementCombinedRegisters() {
+    registers_m.setCombinedRegister(Registers, registers_m.getCombinedRegister(Registers) + Increment);
+}
+
 template <CPU::Registers ToRegister, CPU::Registers FromRegister>
 inline void CPU::LD_R_R() {
     registers_m.setRegister(ToRegister, registers_m.getRegister(FromRegister));
@@ -261,6 +272,11 @@ inline void CPU::LD_R_addressRR() {
 template <CPU::Registers Register>
 inline void CPU::INC_R() {
     incrementRegister(Register, 1);
+}
+
+template <CPU::CombinedRegisters Registers>
+inline void CPU::INC_RR() {
+    pushOperationsToQueue(&CPU::incrementCombinedRegisters<Registers, 1>);
 }
 
 #endif // !CPU_HPP
