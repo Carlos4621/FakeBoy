@@ -133,8 +133,8 @@ private:
     template <CPU::CombinedRegisters ToRegisters, CPU::Registers Register, uint8_t increment>
     void incrementRegisterAndAssignToAddressRR();
 
-    template<CPU::CombinedRegisters Registers, uint8_t Increment>
-    void incrementCombinedRegisters();
+    template<CPU::CombinedRegisters Registers, uint8_t Increment, bool isAdd>
+    void addOrSubstractToCombinedRegisters();
 
     template<CPU::Registers ToRegister, CPU::Registers FromRegister>
     void LD_R_R();
@@ -183,6 +183,9 @@ private:
 
     template<CPU::Registers Register>
     void DEC_R();
+
+    template<CPU::CombinedRegisters Registers>
+    void DEC_RR();
 
     void JP_u16();
 
@@ -242,9 +245,9 @@ inline void CPU::incrementRegisterAndAssignToAddressRR() {
     memoryBus_m->write(registers_m.getCombinedRegister(ToRegisters), registers_m.getRegister(Register));
 }
 
-template <CPU::CombinedRegisters Registers, uint8_t Increment>
-inline void CPU::incrementCombinedRegisters() {
-    registers_m.setCombinedRegister(Registers, registers_m.getCombinedRegister(Registers) + Increment);
+template <CPU::CombinedRegisters Registers, uint8_t Increment, bool isAdd>
+inline void CPU::addOrSubstractToCombinedRegisters() {
+    registers_m.setCombinedRegister(Registers, registers_m.getCombinedRegister(Registers) + (isAdd ? Increment : -Increment));
 }
 
 template <CPU::Registers ToRegister, CPU::Registers FromRegister>
@@ -281,12 +284,17 @@ inline void CPU::INC_R() {
 
 template <CPU::CombinedRegisters Registers>
 inline void CPU::INC_RR() {
-    pushOperationsToQueue(&CPU::incrementCombinedRegisters<Registers, 1>);
+    pushOperationsToQueue(&CPU::addOrSubstractToCombinedRegisters<Registers, 1, true>);
 }
 
 template <CPU::Registers Register>
 inline void CPU::DEC_R() {
     addOrSubstractToRegister(Register, 1, false);
+}
+
+template <CPU::CombinedRegisters Registers>
+inline void CPU::DEC_RR() {
+    pushOperationsToQueue(&CPU::addOrSubstractToCombinedRegisters<Registers, 1, false>);
 }
 
 #endif // !CPU_HPP

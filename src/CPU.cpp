@@ -176,6 +176,11 @@ void CPU::initialiceDECsOpcodes() noexcept {
     opcodeTable[DEC_H_Opcode] = &CPU::DEC_R<Registers::H>;
     opcodeTable[DEC_L_Opcode] = &CPU::DEC_R<Registers::L>;
     opcodeTable[DEC_A_Opcode] = &CPU::DEC_R<Registers::A>;
+
+    opcodeTable[DEC_BC_Opcode] = &CPU::DEC_RR<CombinedRegisters::BC>;
+    opcodeTable[DEC_DE_Opcode] = &CPU::DEC_RR<CombinedRegisters::DE>;
+    opcodeTable[DEC_HL_Opcode] = &CPU::DEC_RR<CombinedRegisters::HL>;
+    opcodeTable[DEC_SP_Opcode] = &CPU::DEC_RR<CombinedRegisters::SP>;
 }
 
 void CPU::setZeroFlagIfRegisterIsZero(Registers reg) {
