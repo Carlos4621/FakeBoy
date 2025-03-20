@@ -141,7 +141,7 @@ static constexpr uint8_t DEC_BC_Opcode{ 0x0B };
 static constexpr uint8_t DEC_DE_Opcode{ 0x1B };
 static constexpr uint8_t DEC_HL_Opcode{ 0x2B };
 static constexpr uint8_t DEC_SP_Opcode{ 0x3B };
-static constexpr uint8_t DEC_addressHL_Opcode{ 0x34 };
+static constexpr uint8_t DEC_addressHL_Opcode{ 0x35 };
 
 static constexpr uint8_t JP_u16_Opcode{ 0xC3 };
 

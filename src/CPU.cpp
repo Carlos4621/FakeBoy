@@ -177,6 +177,8 @@ void CPU::initialiceDECsOpcodes() noexcept {
     opcodeTable[DEC_L_Opcode] = &CPU::DEC_R<Registers::L>;
     opcodeTable[DEC_A_Opcode] = &CPU::DEC_R<Registers::A>;
 
+    opcodeTable[DEC_addressHL_Opcode] = &CPU::DEC_addressHL;
+
     opcodeTable[DEC_BC_Opcode] = &CPU::DEC_RR<CombinedRegisters::BC>;
     opcodeTable[DEC_DE_Opcode] = &CPU::DEC_RR<CombinedRegisters::DE>;
     opcodeTable[DEC_HL_Opcode] = &CPU::DEC_RR<CombinedRegisters::HL>;
@@ -415,7 +417,14 @@ void CPU::LDH_addressU8_A() {
 void CPU::INC_addressHL() {
     pushOperationsToQueue(
         &CPU::from_addressRR_assignTo_R<CombinedRegisters::HL, Registers::AuxiliaryLow>,
-        &CPU::incrementRegisterAndAssignToAddressRR<CombinedRegisters::HL, Registers::AuxiliaryLow, 1>
+        &CPU::AddOrSubstractRegisterAndAssignToAddressRR<CombinedRegisters::HL, Registers::AuxiliaryLow, 1, true>
+    );
+}
+
+void CPU::DEC_addressHL() {
+    pushOperationsToQueue(
+        &CPU::from_addressRR_assignTo_R<CombinedRegisters::HL, Registers::AuxiliaryLow>,
+        &CPU::AddOrSubstractRegisterAndAssignToAddressRR<CombinedRegisters::HL, Registers::AuxiliaryLow, 1, false>
     );
 }
 

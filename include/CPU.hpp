@@ -130,8 +130,8 @@ private:
 
     void addOrSubstractToRegister(CPU::Registers Register, uint8_t valueToAdd, bool isAdd);
 
-    template <CPU::CombinedRegisters ToRegisters, CPU::Registers Register, uint8_t increment>
-    void incrementRegisterAndAssignToAddressRR();
+    template <CPU::CombinedRegisters ToRegisters, CPU::Registers Register, uint8_t increment, bool isAdd>
+    void AddOrSubstractRegisterAndAssignToAddressRR();
 
     template<CPU::CombinedRegisters Registers, uint8_t Increment, bool isAdd>
     void addOrSubstractToCombinedRegisters();
@@ -187,6 +187,8 @@ private:
     template<CPU::CombinedRegisters Registers>
     void DEC_RR();
 
+    void DEC_addressHL();
+
     void JP_u16();
 
     void NOP();
@@ -239,9 +241,9 @@ inline void CPU::from_R_assignTo_addressRR_and_incrementOrDecrementRR() {
     registers_m.setCombinedRegister(ToRegisters, registers_m.getCombinedRegister(ToRegisters) + (Decrement ? -1 : 1));
 }
 
-template <CPU::CombinedRegisters ToRegisters, CPU::Registers Register, uint8_t increment>
-inline void CPU::incrementRegisterAndAssignToAddressRR() {
-    addOrSubstractToRegister(Register, increment, true);
+template <CPU::CombinedRegisters ToRegisters, CPU::Registers Register, uint8_t increment, bool isAdd>
+inline void CPU::AddOrSubstractRegisterAndAssignToAddressRR() {
+    addOrSubstractToRegister(Register, increment, isAdd);
     memoryBus_m->write(registers_m.getCombinedRegister(ToRegisters), registers_m.getRegister(Register));
 }
 
