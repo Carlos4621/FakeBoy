@@ -128,6 +128,9 @@ private:
 
     void incrementRegister(CPU::Registers Register, uint8_t valueToAdd);
 
+    template <CPU::CombinedRegisters ToRegisters, CPU::Registers Register, uint8_t increment>
+    void incrementRegisterAndAssignToAddressRR();
+
     template<CPU::Registers ToRegister, CPU::Registers FromRegister>
     void LD_R_R();
 
@@ -222,8 +225,15 @@ inline void CPU::from_R_assignTo_addressRR_and_incrementOrDecrementRR() {
     registers_m.setCombinedRegister(ToRegisters, registers_m.getCombinedRegister(ToRegisters) + (Decrement ? -1 : 1));
 }
 
+template <CPU::CombinedRegisters ToRegisters, CPU::Registers Register, uint8_t increment>
+inline void CPU::incrementRegisterAndAssignToAddressRR() {
+    incrementRegister(Register, increment);
+    memoryBus_m->write(registers_m.getCombinedRegister(ToRegisters), registers_m.getRegister(Register));
+}
+
 template <CPU::Registers ToRegister, CPU::Registers FromRegister>
-inline void CPU::LD_R_R() {
+inline void CPU::LD_R_R()
+{
     registers_m.setRegister(ToRegister, registers_m.getRegister(FromRegister));
 }
 

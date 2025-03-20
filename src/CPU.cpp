@@ -158,6 +158,7 @@ void CPU::initializeINCsOpcodes() noexcept {
     opcodeTable[INC_H_Opcode] = &CPU::INC_R<Registers::H>;
     opcodeTable[INC_L_Opcode] = &CPU::INC_R<Registers::L>;
     opcodeTable[INC_A_Opcode] = &CPU::INC_R<Registers::A>;
+    opcodeTable[INC_addressHL_Opcode] = &CPU::INC_addressHL;
 }
 
 void CPU::setZeroFlagIfRegisterIsZero(Registers reg) {
@@ -386,9 +387,10 @@ void CPU::LDH_addressU8_A() {
 }
 
 void CPU::INC_addressHL() {
-    LD_addressRR_R<CombinedRegisters::HL, Registers::AuxiliaryLow>();
-    incrementRegister(Registers::AuxiliaryLow, 1);
-    memoryBus_m->write(registers_m.getCombinedRegister(CombinedRegisters::HL), registers_m.getRegister(Registers::AuxiliaryLow));
+    pushOperationsToQueue(
+        &CPU::from_addressRR_assignTo_R<CombinedRegisters::HL, Registers::AuxiliaryLow>,
+        &CPU::incrementRegisterAndAssignToAddressRR<CombinedRegisters::HL, Registers::AuxiliaryLow, 1>
+    );
 }
 
 void CPU::JP_u16() {
