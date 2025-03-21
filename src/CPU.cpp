@@ -449,7 +449,8 @@ void CPU::AND_A_u8() {
 }
 
 void CPU::AND_A_addressHL() {
-    pushOperationsToQueue(&CPU::ANDRegisterAWithAddressHL);
+    from_addressRR_assignTo_R<CombinedRegisters::HL, Registers::AuxiliaryLow>();
+    pushOperationsToQueue(&CPU::AND_A_R<Registers::AuxiliaryLow>);
 }
 
 void CPU::JP_u16() {

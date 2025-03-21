@@ -103,9 +103,6 @@ private:
     void fromAWriteToIORegisters(uint8_t offset);
     void fromIORegistersWriteToA(uint8_t offset);
 
-    void ANDRegisterAWithNextByte();
-    void ANDRegisterAWithAddressHL();
-
     template<CPU::Registers Register, uint8_t offset = 0>
     void from_R_assignTo_addressU16();
 
@@ -211,25 +208,6 @@ private:
 template <typename... Ops>
 inline void CPU::pushOperationsToQueue(Ops... ops) {
     (operationsQueue_m.push(ops), ...);
-}
-
-inline void CPU::ANDRegisterAWithNextByte() {
-    loadNextByteToLower();
-    registers_m.setRegister(Registers::A, registers_m.getRegister(Registers::A) & registers_m.getRegister(Registers::AuxiliaryLow));
-
-    setZeroFlagIfRegisterIsZero(Registers::A);
-    registers_m.setFlag(Flags::N, false);
-    registers_m.setFlag(Flags::H, true);
-    registers_m.setFlag(Flags::C, false);
-}
-
-inline void CPU::ANDRegisterAWithAddressHL() {
-    registers_m.setRegister(Registers::A, registers_m.getRegister(Registers::A) & memoryBus_m->read(registers_m.getCombinedRegister(CombinedRegisters::HL)));
-
-    setZeroFlagIfRegisterIsZero(Registers::A);
-    registers_m.setFlag(Flags::N, false);
-    registers_m.setFlag(Flags::H, true);
-    registers_m.setFlag(Flags::C, false);
 }
 
 template <CPU::Registers Register, uint8_t offset>
