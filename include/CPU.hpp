@@ -202,6 +202,8 @@ private:
     template<CPU::Registers Register>
     void OR_A_R();
 
+    void OR_A_u8();
+
     void JP_u16();
 
     void NOP();
