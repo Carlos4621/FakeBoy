@@ -103,8 +103,7 @@ private:
     void fromAWriteToIORegisters(uint8_t offset);
     void fromIORegistersWriteToA(uint8_t offset);
 
-    template<CPU::Registers Register>
-    void ANDRegisterWithNextByte();
+    void ANDRegisterAWithNextByte();
 
     template<CPU::Registers Register, uint8_t offset = 0>
     void from_R_assignTo_addressU16();
@@ -197,8 +196,7 @@ private:
     template<CPU::Registers Register>
     void AND_A_R();
     
-    template<CPU::Registers Register>
-    void AND_R_u8();
+    void AND_A_u8();
 
     void JP_u16();
 
@@ -212,12 +210,11 @@ inline void CPU::pushOperationsToQueue(Ops... ops) {
     (operationsQueue_m.push(ops), ...);
 }
 
-template <CPU::Registers Register>
-inline void CPU::ANDRegisterWithNextByte() {
+inline void CPU::ANDRegisterAWithNextByte() {
     loadNextByteToLower();
-    registers_m.setRegister(Register, registers_m.getRegister(Register) & registers_m.getRegister(Registers::AuxiliaryLow));
+    registers_m.setRegister(Registers::A, registers_m.getRegister(Registers::A) & registers_m.getRegister(Registers::AuxiliaryLow));
 
-    setZeroFlagIfRegisterIsZero(Register);
+    setZeroFlagIfRegisterIsZero(Registers::A);
     registers_m.setFlag(Flags::N, false);
     registers_m.setFlag(Flags::H, true);
     registers_m.setFlag(Flags::C, false);
@@ -331,9 +328,8 @@ inline void CPU::AND_A_R() {
     registers_m.setFlag(Flags::C, false);
 }
 
-template <CPU::Registers Register>
-inline void CPU::AND_R_u8() {
-    pushOperationsToQueue(&CPU::ANDRegisterWithNextByte<Register>);
+inline void CPU::AND_A_u8() {
+    pushOperationsToQueue(&CPU::ANDRegisterAWithNextByte);
 }
 
 #endif // !CPU_HPP

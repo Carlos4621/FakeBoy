@@ -196,7 +196,7 @@ void CPU::initializeANDsOpcodes() noexcept {
     opcodeTable[AND_A_H_Opcode] = &CPU::AND_A_R<Registers::H>;
     opcodeTable[AND_A_L_Opcode] = &CPU::AND_A_R<Registers::L>;
 
-    opcodeTable[AND_A_u8_Opcode] = &CPU::AND_R_u8<Registers::A>;
+    opcodeTable[AND_A_u8_Opcode] = &CPU::AND_A_u8;
 }
 
 void CPU::setZeroFlagIfRegisterIsZero(Registers reg) {
