@@ -197,6 +197,7 @@ void CPU::initializeANDsOpcodes() noexcept {
     opcodeTable[AND_A_L_Opcode] = &CPU::AND_A_R<Registers::L>;
 
     opcodeTable[AND_A_u8_Opcode] = &CPU::AND_A_u8;
+    opcodeTable[AND_A_addressHL_Opcode] = &CPU::AND_A_addressHL;
 }
 
 void CPU::setZeroFlagIfRegisterIsZero(Registers reg) {
@@ -440,6 +441,14 @@ void CPU::DEC_addressHL() {
         &CPU::from_addressRR_assignTo_R<CombinedRegisters::HL, Registers::AuxiliaryLow>,
         &CPU::AddOrSubstractRegisterAndAssignToAddressRR<CombinedRegisters::HL, Registers::AuxiliaryLow, 1, false>
     );
+}
+
+void CPU::AND_A_u8() {
+    pushOperationsToQueue(&CPU::ANDRegisterAWithNextByte);
+}
+
+void CPU::AND_A_addressHL() {
+    pushOperationsToQueue(&CPU::ANDRegisterAWithAddressHL);
 }
 
 void CPU::JP_u16() {
