@@ -279,9 +279,9 @@ void CPU::fetchOpcode() {
     const auto opcode{ read_PC_Address() };
     const auto& operation{ opcodeTable[opcode] };
 
-    (this->*operation)();
-
     incrementPC();
+
+    (this->*operation)();
 }
 
 void CPU::processNextOperation() {
@@ -444,7 +444,8 @@ void CPU::DEC_addressHL() {
 }
 
 void CPU::AND_A_u8() {
-    pushOperationsToQueue(&CPU::ANDRegisterAWithNextByte);
+    loadNextByteToLower();
+    pushOperationsToQueue(&CPU::AND_A_R<Registers::AuxiliaryLow>);
 }
 
 void CPU::AND_A_addressHL() {
