@@ -31,7 +31,7 @@ protected:
     }
 };
 
-TEST_F(CPU_AND_A_u8, AND_A_R_OpcodesWorks) {
+TEST_F(CPU_AND_A_u8, AND_A_u8_OpcodesWorks) {
     for (size_t i{ 0 }; i < ExpectedValues.size(); ++i) {
         const auto address{ 0xA000 + i };
 
@@ -41,7 +41,7 @@ TEST_F(CPU_AND_A_u8, AND_A_R_OpcodesWorks) {
     }
 }
 
-TEST_F(CPU_AND_A_u8, AND_A_R_ZeroFlagWorks) {
+TEST_F(CPU_AND_A_u8, AND_A_u8_ZeroFlagWorks) {
     for (size_t i{ 0 }; i < TCyclesForOthersSections; ++i) {
         cpu_m.processTCycle();
     }
