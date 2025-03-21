@@ -204,6 +204,8 @@ private:
 
     void OR_A_u8();
 
+    void OR_A_addressHL();
+
     void JP_u16();
 
     void NOP();
