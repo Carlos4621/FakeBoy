@@ -64,7 +64,7 @@ private:
     static void initialieLDsOpcodes() noexcept;
     static void initialize_LD_R_R_Opcodes() noexcept;
     static void initialize_LD_R_u8_Opcodes() noexcept;
-    static void initialize_JP_Opcodes() noexcept;
+    static void initializeJPsOpcodes() noexcept;
     static void initializeMiscellaneousOpcodes() noexcept;
     static void initialize_LD_RR_u16_Opcodes() noexcept;
     static void initialize_LD_addressRR_R_Opcodes() noexcept;
@@ -76,6 +76,8 @@ private:
 
     static void initializeINCsOpcodes() noexcept;
     static void initializeDECsOpcodes() noexcept;
+
+    static void initializeANDsOpcodes() noexcept;
 
     void setZeroFlagIfRegisterIsZero(CPU::Registers reg);
     void setHalfCarryIfHalfCarryWillOcurr(CPU::Registers reg, uint8_t valueToAdd, bool isAdd);
@@ -189,6 +191,9 @@ private:
 
     void DEC_addressHL();
 
+    template<CPU::Registers RegisterOne, CPU::Registers RegisterTwo>
+    void AND_R_R();
+
     void JP_u16();
 
     void NOP();
@@ -297,6 +302,15 @@ inline void CPU::DEC_R() {
 template <CPU::CombinedRegisters Registers>
 inline void CPU::DEC_RR() {
     pushOperationsToQueue(&CPU::addOrSubstractToCombinedRegisters<Registers, 1, false>);
+}
+
+template <CPU::Registers RegisterOne, CPU::Registers RegisterTwo>
+inline void CPU::AND_R_R() {
+    registers_m.setRegister(RegisterOne, registers_m.getRegister(RegisterOne) & registers_m.getRegister(RegisterTwo));
+    setZeroFlagIfRegisterIsZero(RegisterOne);
+    registers_m.setFlag(Flags::H, true);
+    registers_m.setFlag(Flags::N, false);
+    registers_m.setFlag(Flags::C, false);
 }
 
 #endif // !CPU_HPP

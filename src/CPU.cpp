@@ -60,7 +60,9 @@ void CPU::initializeOpcodeTable() noexcept {
     initializeINCsOpcodes();
     initializeDECsOpcodes();
 
-    initialize_JP_Opcodes();
+    initializeANDsOpcodes();
+
+    initializeJPsOpcodes();
     initializeMiscellaneousOpcodes();
 }
 
@@ -185,6 +187,16 @@ void CPU::initializeDECsOpcodes() noexcept {
     opcodeTable[DEC_SP_Opcode] = &CPU::DEC_RR<CombinedRegisters::SP>;
 }
 
+void CPU::initializeANDsOpcodes() noexcept {
+    opcodeTable[AND_A_A_Opcode] = &CPU::AND_R_R<Registers::A, Registers::A>;
+    opcodeTable[AND_A_B_Opcode] = &CPU::AND_R_R<Registers::A, Registers::B>;
+    opcodeTable[AND_A_C_Opcode] = &CPU::AND_R_R<Registers::A, Registers::C>;
+    opcodeTable[AND_A_D_Opcode] = &CPU::AND_R_R<Registers::A, Registers::D>;
+    opcodeTable[AND_A_E_Opcode] = &CPU::AND_R_R<Registers::A, Registers::E>;
+    opcodeTable[AND_A_H_Opcode] = &CPU::AND_R_R<Registers::A, Registers::H>;
+    opcodeTable[AND_A_L_Opcode] = &CPU::AND_R_R<Registers::A, Registers::L>;
+}
+
 void CPU::setZeroFlagIfRegisterIsZero(Registers reg) {
     registers_m.setFlag(Flags::Z, (registers_m.getRegister(reg) == 0));
 }
@@ -200,7 +212,7 @@ void CPU::setHalfCarryIfHalfCarryWillOcurr(Registers reg, uint8_t valueToAdd, bo
     }
 }
 
-void CPU::initialize_JP_Opcodes() noexcept {
+void CPU::initializeJPsOpcodes() noexcept {
     opcodeTable[JP_u16_Opcode] = &CPU::JP_u16;
 }
 
