@@ -153,6 +153,16 @@ static constexpr uint8_t AND_A_L_Opcode{ 0xA5 };
 static constexpr uint8_t AND_A_u8_Opcode{ 0xE6 };
 static constexpr uint8_t AND_A_addressHL_Opcode{ 0xA6 };
 
+static constexpr uint8_t OR_A_A_Opcode{ 0xB7 };
+static constexpr uint8_t OR_A_B_Opcode{ 0xB0 };
+static constexpr uint8_t OR_A_C_Opcode{ 0xB1 };
+static constexpr uint8_t OR_A_D_Opcode{ 0xB2 };
+static constexpr uint8_t OR_A_E_Opcode{ 0xB3 };
+static constexpr uint8_t OR_A_H_Opcode{ 0xB4 };
+static constexpr uint8_t OR_A_L_Opcode{ 0xB5 };
+static constexpr uint8_t OR_A_u8_Opcode{ 0xF6 };
+static constexpr uint8_t OR_A_addressHL_Opcode{ 0xB6 };
+
 static constexpr uint8_t JP_u16_Opcode{ 0xC3 };
 
 #endif // !OPCODES_HPP

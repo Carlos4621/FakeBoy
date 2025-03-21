@@ -78,6 +78,7 @@ private:
     static void initializeDECsOpcodes() noexcept;
 
     static void initializeANDsOpcodes() noexcept;
+    static void initializeORsOpcodes() noexcept;
 
     void setZeroFlagIfRegisterIsZero(CPU::Registers reg);
     void setHalfCarryIfHalfCarryWillOcurr(CPU::Registers reg, uint8_t valueToAdd, bool isAdd);
@@ -198,6 +199,9 @@ private:
 
     void AND_A_addressHL();
 
+    template<CPU::Registers Register>
+    void OR_A_R();
+
     void JP_u16();
 
     void NOP();
@@ -211,8 +215,7 @@ inline void CPU::pushOperationsToQueue(Ops... ops) {
 }
 
 template <CPU::Registers Register, uint8_t offset>
-inline void CPU::from_R_assignTo_addressU16()
-{
+inline void CPU::from_R_assignTo_addressU16() {
     const auto address{ registers_m.getCombinedRegister(CombinedRegisters::Auxiliary) + offset };
     memoryBus_m->write(address, registers_m.getRegister(Register));
 }
@@ -314,6 +317,15 @@ inline void CPU::AND_A_R() {
     registers_m.setRegister(Registers::A, registers_m.getRegister(Registers::A) & registers_m.getRegister(Register));
     setZeroFlagIfRegisterIsZero(Registers::A);
     registers_m.setFlag(Flags::H, true);
+    registers_m.setFlag(Flags::N, false);
+    registers_m.setFlag(Flags::C, false);
+}
+
+template <CPU::Registers Register>
+inline void CPU::OR_A_R() {
+    registers_m.setRegister(Registers::A, registers_m.getRegister(Registers::A) | registers_m.getRegister(Register));
+    setZeroFlagIfRegisterIsZero(Registers::A);
+    registers_m.setFlag(Flags::H, false);
     registers_m.setFlag(Flags::N, false);
     registers_m.setFlag(Flags::C, false);
 }
