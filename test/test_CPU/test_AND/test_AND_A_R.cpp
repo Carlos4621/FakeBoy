@@ -4,7 +4,7 @@
 #include <iostream>
 #include "TestingCPU.hpp"
 
-static constexpr std::string_view CartidgePath{ "test_AND_R_R_ROM.gb" };
+static constexpr std::string_view CartidgePath{ "test_AND_A_R_ROM.gb" };
 static constexpr uint16_t MinimumTCyclesNeeded{ 268 };
 static constexpr uint8_t TCyclesForOthersSections{ 36 };
 
@@ -12,7 +12,7 @@ static constexpr std::array ExpectedValues {
     0b00000001, 0b00000010, 0b00000100, 0b00001000, 0, 0
 };
 
-class CPU_AND_R_R : public ::testing::Test {
+class CPU_AND_A_R : public ::testing::Test {
 protected:
     Cartridge cartridge_m{ CartidgePath };
     VideoRAM videoRAM_m;
@@ -31,7 +31,7 @@ protected:
     }
 };
 
-TEST_F(CPU_AND_R_R, AND_R_R_OpcodesWorks) {
+TEST_F(CPU_AND_A_R, AND_A_R_OpcodesWorks) {
     for (size_t i{ 0 }; i < ExpectedValues.size(); ++i) {
         const auto address{ 0xA000 + i };
 
@@ -41,7 +41,7 @@ TEST_F(CPU_AND_R_R, AND_R_R_OpcodesWorks) {
     }
 }
 
-TEST_F(CPU_AND_R_R, AND_R_R_ZeroFlagWorks) {
+TEST_F(CPU_AND_A_R, AND_A_R_ZeroFlagWorks) {
     for (size_t i{ 0 }; i < TCyclesForOthersSections; ++i) {
         cpu_m.processTCycle();
     }

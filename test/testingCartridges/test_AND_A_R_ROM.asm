@@ -1,6 +1,6 @@
 INCLUDE "header.asm"
 
-HEADER "AND R, R", MBC_NONE, ROM_32K, RAM_8K
+HEADER "AND A, R", MBC_NONE, ROM_32K, RAM_8K
 
 Start:
     
@@ -44,5 +44,6 @@ Start:
     ld a, 0b01000000
     ld b, 0b10000000
     and b
+    ld [$A006], a
 
     jp Start
