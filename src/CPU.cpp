@@ -188,13 +188,15 @@ void CPU::initializeDECsOpcodes() noexcept {
 }
 
 void CPU::initializeANDsOpcodes() noexcept {
-    opcodeTable[AND_A_A_Opcode] = &CPU::AND_R_R<Registers::A, Registers::A>;
-    opcodeTable[AND_A_B_Opcode] = &CPU::AND_R_R<Registers::A, Registers::B>;
-    opcodeTable[AND_A_C_Opcode] = &CPU::AND_R_R<Registers::A, Registers::C>;
-    opcodeTable[AND_A_D_Opcode] = &CPU::AND_R_R<Registers::A, Registers::D>;
-    opcodeTable[AND_A_E_Opcode] = &CPU::AND_R_R<Registers::A, Registers::E>;
-    opcodeTable[AND_A_H_Opcode] = &CPU::AND_R_R<Registers::A, Registers::H>;
-    opcodeTable[AND_A_L_Opcode] = &CPU::AND_R_R<Registers::A, Registers::L>;
+    opcodeTable[AND_A_A_Opcode] = &CPU::AND_A_R<Registers::A>;
+    opcodeTable[AND_A_B_Opcode] = &CPU::AND_A_R<Registers::B>;
+    opcodeTable[AND_A_C_Opcode] = &CPU::AND_A_R<Registers::C>;
+    opcodeTable[AND_A_D_Opcode] = &CPU::AND_A_R<Registers::D>;
+    opcodeTable[AND_A_E_Opcode] = &CPU::AND_A_R<Registers::E>;
+    opcodeTable[AND_A_H_Opcode] = &CPU::AND_A_R<Registers::H>;
+    opcodeTable[AND_A_L_Opcode] = &CPU::AND_A_R<Registers::L>;
+
+    opcodeTable[AND_A_u8_Opcode] = &CPU::AND_R_u8<Registers::A>;
 }
 
 void CPU::setZeroFlagIfRegisterIsZero(Registers reg) {

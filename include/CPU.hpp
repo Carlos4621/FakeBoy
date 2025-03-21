@@ -103,6 +103,9 @@ private:
     void fromAWriteToIORegisters(uint8_t offset);
     void fromIORegistersWriteToA(uint8_t offset);
 
+    template<CPU::Registers Register>
+    void ANDRegisterWithNextByte();
+
     template<CPU::Registers Register, uint8_t offset = 0>
     void from_R_assignTo_addressU16();
 
@@ -191,8 +194,11 @@ private:
 
     void DEC_addressHL();
 
-    template<CPU::Registers RegisterOne, CPU::Registers RegisterTwo>
-    void AND_R_R();
+    template<CPU::Registers Register>
+    void AND_A_R();
+    
+    template<CPU::Registers Register>
+    void AND_R_u8();
 
     void JP_u16();
 
@@ -206,8 +212,20 @@ inline void CPU::pushOperationsToQueue(Ops... ops) {
     (operationsQueue_m.push(ops), ...);
 }
 
+template <CPU::Registers Register>
+inline void CPU::ANDRegisterWithNextByte() {
+    loadNextByteToLower();
+    registers_m.setRegister(Register, registers_m.getRegister(Register) & registers_m.getRegister(Registers::AuxiliaryLow));
+
+    setZeroFlagIfRegisterIsZero(Register);
+    registers_m.setFlag(Flags::N, false);
+    registers_m.setFlag(Flags::H, true);
+    registers_m.setFlag(Flags::C, false);
+}
+
 template <CPU::Registers Register, uint8_t offset>
-inline void CPU::from_R_assignTo_addressU16() {
+inline void CPU::from_R_assignTo_addressU16()
+{
     const auto address{ registers_m.getCombinedRegister(CombinedRegisters::Auxiliary) + offset };
     memoryBus_m->write(address, registers_m.getRegister(Register));
 }
@@ -304,13 +322,18 @@ inline void CPU::DEC_RR() {
     pushOperationsToQueue(&CPU::addOrSubstractToCombinedRegisters<Registers, 1, false>);
 }
 
-template <CPU::Registers RegisterOne, CPU::Registers RegisterTwo>
-inline void CPU::AND_R_R() {
-    registers_m.setRegister(RegisterOne, registers_m.getRegister(RegisterOne) & registers_m.getRegister(RegisterTwo));
-    setZeroFlagIfRegisterIsZero(RegisterOne);
+template <CPU::Registers Register>
+inline void CPU::AND_A_R() {
+    registers_m.setRegister(Registers::A, registers_m.getRegister(Registers::A) & registers_m.getRegister(Register));
+    setZeroFlagIfRegisterIsZero(Registers::A);
     registers_m.setFlag(Flags::H, true);
     registers_m.setFlag(Flags::N, false);
     registers_m.setFlag(Flags::C, false);
+}
+
+template <CPU::Registers Register>
+inline void CPU::AND_R_u8() {
+    pushOperationsToQueue(&CPU::ANDRegisterWithNextByte<Register>);
 }
 
 #endif // !CPU_HPP
