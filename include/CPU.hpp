@@ -225,6 +225,8 @@ private:
     template<CPU::Registers Register>
     void ADD_A_R();
 
+    void ADD_A_u8();
+
     void JP_u16();
 
     void NOP();

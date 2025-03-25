@@ -181,6 +181,8 @@ static constexpr uint8_t ADD_A_E_Opcode{ 0x83 };
 static constexpr uint8_t ADD_A_H_Opcode{ 0x84 };
 static constexpr uint8_t ADD_A_L_Opcode{ 0x85 };
 
+static constexpr uint8_t ADD_A_u8_Opcode{ 0xC6 };
+
 static constexpr uint8_t JP_u16_Opcode{ 0xC3 };
 
 #endif // !OPCODES_HPP
