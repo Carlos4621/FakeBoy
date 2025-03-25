@@ -214,6 +214,8 @@ private:
     template<CPU::Registers Register>
     void XOR_A_R();
 
+    void XOR_A_u8();
+
     void JP_u16();
 
     void NOP();
