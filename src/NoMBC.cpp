@@ -6,7 +6,9 @@ NoMBC::NoMBC() {
 }
 
 void NoMBC::writeToRegisters(uint16_t address, uint8_t value) {
-    // Sin MBC, no hay registros que escribir
+    // No hay registros para escribir, así que no hacemos nada
+    (void)address; // Evitar advertencias de variable no utilizada
+    (void)value;   // Evitar advertencias de variable no utilizada
 }
 
 uint16_t NoMBC::getRedirected_ROM_address(uint16_t address) const noexcept {
