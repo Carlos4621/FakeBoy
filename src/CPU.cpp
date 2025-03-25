@@ -225,6 +225,7 @@ void CPU::initializeXORsOpcodes() noexcept {
     opcodeTable[XOR_A_L_Opcode] = &CPU::XOR_A_R<Registers::L>;
 
     opcodeTable[XOR_A_u8_Opcode] = &CPU::XOR_A_u8;
+    opcodeTable[XOR_A_addressHL_Opcode] = &CPU::XOR_A_addressHL;
 }
 
 void CPU::setZeroFlagIfRegisterIsZero(Registers reg) {
@@ -520,6 +521,11 @@ void CPU::OR_A_addressHL() {
 
 void CPU::XOR_A_u8() {
     loadNextByteToLower();
+    pushOperationsToQueue(&CPU::XOR_A_R<Registers::AuxiliaryLow>);
+}
+
+void CPU::XOR_A_addressHL() {
+    from_addressRR_assignTo_R<CombinedRegisters::HL, Registers::AuxiliaryLow>();
     pushOperationsToQueue(&CPU::XOR_A_R<Registers::AuxiliaryLow>);
 }
 

@@ -216,6 +216,8 @@ private:
 
     void XOR_A_u8();
 
+    void XOR_A_addressHL();
+
     void JP_u16();
 
     void NOP();
