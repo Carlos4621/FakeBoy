@@ -27,6 +27,8 @@ file(GLOB SRC_FILES "src/*.cpp" "src/*/*.cpp" "test/test_CPU/TestingCPU/*.cpp")
 
 add_executable(FakeBoy main.cpp ${SRC_FILES})
 
+target_compile_options(FakeBoy PRIVATE -Wall -Wextra -Wpedantic)
+
 enable_testing()
 
 file(GLOB TEST_FILES "test/*/*.cpp" "test/*.cpp" "test/*/*/*.cpp")
