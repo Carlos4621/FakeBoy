@@ -64,6 +64,8 @@ void CPU::initializeOpcodeTable() noexcept {
     initializeORsOpcodes();
     initializeXORsOpcodes();
 
+    initializeADDsOpcodes();
+
     initializeJPsOpcodes();
     initializeMiscellaneousOpcodes();
 }
@@ -228,6 +230,16 @@ void CPU::initializeXORsOpcodes() noexcept {
     opcodeTable[XOR_A_addressHL_Opcode] = &CPU::XOR_A_addressHL;
 }
 
+void CPU::initializeADDsOpcodes() noexcept {
+    opcodeTable[ADD_A_A_Opcode] = &CPU::ADD_A_R<Registers::A>;
+    opcodeTable[ADD_A_B_Opcode] = &CPU::ADD_A_R<Registers::B>;
+    opcodeTable[ADD_A_C_Opcode] = &CPU::ADD_A_R<Registers::C>;
+    opcodeTable[ADD_A_D_Opcode] = &CPU::ADD_A_R<Registers::D>;
+    opcodeTable[ADD_A_E_Opcode] = &CPU::ADD_A_R<Registers::E>;
+    opcodeTable[ADD_A_H_Opcode] = &CPU::ADD_A_R<Registers::H>;
+    opcodeTable[ADD_A_L_Opcode] = &CPU::ADD_A_R<Registers::L>;
+}
+
 void CPU::setZeroFlagIfRegisterIsZero(Registers reg) {
     registers_m.setFlag(Flags::Z, (registers_m.getRegister(reg) == 0));
 }
@@ -236,10 +248,21 @@ void CPU::setHalfCarryIfHalfCarryWillOcurr(Registers reg, uint8_t valueToAdd, bo
     const auto registerValue{ registers_m.getRegister(reg) };
 
     if(isAdd) {
-        registers_m.setFlag(Flags::H, (((registerValue & ByteMask) + valueToAdd) > ByteMask));
+        registers_m.setFlag(Flags::H, (((registerValue & ByteMask) + (valueToAdd & ByteMask)) & HalfCarryByteMask) != 0);
     }
     else {
         registers_m.setFlag(Flags::H, ((registerValue & ByteMask) < ((registerValue - valueToAdd) & ByteMask)));
+    }
+}
+
+void CPU::setCarryIfCarryWillOcurr(CPU::Registers reg, uint8_t valueToAdd, bool isAdd) {
+    const auto registerValue{ registers_m.getRegister(reg) };
+
+    if(isAdd) {
+        registers_m.setFlag(Flags::C, static_cast<uint8_t>(registerValue + valueToAdd) < registerValue);
+    }
+    else {
+        registers_m.setFlag(Flags::C, (registerValue < valueToAdd));
     }
 }
 
@@ -408,8 +431,12 @@ void CPU::setPC(uint16_t address) {
     registers_m.setCombinedRegister(CombinedRegisters::PC, address);
 }
 
-void CPU::addOrSubstractToRegister(Registers Register, uint8_t valueToAdd, bool isAdd) {
+void CPU::addOrSubstractToRegister(Registers Register, uint8_t valueToAdd, bool isAdd, bool detectCarry) {
     setHalfCarryIfHalfCarryWillOcurr(Register, valueToAdd, isAdd);
+
+    if (detectCarry) {
+        setCarryIfCarryWillOcurr(Register, valueToAdd, isAdd);
+    }
 
     registers_m.setRegister(Register, registers_m.getRegister(Register) + (isAdd ? valueToAdd : -valueToAdd));
 
@@ -529,8 +556,7 @@ void CPU::XOR_A_addressHL() {
     pushOperationsToQueue(&CPU::XOR_A_R<Registers::AuxiliaryLow>);
 }
 
-void CPU::JP_u16()
-{
+void CPU::JP_u16() {
     pushOperationsToQueue(
         &CPU::loadNextByteToLower,
         &CPU::loadNextByteToUpper,

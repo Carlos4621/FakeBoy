@@ -49,6 +49,7 @@ private:
     static constexpr uint8_t ByteDisplacement{ 8 };
     static constexpr uint8_t TCyclesPerInstruction{ 4 };
     static constexpr uint8_t ByteMask{ 0x0F };
+    static constexpr uint8_t HalfCarryByteMask{ 0x10 };
 
     static std::array<MemberFunction, NumberOfOpcodes> opcodeTable;
     static bool isOpcodeTableInitialized;
@@ -83,10 +84,13 @@ private:
     static void initializeORsOpcodes() noexcept;
     static void initializeXORsOpcodes() noexcept;
 
+    static void initializeADDsOpcodes() noexcept;
+
     void logicalOperation_A_R(CPU::Registers reg, LogicalOperations operation);
 
     void setZeroFlagIfRegisterIsZero(CPU::Registers reg);
     void setHalfCarryIfHalfCarryWillOcurr(CPU::Registers reg, uint8_t valueToAdd, bool isAdd);
+    void setCarryIfCarryWillOcurr(CPU::Registers reg, uint8_t valueToAdd, bool isAdd);
 
     template<typename... Ops>
     void pushOperationsToQueue(Ops... ops);
@@ -136,7 +140,7 @@ private:
     template<CPU::CombinedRegisters ToRegisters, CPU::Registers FromRegister, bool Increment>
     void from_R_assignTo_addressRR_and_incrementOrDecrementRR();
 
-    void addOrSubstractToRegister(CPU::Registers Register, uint8_t valueToAdd, bool isAdd);
+    void addOrSubstractToRegister(CPU::Registers Register, uint8_t valueToAdd, bool isAdd, bool detectCarry = false);
 
     template <CPU::CombinedRegisters ToRegisters, CPU::Registers Register, uint8_t increment, bool isAdd>
     void AddOrSubstractRegisterAndAssignToAddressRR();
@@ -217,6 +221,9 @@ private:
     void XOR_A_u8();
 
     void XOR_A_addressHL();
+
+    template<CPU::Registers Register>
+    void ADD_A_R();
 
     void JP_u16();
 
@@ -341,6 +348,11 @@ inline void CPU::OR_A_R() {
 template <CPU::Registers Register>
 inline void CPU::XOR_A_R() {
     logicalOperation_A_R(Register, LogicalOperations::XOR);
+}
+
+template <CPU::Registers Register>
+inline void CPU::ADD_A_R() {
+    addOrSubstractToRegister(Registers::A, registers_m.getRegister(Register), true, true);
 }
 
 #endif // !CPU_HPP

@@ -173,6 +173,14 @@ static constexpr uint8_t XOR_A_L_Opcode{ 0xAD };
 static constexpr uint8_t XOR_A_u8_Opcode{ 0xEE };
 static constexpr uint8_t XOR_A_addressHL_Opcode{ 0xAE };
 
+static constexpr uint8_t ADD_A_A_Opcode{ 0x87 };
+static constexpr uint8_t ADD_A_B_Opcode{ 0x80 };
+static constexpr uint8_t ADD_A_C_Opcode{ 0x81 };
+static constexpr uint8_t ADD_A_D_Opcode{ 0x82 };
+static constexpr uint8_t ADD_A_E_Opcode{ 0x83 };
+static constexpr uint8_t ADD_A_H_Opcode{ 0x84 };
+static constexpr uint8_t ADD_A_L_Opcode{ 0x85 };
+
 static constexpr uint8_t JP_u16_Opcode{ 0xC3 };
 
 #endif // !OPCODES_HPP
