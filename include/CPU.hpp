@@ -43,6 +43,8 @@ private:
     using CombinedRegisters = CPURegisters::CombinedRegisters;
     using Flags = CPURegisters::Flags;
 
+    enum class LogicalOperations : uint8_t { AND, OR, XOR };
+
     static constexpr uint16_t NumberOfOpcodes{ 256 };
     static constexpr uint8_t ByteDisplacement{ 8 };
     static constexpr uint8_t TCyclesPerInstruction{ 4 };
@@ -79,6 +81,9 @@ private:
 
     static void initializeANDsOpcodes() noexcept;
     static void initializeORsOpcodes() noexcept;
+    static void initializeXORsOpcodes() noexcept;
+
+    void logicalOperation_A_R(CPU::Registers reg, LogicalOperations operation);
 
     void setZeroFlagIfRegisterIsZero(CPU::Registers reg);
     void setHalfCarryIfHalfCarryWillOcurr(CPU::Registers reg, uint8_t valueToAdd, bool isAdd);
@@ -206,6 +211,9 @@ private:
 
     void OR_A_addressHL();
 
+    template<CPU::Registers Register>
+    void XOR_A_R();
+
     void JP_u16();
 
     void NOP();
@@ -318,20 +326,17 @@ inline void CPU::DEC_RR() {
 
 template <CPU::Registers Register>
 inline void CPU::AND_A_R() {
-    registers_m.setRegister(Registers::A, registers_m.getRegister(Registers::A) & registers_m.getRegister(Register));
-    setZeroFlagIfRegisterIsZero(Registers::A);
-    registers_m.setFlag(Flags::H, true);
-    registers_m.setFlag(Flags::N, false);
-    registers_m.setFlag(Flags::C, false);
+    logicalOperation_A_R(Register, LogicalOperations::AND);
 }
 
 template <CPU::Registers Register>
 inline void CPU::OR_A_R() {
-    registers_m.setRegister(Registers::A, registers_m.getRegister(Registers::A) | registers_m.getRegister(Register));
-    setZeroFlagIfRegisterIsZero(Registers::A);
-    registers_m.setFlag(Flags::H, false);
-    registers_m.setFlag(Flags::N, false);
-    registers_m.setFlag(Flags::C, false);
+    logicalOperation_A_R(Register, LogicalOperations::OR);
+}
+
+template <CPU::Registers Register>
+inline void CPU::XOR_A_R() {
+    logicalOperation_A_R(Register, LogicalOperations::XOR);
 }
 
 #endif // !CPU_HPP

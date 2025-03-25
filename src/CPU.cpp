@@ -62,6 +62,7 @@ void CPU::initializeOpcodeTable() noexcept {
 
     initializeANDsOpcodes();
     initializeORsOpcodes();
+    initializeXORsOpcodes();
 
     initializeJPsOpcodes();
     initializeMiscellaneousOpcodes();
@@ -214,6 +215,16 @@ void CPU::initializeORsOpcodes() noexcept {
     opcodeTable[OR_A_addressHL_Opcode] = &CPU::OR_A_addressHL;
 }
 
+void CPU::initializeXORsOpcodes() noexcept {
+    opcodeTable[XOR_A_A_Opcode] = &CPU::XOR_A_R<Registers::A>;
+    opcodeTable[XOR_A_B_Opcode] = &CPU::XOR_A_R<Registers::B>;
+    opcodeTable[XOR_A_C_Opcode] = &CPU::XOR_A_R<Registers::C>;
+    opcodeTable[XOR_A_D_Opcode] = &CPU::XOR_A_R<Registers::D>;
+    opcodeTable[XOR_A_E_Opcode] = &CPU::XOR_A_R<Registers::E>;
+    opcodeTable[XOR_A_H_Opcode] = &CPU::XOR_A_R<Registers::H>;
+    opcodeTable[XOR_A_L_Opcode] = &CPU::XOR_A_R<Registers::L>;
+}
+
 void CPU::setZeroFlagIfRegisterIsZero(Registers reg) {
     registers_m.setFlag(Flags::Z, (registers_m.getRegister(reg) == 0));
 }
@@ -287,6 +298,34 @@ void CPU::initialize_LDI_LDD_Opcodes() noexcept {
 void CPU::initialize_LD_SPs_HLs_Opcodes() noexcept {
     opcodeTable[LD_SP_HL_Opcode] = &CPU::LD_SP_HL;
     opcodeTable[LD_addressU16_SP_Opcode] = &CPU::LD_addressU16_SP;
+}
+
+void CPU::logicalOperation_A_R(CPU::Registers reg, LogicalOperations operation) {
+    uint8_t registerAValue = registers_m.getRegister(Registers::A);
+    uint8_t registerRValue = registers_m.getRegister(reg);
+    uint8_t result{};
+    
+    switch(operation) {
+        case LogicalOperations::AND:
+            result = registerAValue & registerRValue;
+            registers_m.setFlag(Flags::H, true);
+            break;
+
+        case LogicalOperations::OR:
+            result = registerAValue | registerRValue;
+            registers_m.setFlag(Flags::H, false);
+            break;
+
+        case LogicalOperations::XOR:
+            result = registerAValue ^ registerRValue;
+            registers_m.setFlag(Flags::H, false);
+            break;
+    }
+    
+    registers_m.setRegister(Registers::A, result);
+    setZeroFlagIfRegisterIsZero(Registers::A);
+    registers_m.setFlag(Flags::N, false);
+    registers_m.setFlag(Flags::C, false);
 }
 
 void CPU::fetchOpcode() {
