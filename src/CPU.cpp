@@ -240,6 +240,7 @@ void CPU::initializeADDsOpcodes() noexcept {
     opcodeTable[ADD_A_L_Opcode] = &CPU::ADD_A_R<Registers::L>;
 
     opcodeTable[ADD_A_u8_Opcode] = &CPU::ADD_A_u8;
+    opcodeTable[ADD_A_addressHL_Opcode] = &CPU::ADD_A_addressHL;
 }
 
 void CPU::setZeroFlagIfRegisterIsZero(Registers reg) {
@@ -560,6 +561,11 @@ void CPU::XOR_A_addressHL() {
 
 void CPU::ADD_A_u8() {
     loadNextByteToLower();
+    pushOperationsToQueue(&CPU::ADD_A_R<Registers::AuxiliaryLow>);
+}
+
+void CPU::ADD_A_addressHL() {
+    from_addressRR_assignTo_R<CombinedRegisters::HL, Registers::AuxiliaryLow>();
     pushOperationsToQueue(&CPU::ADD_A_R<Registers::AuxiliaryLow>);
 }
 

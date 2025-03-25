@@ -227,6 +227,8 @@ private:
 
     void ADD_A_u8();
 
+    void ADD_A_addressHL();
+
     void JP_u16();
 
     void NOP();
