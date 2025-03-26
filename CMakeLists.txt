@@ -27,7 +27,8 @@ file(GLOB SRC_FILES "src/*.cpp" "src/*/*.cpp" "test/test_CPU/TestingCPU/*.cpp")
 
 add_executable(FakeBoy main.cpp ${SRC_FILES})
 
-target_compile_options(FakeBoy PRIVATE -Wall -Wextra -Wpedantic)
+target_compile_options(FakeBoy PRIVATE -Wall -Wextra -Wpedantic -fsanitize=address,undefined -fno-omit-frame-pointer)
+target_link_options(FakeBoy PRIVATE -fsanitize=address,undefined)
 
 enable_testing()
 
