@@ -183,6 +183,11 @@ static constexpr uint8_t ADD_A_L_Opcode{ 0x85 };
 static constexpr uint8_t ADD_A_u8_Opcode{ 0xC6 };
 static constexpr uint8_t ADD_A_addressHL_Opcode{ 0x86 };
 
+static constexpr uint8_t ADD_HL_BC_Opcode{ 0x09 };
+static constexpr uint8_t ADD_HL_DE_Opcode{ 0x19 };
+static constexpr uint8_t ADD_HL_HL_Opcode{ 0x29 };
+static constexpr uint8_t ADD_HL_SP_Opcode{ 0x39 };
+
 static constexpr uint8_t JP_u16_Opcode{ 0xC3 };
 
 #endif // !OPCODES_HPP

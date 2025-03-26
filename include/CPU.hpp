@@ -49,7 +49,8 @@ private:
     static constexpr uint8_t ByteDisplacement{ 8 };
     static constexpr uint8_t TCyclesPerInstruction{ 4 };
     static constexpr uint8_t ByteMask{ 0x0F };
-    static constexpr uint8_t HalfCarryByteMask{ 0x10 };
+    static constexpr uint8_t HalfCarryByteMask_8Bits{ 0x10 };
+    static constexpr uint16_t HalfCarryByteMask_16Bits{ 0x0FFF };
 
     static std::array<MemberFunction, NumberOfOpcodes> opcodeTable;
     static bool isOpcodeTableInitialized;
@@ -67,16 +68,16 @@ private:
     static void initialieLDsOpcodes() noexcept;
     static void initialize_LD_R_R_Opcodes() noexcept;
     static void initialize_LD_R_u8_Opcodes() noexcept;
-    static void initializeJPsOpcodes() noexcept;
-    static void initializeMiscellaneousOpcodes() noexcept;
     static void initialize_LD_RR_u16_Opcodes() noexcept;
     static void initialize_LD_addressRR_R_Opcodes() noexcept;
     static void initialize_LD_R_addressRR_Opcodes() noexcept;
     static void initialize_LD_addressHL_u8_Opcode() noexcept;
     static void initialize_LDI_LDD_Opcodes() noexcept;
     static void initialize_LD_SPs_HLs_Opcodes() noexcept;
-    static void initialize_LDH_Opcodes();
+    static void initialize_LDH_Opcodes() noexcept;
 
+    static void initializeJPsOpcodes() noexcept;
+    
     static void initializeINCsOpcodes() noexcept;
     static void initializeDECsOpcodes() noexcept;
 
@@ -86,11 +87,17 @@ private:
 
     static void initializeADDsOpcodes() noexcept;
 
-    void logicalOperation_A_R(CPU::Registers reg, LogicalOperations operation);
+    static void initializeMiscellaneousOpcodes() noexcept;
 
-    void setZeroFlagIfRegisterIsZero(CPU::Registers reg);
-    void setHalfCarryIfHalfCarryWillOcurr(CPU::Registers reg, uint8_t valueToAdd, bool isAdd);
-    void setCarryIfCarryWillOcurr(CPU::Registers reg, uint8_t valueToAdd, bool isAdd);
+    void logicalOperation_A_R(Registers reg, LogicalOperations operation);
+
+    void setZeroFlagIfRegisterIsZero(Registers reg);
+    void setHalfCarryIfHalfCarryWillOcurr_8Bits(Registers reg, uint8_t valueToAdd, bool isAdd);
+    void setCarryIfCarryWillOcurr_8bits(Registers reg, uint8_t valueToAdd, bool isAdd);
+
+    void setZeroFlagIfCombinedRegisterIsZero(CombinedRegisters reg);
+    void setHalfCarryIfHalfCarryWillOcurr_16Bits(CombinedRegisters reg, uint16_t valueToAdd, bool isAdd);
+    void setCarryIfCarryWillOcurr_16bits(CombinedRegisters reg, uint16_t valueToAdd, bool isAdd);
 
     template<typename... Ops>
     void pushOperationsToQueue(Ops... ops);
@@ -142,11 +149,14 @@ private:
 
     void addOrSubstractToRegister(CPU::Registers Register, uint8_t valueToAdd, bool isAdd, bool detectCarry = false);
 
-    template <CPU::CombinedRegisters ToRegisters, CPU::Registers Register, uint8_t increment, bool isAdd>
-    void AddOrSubstractRegisterAndAssignToAddressRR();
+    template <CPU::CombinedRegisters FirstRegister, CPU::CombinedRegisters SecondRegister, bool isAdd>
+    void addOrSubstractTwoCombinedRegister();
 
-    template<CPU::CombinedRegisters Registers, uint8_t Increment, bool isAdd>
-    void addOrSubstractToCombinedRegisters();
+    template <CPU::CombinedRegisters ToRegisters, CPU::Registers Register, uint8_t increment, bool isAdd>
+    void addOrSubstractRegisterAndAssignToAddressRR();
+
+    template<CPU::CombinedRegisters Registers, bool isIncrement>
+    void incrementOrDecrementCombinedRegisters();
 
     template<CPU::Registers ToRegister, CPU::Registers FromRegister>
     void LD_R_R();
@@ -229,6 +239,9 @@ private:
 
     void ADD_A_addressHL();
 
+    template<CPU::CombinedRegisters Registers>
+    void ADD_HL_RR();
+
     void JP_u16();
 
     void NOP();
@@ -272,24 +285,37 @@ inline void CPU::from_R_assignTo_addressRR() {
 template <CPU::CombinedRegisters FromRegisters, CPU::Registers ToRegister, bool Increment>
 inline void CPU::from_addressRR_assignTo_R_and_incrementOrDecrementRR() {
     from_addressRR_assignTo_R<FromRegisters, ToRegister>();
-    addOrSubstractToCombinedRegisters<FromRegisters, 1, Increment>();
+    incrementOrDecrementCombinedRegisters<FromRegisters, Increment>();
 }
 
 template <CPU::CombinedRegisters ToRegisters, CPU::Registers FromRegister, bool Increment>
 inline void CPU::from_R_assignTo_addressRR_and_incrementOrDecrementRR() {
     from_R_assignTo_addressRR<ToRegisters, FromRegister>();
-    addOrSubstractToCombinedRegisters<ToRegisters, 1, Increment>();
+    incrementOrDecrementCombinedRegisters<ToRegisters, Increment>();
+}
+
+template <CPU::CombinedRegisters FirstRegister, CPU::CombinedRegisters SecondRegister, bool isAdd>
+inline void CPU::addOrSubstractTwoCombinedRegister() {
+    const auto secondRegisterValue{ registers_m.getCombinedRegister(SecondRegister) };
+
+    setHalfCarryIfHalfCarryWillOcurr_16Bits(FirstRegister, secondRegisterValue, isAdd);
+    setCarryIfCarryWillOcurr_16bits(FirstRegister, secondRegisterValue, isAdd);
+
+    registers_m.setCombinedRegister(FirstRegister, registers_m.getCombinedRegister(FirstRegister) + (isAdd ? secondRegisterValue : -secondRegisterValue));
+
+    setZeroFlagIfCombinedRegisterIsZero(FirstRegister);
+    registers_m.setFlag(Flags::N, !isAdd);
 }
 
 template <CPU::CombinedRegisters ToRegisters, CPU::Registers Register, uint8_t increment, bool isAdd>
-inline void CPU::AddOrSubstractRegisterAndAssignToAddressRR() {
+inline void CPU::addOrSubstractRegisterAndAssignToAddressRR() {
     addOrSubstractToRegister(Register, increment, isAdd);
     memoryBus_m->write(registers_m.getCombinedRegister(ToRegisters), registers_m.getRegister(Register));
 }
 
-template <CPU::CombinedRegisters Registers, uint8_t Increment, bool isAdd>
-inline void CPU::addOrSubstractToCombinedRegisters() {
-    registers_m.setCombinedRegister(Registers, registers_m.getCombinedRegister(Registers) + (isAdd ? Increment : -Increment));
+template <CPU::CombinedRegisters Registers, bool isIncrement>
+inline void CPU::incrementOrDecrementCombinedRegisters() {
+    registers_m.setCombinedRegister(Registers, registers_m.getCombinedRegister(Registers) + (isIncrement ? 1 : -1));
 }
 
 template <CPU::Registers ToRegister, CPU::Registers FromRegister>
@@ -326,7 +352,7 @@ inline void CPU::INC_R() {
 
 template <CPU::CombinedRegisters Registers>
 inline void CPU::INC_RR() {
-    pushOperationsToQueue(&CPU::addOrSubstractToCombinedRegisters<Registers, 1, true>);
+    pushOperationsToQueue(&CPU::incrementOrDecrementCombinedRegisters<Registers, true>);
 }
 
 template <CPU::Registers Register>
@@ -336,7 +362,7 @@ inline void CPU::DEC_R() {
 
 template <CPU::CombinedRegisters Registers>
 inline void CPU::DEC_RR() {
-    pushOperationsToQueue(&CPU::addOrSubstractToCombinedRegisters<Registers, 1, false>);
+    pushOperationsToQueue(&CPU::incrementOrDecrementCombinedRegisters<Registers, false>);
 }
 
 template <CPU::Registers Register>
@@ -357,6 +383,11 @@ inline void CPU::XOR_A_R() {
 template <CPU::Registers Register>
 inline void CPU::ADD_A_R() {
     addOrSubstractToRegister(Registers::A, registers_m.getRegister(Register), true, true);
+}
+
+template <CPU::CombinedRegisters Registers>
+inline void CPU::ADD_HL_RR() {
+    pushOperationsToQueue(&CPU::addOrSubstractTwoCombinedRegister<CombinedRegisters::HL, Registers, true>);
 }
 
 #endif // !CPU_HPP

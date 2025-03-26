@@ -150,7 +150,7 @@ void CPU::initialize_LD_R_u8_Opcodes() noexcept {
     opcodeTable[LD_L_u8_Opcode] = &CPU::LD_R_u8<CPU::Registers::L>;
 }
 
-void CPU::initialize_LDH_Opcodes() {
+void CPU::initialize_LDH_Opcodes() noexcept {
     opcodeTable[LDH_A_addressU8_Opcode] = &CPU::LDH_A_addressU8;
     opcodeTable[LDH_addressU8_A_Opcode] = &CPU::LDH_addressU8_A;
     opcodeTable[LD_A_addressC_Opcode] = &CPU::LD_A_addressC;
@@ -241,28 +241,58 @@ void CPU::initializeADDsOpcodes() noexcept {
 
     opcodeTable[ADD_A_u8_Opcode] = &CPU::ADD_A_u8;
     opcodeTable[ADD_A_addressHL_Opcode] = &CPU::ADD_A_addressHL;
+
+    opcodeTable[ADD_HL_BC_Opcode] = &CPU::ADD_HL_RR<CombinedRegisters::BC>;
+    opcodeTable[ADD_HL_DE_Opcode] = &CPU::ADD_HL_RR<CombinedRegisters::DE>;
+    opcodeTable[ADD_HL_HL_Opcode] = &CPU::ADD_HL_RR<CombinedRegisters::HL>;
+    opcodeTable[ADD_HL_SP_Opcode] = &CPU::ADD_HL_RR<CombinedRegisters::SP>;
 }
 
 void CPU::setZeroFlagIfRegisterIsZero(Registers reg) {
     registers_m.setFlag(Flags::Z, (registers_m.getRegister(reg) == 0));
 }
 
-void CPU::setHalfCarryIfHalfCarryWillOcurr(Registers reg, uint8_t valueToAdd, bool isAdd) {
+void CPU::setHalfCarryIfHalfCarryWillOcurr_8Bits(Registers reg, uint8_t valueToAdd, bool isAdd) {
     const auto registerValue{ registers_m.getRegister(reg) };
 
     if(isAdd) {
-        registers_m.setFlag(Flags::H, (((registerValue & ByteMask) + (valueToAdd & ByteMask)) & HalfCarryByteMask) != 0);
+        registers_m.setFlag(Flags::H, (((registerValue & ByteMask) + (valueToAdd & ByteMask)) & HalfCarryByteMask_8Bits) != 0);
     }
     else {
         registers_m.setFlag(Flags::H, ((registerValue & ByteMask) < ((registerValue - valueToAdd) & ByteMask)));
     }
 }
 
-void CPU::setCarryIfCarryWillOcurr(CPU::Registers reg, uint8_t valueToAdd, bool isAdd) {
+void CPU::setCarryIfCarryWillOcurr_8bits(CPU::Registers reg, uint8_t valueToAdd, bool isAdd) {
     const auto registerValue{ registers_m.getRegister(reg) };
 
     if(isAdd) {
         registers_m.setFlag(Flags::C, static_cast<uint8_t>(registerValue + valueToAdd) < registerValue);
+    }
+    else {
+        registers_m.setFlag(Flags::C, (registerValue < valueToAdd));
+    }
+}
+
+void CPU::setZeroFlagIfCombinedRegisterIsZero(CombinedRegisters reg) {
+    registers_m.setFlag(Flags::Z, (registers_m.getCombinedRegister(reg) == 0));
+}
+
+void CPU::setHalfCarryIfHalfCarryWillOcurr_16Bits(CombinedRegisters reg, uint16_t valueToAdd, bool isAdd) {
+    const auto registerValue{ registers_m.getCombinedRegister(reg) };
+
+    if (isAdd) {
+        registers_m.setFlag(Flags::H, ((registerValue & HalfCarryByteMask_16Bits) + (valueToAdd & HalfCarryByteMask_16Bits)) > HalfCarryByteMask_16Bits);
+    }
+    else {
+        registers_m.setFlag(Flags::H, (registerValue & HalfCarryByteMask_16Bits) < (valueToAdd & HalfCarryByteMask_16Bits));
+    }
+}
+
+void CPU::setCarryIfCarryWillOcurr_16bits(CombinedRegisters reg, uint16_t valueToAdd, bool isAdd) {
+    const auto registerValue{ registers_m.getCombinedRegister(reg) };
+    if (isAdd) {
+        registers_m.setFlag(Flags::C, static_cast<uint16_t>(registerValue + valueToAdd) < registerValue);
     }
     else {
         registers_m.setFlag(Flags::C, (registerValue < valueToAdd));
@@ -435,10 +465,10 @@ void CPU::setPC(uint16_t address) {
 }
 
 void CPU::addOrSubstractToRegister(Registers Register, uint8_t valueToAdd, bool isAdd, bool detectCarry) {
-    setHalfCarryIfHalfCarryWillOcurr(Register, valueToAdd, isAdd);
+    setHalfCarryIfHalfCarryWillOcurr_8Bits(Register, valueToAdd, isAdd);
 
     if (detectCarry) {
-        setCarryIfCarryWillOcurr(Register, valueToAdd, isAdd);
+        setCarryIfCarryWillOcurr_8bits(Register, valueToAdd, isAdd);
     }
 
     registers_m.setRegister(Register, registers_m.getRegister(Register) + (isAdd ? valueToAdd : -valueToAdd));
@@ -518,14 +548,14 @@ void CPU::LDH_addressU8_A() {
 void CPU::INC_addressHL() {
     pushOperationsToQueue(
         &CPU::from_addressRR_assignTo_R<CombinedRegisters::HL, Registers::AuxiliaryLow>,
-        &CPU::AddOrSubstractRegisterAndAssignToAddressRR<CombinedRegisters::HL, Registers::AuxiliaryLow, 1, true>
+        &CPU::addOrSubstractRegisterAndAssignToAddressRR<CombinedRegisters::HL, Registers::AuxiliaryLow, 1, true>
     );
 }
 
 void CPU::DEC_addressHL() {
     pushOperationsToQueue(
         &CPU::from_addressRR_assignTo_R<CombinedRegisters::HL, Registers::AuxiliaryLow>,
-        &CPU::AddOrSubstractRegisterAndAssignToAddressRR<CombinedRegisters::HL, Registers::AuxiliaryLow, 1, false>
+        &CPU::addOrSubstractRegisterAndAssignToAddressRR<CombinedRegisters::HL, Registers::AuxiliaryLow, 1, false>
     );
 }
 
