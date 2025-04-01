@@ -285,6 +285,8 @@ void CPU::initializeSBCsOpcodes() noexcept {
     opcodeTable[SBC_A_E_Opcode] = &CPU::SBC_A_R<Registers::E>;
     opcodeTable[SBC_A_H_Opcode] = &CPU::SBC_A_R<Registers::H>;
     opcodeTable[SBC_A_L_Opcode] = &CPU::SBC_A_R<Registers::L>;
+
+    opcodeTable[SBC_A_u8_Opcode] = &CPU::SBC_A_u8;
 }
 
 void CPU::setZeroFlagIfRegisterIsZero(Registers reg) {
@@ -656,6 +658,11 @@ void CPU::CP_A_u8() {
 void CPU::CP_A_addressHL() {
     from_addressRR_assignTo_R<CombinedRegisters::HL, Registers::AuxiliaryLow>();
     pushOperationsToQueue(&CPU::CP_A_R<Registers::AuxiliaryLow>);
+}
+
+void CPU::SBC_A_u8() {
+    loadNextByteToLower();
+    pushOperationsToQueue(&CPU::SBC_A_R<Registers::AuxiliaryLow>);
 }
 
 void CPU::JP_u16() {

@@ -262,6 +262,8 @@ private:
     template<CPU::Registers Register>
     void SBC_A_R();
 
+    void SBC_A_u8();
+
     void JP_u16();
 
     void NOP();
