@@ -87,6 +87,7 @@ private:
 
     static void initializeADDsOpcodes() noexcept;
     static void initializeSUBsOpcodes() noexcept;
+    static void initializeCPsOpcodes() noexcept;
 
     static void initializeMiscellaneousOpcodes() noexcept;
 
@@ -250,6 +251,9 @@ private:
 
     void SUB_A_addressHL();
 
+    template<CPU::Registers Register>
+    void CP_A_R();
+
     void JP_u16();
 
     void NOP();
@@ -401,6 +405,12 @@ inline void CPU::ADD_HL_RR() {
 template <CPU::Registers Register>
 inline void CPU::SUB_A_R() {
     addOrSubstractToRegister(Registers::A, registers_m.getRegister(Register), false, true);
+}
+
+template <CPU::Registers Register>
+inline void CPU::CP_A_R() {
+    LD_R_R<Registers::AuxiliaryLow, Registers::A>();
+    addOrSubstractToRegister(Registers::AuxiliaryLow, registers_m.getRegister(Register), false, true);
 }
 
 #endif // !CPU_HPP
