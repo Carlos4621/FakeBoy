@@ -208,6 +208,16 @@ static constexpr uint8_t CP_A_L_Opcode{ 0xBD };
 static constexpr uint8_t CP_A_u8_Opcode{ 0xFE };
 static constexpr uint8_t CP_A_addressHL_Opcode{ 0xBE };
 
+static constexpr uint8_t SBC_A_A_Opcode{ 0x9F };
+static constexpr uint8_t SBC_A_B_Opcode{ 0x98 };
+static constexpr uint8_t SBC_A_C_Opcode{ 0x99 };
+static constexpr uint8_t SBC_A_D_Opcode{ 0x9A };
+static constexpr uint8_t SBC_A_E_Opcode{ 0x9B };
+static constexpr uint8_t SBC_A_H_Opcode{ 0x9C };
+static constexpr uint8_t SBC_A_L_Opcode{ 0x9D };
+static constexpr uint8_t SBC_A_u8_Opcode{ 0xDE };
+static constexpr uint8_t SBC_A_addressHL_Opcode{ 0x9E };
+
 static constexpr uint8_t JP_u16_Opcode{ 0xC3 };
 
 #endif // !OPCODES_HPP
