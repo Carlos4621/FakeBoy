@@ -43,7 +43,7 @@ private:
 
     static constexpr uint8_t TotalRegisters{ 8 };
 
-    static constexpr uint16_t InitialAFRegister{ 0x01B0 };
+    static constexpr uint16_t InitialAFRegister{ 0x0180 };
     static constexpr uint16_t InitialBCRegister{ 0x0013 };
     static constexpr uint16_t InitialDERegister{ 0x00D8 };
     static constexpr uint16_t InitialHLRegister{ 0x014D };
