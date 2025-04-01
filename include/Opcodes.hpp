@@ -195,6 +195,8 @@ static constexpr uint8_t SUB_A_D_Opcode{ 0x92 };
 static constexpr uint8_t SUB_A_E_Opcode{ 0x93 };
 static constexpr uint8_t SUB_A_H_Opcode{ 0x94 };
 static constexpr uint8_t SUB_A_L_Opcode{ 0x95 };
+static constexpr uint8_t SUB_A_u8_Opcode{ 0xD6 };
+static constexpr uint8_t SUB_A_addressHL_Opcode{ 0x96 };
 
 static constexpr uint8_t JP_u16_Opcode{ 0xC3 };
 
