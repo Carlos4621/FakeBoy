@@ -65,6 +65,7 @@ void CPU::initializeOpcodeTable() noexcept {
     initializeXORsOpcodes();
 
     initializeADDsOpcodes();
+    initializeSUBsOpcodes();
 
     initializeJPsOpcodes();
     initializeMiscellaneousOpcodes();
@@ -246,6 +247,16 @@ void CPU::initializeADDsOpcodes() noexcept {
     opcodeTable[ADD_HL_DE_Opcode] = &CPU::ADD_HL_RR<CombinedRegisters::DE>;
     opcodeTable[ADD_HL_HL_Opcode] = &CPU::ADD_HL_RR<CombinedRegisters::HL>;
     opcodeTable[ADD_HL_SP_Opcode] = &CPU::ADD_HL_RR<CombinedRegisters::SP>;
+}
+
+void CPU::initializeSUBsOpcodes() noexcept {
+    opcodeTable[SUB_A_A_Opcode] = &CPU::SUB_A_R<Registers::A>;
+    opcodeTable[SUB_A_B_Opcode] = &CPU::SUB_A_R<Registers::B>;
+    opcodeTable[SUB_A_C_Opcode] = &CPU::SUB_A_R<Registers::C>;
+    opcodeTable[SUB_A_D_Opcode] = &CPU::SUB_A_R<Registers::D>;
+    opcodeTable[SUB_A_E_Opcode] = &CPU::SUB_A_R<Registers::E>;
+    opcodeTable[SUB_A_H_Opcode] = &CPU::SUB_A_R<Registers::H>;
+    opcodeTable[SUB_A_L_Opcode] = &CPU::SUB_A_R<Registers::L>;
 }
 
 void CPU::setZeroFlagIfRegisterIsZero(Registers reg) {

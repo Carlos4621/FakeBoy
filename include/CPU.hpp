@@ -86,6 +86,7 @@ private:
     static void initializeXORsOpcodes() noexcept;
 
     static void initializeADDsOpcodes() noexcept;
+    static void initializeSUBsOpcodes() noexcept;
 
     static void initializeMiscellaneousOpcodes() noexcept;
 
@@ -242,6 +243,9 @@ private:
     template<CPU::CombinedRegisters Registers>
     void ADD_HL_RR();
 
+    template<CPU::Registers Register>
+    void SUB_A_R();
+
     void JP_u16();
 
     void NOP();
@@ -388,6 +392,11 @@ inline void CPU::ADD_A_R() {
 template <CPU::CombinedRegisters Registers>
 inline void CPU::ADD_HL_RR() {
     pushOperationsToQueue(&CPU::addOrSubstractTwoCombinedRegister<CombinedRegisters::HL, Registers, true>);
+}
+
+template <CPU::Registers Register>
+inline void CPU::SUB_A_R() {
+    addOrSubstractToRegister(Registers::A, registers_m.getRegister(Register), false, true);
 }
 
 #endif // !CPU_HPP

@@ -188,6 +188,14 @@ static constexpr uint8_t ADD_HL_DE_Opcode{ 0x19 };
 static constexpr uint8_t ADD_HL_HL_Opcode{ 0x29 };
 static constexpr uint8_t ADD_HL_SP_Opcode{ 0x39 };
 
+static constexpr uint8_t SUB_A_A_Opcode{ 0x97 };
+static constexpr uint8_t SUB_A_B_Opcode{ 0x90 };
+static constexpr uint8_t SUB_A_C_Opcode{ 0x91 };
+static constexpr uint8_t SUB_A_D_Opcode{ 0x92 };
+static constexpr uint8_t SUB_A_E_Opcode{ 0x93 };
+static constexpr uint8_t SUB_A_H_Opcode{ 0x94 };
+static constexpr uint8_t SUB_A_L_Opcode{ 0x95 };
+
 static constexpr uint8_t JP_u16_Opcode{ 0xC3 };
 
 #endif // !OPCODES_HPP
