@@ -248,6 +248,8 @@ private:
 
     void SUB_A_u8();
 
+    void SUB_A_addressHL();
+
     void JP_u16();
 
     void NOP();
