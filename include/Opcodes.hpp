@@ -205,6 +205,8 @@ static constexpr uint8_t CP_A_D_Opcode{ 0xBA };
 static constexpr uint8_t CP_A_E_Opcode{ 0xBB };
 static constexpr uint8_t CP_A_H_Opcode{ 0xBC };
 static constexpr uint8_t CP_A_L_Opcode{ 0xBD };
+static constexpr uint8_t CP_A_u8_Opcode{ 0xFE };
+static constexpr uint8_t CP_A_addressHL_Opcode{ 0xBE };
 
 static constexpr uint8_t JP_u16_Opcode{ 0xC3 };
 
