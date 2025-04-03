@@ -231,5 +231,6 @@ static constexpr uint8_t ADC_A_addressHL_Opcode{ 0x8E };
 static constexpr uint8_t JP_HL_Opcode{ 0xE9 };
 static constexpr uint8_t JP_u16_Opcode{ 0xC3 };
 static constexpr uint8_t JP_Z_u16_Opcode{ 0xCA };
+static constexpr uint8_t JP_C_u16_Opcode{ 0xDA };
 
 #endif // !OPCODES_HPP

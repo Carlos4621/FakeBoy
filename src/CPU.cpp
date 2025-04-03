@@ -359,6 +359,7 @@ void CPU::initializeJPsOpcodes() noexcept {
     opcodeTable[JP_HL_Opcode] = &CPU::JP_HL;
     opcodeTable[JP_u16_Opcode] = &CPU::JP_u16;
     opcodeTable[JP_Z_u16_Opcode] = &CPU::JP_CF_u16<Flags::Z, false>;
+    opcodeTable[JP_C_u16_Opcode] = &CPU::JP_CF_u16<Flags::C, false>;
 }
 
 // REMINDER: colocar en su lugar correcto
