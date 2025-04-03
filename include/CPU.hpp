@@ -270,6 +270,8 @@ private:
     template <CPU::Registers Register>
     void ADC_A_R();
 
+    void ADC_A_u8();
+
     void JP_u16();
 
     void NOP();
