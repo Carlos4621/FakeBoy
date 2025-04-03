@@ -1,6 +1,6 @@
 INCLUDE "header.asm"
 
-HEADER "JP Z, HL", MBC_NONE, ROM_32K, RAM_8K
+HEADER "JP C, HL", MBC_NONE, ROM_32K, RAM_8K
 
 SECTION "Expected", ROM0[$3000]
     ld a, b
