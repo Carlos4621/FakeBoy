@@ -304,6 +304,11 @@ void CPU::initializeADCsOpcodes() noexcept {
     opcodeTable[ADC_A_addressHL_Opcode] = &CPU::ADC_A_addressHL;
 }
 
+void CPU::initalizeJPsOpcodes() noexcept {
+    opcodeTable[JP_HL_Opcode] = &CPU::JP_HL;
+    opcodeTable[JP_u16_Opcode] = &CPU::JP_u16;
+}
+
 void CPU::setZeroFlagIfRegisterIsZero(Registers reg) {
     registers_m.setFlag(Flags::Z, (registers_m.getRegister(reg) == 0));
 }
@@ -356,6 +361,7 @@ void CPU::setCarryIfCarryWillOcurr_16bits(CombinedRegisters reg, uint16_t valueT
 }
 
 void CPU::initializeJPsOpcodes() noexcept {
+    opcodeTable[JP_HL_Opcode] = &CPU::JP_HL;
     opcodeTable[JP_u16_Opcode] = &CPU::JP_u16;
 }
 
@@ -700,6 +706,10 @@ void CPU::JP_u16() {
         &CPU::loadNextByteToLower,
         &CPU::loadNextByteToUpper,
         &CPU::from_addressU16_assignTo_PC);
+}
+
+void CPU::JP_HL() {
+    setPC(registers_m.getCombinedRegister(CombinedRegisters::HL));
 }
 
 void CPU::NOP() {
