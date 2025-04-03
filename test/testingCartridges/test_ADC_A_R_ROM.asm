@@ -3,7 +3,7 @@ INCLUDE "header.asm"
 HEADER "ADC A, R", MBC_NONE, ROM_32K, RAM_8K
 
 Start:
-
+    add a
     ; A, A
     ld a, $2
     adc a

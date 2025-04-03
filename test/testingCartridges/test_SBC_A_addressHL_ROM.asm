@@ -3,7 +3,7 @@ INCLUDE "header.asm"
 HEADER "SBC A, (HL)", MBC_NONE, ROM_32K, RAM_8K
 
 Start:
-
+    add a
     ld a, $6
     ld hl, $A002
     ld [hl], a
