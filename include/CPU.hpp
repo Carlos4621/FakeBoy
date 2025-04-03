@@ -89,6 +89,7 @@ private:
     static void initializeSUBsOpcodes() noexcept;
     static void initializeCPsOpcodes() noexcept;
     static void initializeSBCsOpcodes() noexcept;
+    static void initializeADCsOpcodes() noexcept;
 
     static void initializeMiscellaneousOpcodes() noexcept;
 
@@ -266,6 +267,9 @@ private:
 
     void SBC_A_addressHL();
 
+    template <CPU::Registers Register>
+    void ADC_A_R();
+
     void JP_u16();
 
     void NOP();
@@ -430,6 +434,13 @@ inline void CPU::SBC_A_R() {
     const auto valueToSubtract{ static_cast<uint8_t>(registers_m.getRegister(Register) + (registers_m.getFlag(Flags::C) ? 1 : 0)) };
 
     addOrSubstractToRegister(Registers::A, valueToSubtract, false, true);
+}
+
+template <CPU::Registers Register>
+inline void CPU::ADC_A_R() {
+    const auto valueToAdd{ static_cast<uint8_t>(registers_m.getRegister(Register) + (registers_m.getFlag(Flags::C) ? 1 : 0)) };
+
+    addOrSubstractToRegister(Registers::A, valueToAdd, true, true);
 }
 
 #endif // !CPU_HPP

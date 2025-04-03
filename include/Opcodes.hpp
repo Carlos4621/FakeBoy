@@ -218,6 +218,16 @@ static constexpr uint8_t SBC_A_L_Opcode{ 0x9D };
 static constexpr uint8_t SBC_A_u8_Opcode{ 0xDE };
 static constexpr uint8_t SBC_A_addressHL_Opcode{ 0x9E };
 
+static constexpr uint8_t ADC_A_A_Opcode{ 0x8F };
+static constexpr uint8_t ADC_A_B_Opcode{ 0x88 };
+static constexpr uint8_t ADC_A_C_Opcode{ 0x89 };
+static constexpr uint8_t ADC_A_D_Opcode{ 0x8A };
+static constexpr uint8_t ADC_A_E_Opcode{ 0x8B };
+static constexpr uint8_t ADC_A_H_Opcode{ 0x8C };
+static constexpr uint8_t ADC_A_L_Opcode{ 0x8D };
+static constexpr uint8_t ADC_A_u8_Opcode{ 0xCE };
+static constexpr uint8_t ADC_A_addressHL_Opcode{ 0x8E };
+
 static constexpr uint8_t JP_u16_Opcode{ 0xC3 };
 
 #endif // !OPCODES_HPP
