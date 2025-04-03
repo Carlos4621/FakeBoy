@@ -77,6 +77,7 @@ private:
     static void initialize_LDH_Opcodes() noexcept;
 
     static void initializeJPsOpcodes() noexcept;
+    static void initializeJRsOpcodes() noexcept;
     
     static void initializeINCsOpcodes() noexcept;
     static void initializeDECsOpcodes() noexcept;
@@ -135,6 +136,7 @@ private:
 
     void incrementPC();
     void setPC(uint16_t address);
+    void from_i8_addTo_PC();
 
     template<CPU::Registers ToRegister>
     void assignNextByteToRegister();
@@ -280,6 +282,11 @@ private:
     void JP_CF_u16();
 
     void JP_HL();
+
+    void JR_i8();
+
+    template <CPU::Flags Flag, bool Negative>
+    void JR_CF_i8();
 
     void NOP();
     
@@ -460,6 +467,15 @@ inline void CPU::JP_CF_u16() {
 
     if (registers_m.getFlag(Flag) != Negative) {
         pushOperationsToQueue(&CPU::from_addressU16_assignTo_PC);
+    }
+}
+
+template <CPU::Flags Flag, bool Negative>
+inline void CPU::JR_CF_i8() {
+    pushOperationsToQueue(&CPU::loadNextByteToLower);
+
+    if (registers_m.getFlag(Flag) != Negative) {
+        pushOperationsToQueue(&CPU::from_i8_addTo_PC);
     }
 }
 

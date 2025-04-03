@@ -71,6 +71,8 @@ void CPU::initializeOpcodeTable() noexcept {
     initializeADCsOpcodes();
 
     initializeJPsOpcodes();
+    initializeJRsOpcodes();
+
     initializeMiscellaneousOpcodes();
 }
 
@@ -364,6 +366,10 @@ void CPU::initializeJPsOpcodes() noexcept {
     opcodeTable[JP_NC_u16_Opcode] = &CPU::JP_CF_u16<Flags::C, true>;
 }
 
+void CPU::initializeJRsOpcodes() noexcept {
+    opcodeTable[JR_i8_Opcode] = &CPU::JR_i8;
+}
+
 // REMINDER: colocar en su lugar correcto
 void CPU::initializeMiscellaneousOpcodes() noexcept {
     opcodeTable[LD_addressU16_A_Opcode] = &CPU::LD_addressU16_A;
@@ -523,6 +529,13 @@ void CPU::incrementPC() {
 
 void CPU::setPC(uint16_t address) {
     registers_m.setCombinedRegister(CombinedRegisters::PC, address);
+}
+
+void CPU::from_i8_addTo_PC() {
+    const auto signedValue{ static_cast<int8_t>(registers_m.getRegister(Registers::AuxiliaryLow)) };
+
+    registers_m.setCombinedRegister(CombinedRegisters::PC,
+        registers_m.getCombinedRegister(CombinedRegisters::PC) + signedValue);
 }
 
 void CPU::addOrSubstractToRegister(Registers Register, uint8_t valueToAdd, bool isAdd, bool detectCarry) {
@@ -709,6 +722,12 @@ void CPU::JP_u16() {
 
 void CPU::JP_HL() {
     setPC(registers_m.getCombinedRegister(CombinedRegisters::HL));
+}
+
+void CPU::JR_i8() {
+    pushOperationsToQueue(
+        &CPU::loadNextByteToLower,
+        &CPU::from_i8_addTo_PC);
 }
 
 void CPU::NOP() {
