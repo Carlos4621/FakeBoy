@@ -264,6 +264,8 @@ private:
 
     void SBC_A_u8();
 
+    void SBC_A_addressHL();
+
     void JP_u16();
 
     void NOP();
