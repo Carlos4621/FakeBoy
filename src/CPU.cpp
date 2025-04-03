@@ -304,11 +304,6 @@ void CPU::initializeADCsOpcodes() noexcept {
     opcodeTable[ADC_A_addressHL_Opcode] = &CPU::ADC_A_addressHL;
 }
 
-void CPU::initalizeJPsOpcodes() noexcept {
-    opcodeTable[JP_HL_Opcode] = &CPU::JP_HL;
-    opcodeTable[JP_u16_Opcode] = &CPU::JP_u16;
-}
-
 void CPU::setZeroFlagIfRegisterIsZero(Registers reg) {
     registers_m.setFlag(Flags::Z, (registers_m.getRegister(reg) == 0));
 }
@@ -363,6 +358,7 @@ void CPU::setCarryIfCarryWillOcurr_16bits(CombinedRegisters reg, uint16_t valueT
 void CPU::initializeJPsOpcodes() noexcept {
     opcodeTable[JP_HL_Opcode] = &CPU::JP_HL;
     opcodeTable[JP_u16_Opcode] = &CPU::JP_u16;
+    opcodeTable[JP_Z_u16_Opcode] = &CPU::JP_CF_u16<Flags::Z, false>;
 }
 
 // REMINDER: colocar en su lugar correcto
@@ -717,5 +713,5 @@ void CPU::NOP() {
 }
 
 void CPU::invalidOpcode() {
-    throw std::runtime_error{ std::string{ "Invalid opcode: " } + std::to_string(read_PC_Address()) };
+    throw std::runtime_error{ std::string{ "Invalid opcode: " } + std::to_string(memoryBus_m->read(registers_m.getCombinedRegister(CombinedRegisters::PC) - 1)) };
 }

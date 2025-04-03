@@ -278,6 +278,9 @@ private:
 
     void JP_u16();
 
+    template <CPU::Flags Flag, bool Negative>
+    void JP_CF_u16();
+
     void JP_HL();
 
     void NOP();
@@ -449,6 +452,17 @@ inline void CPU::ADC_A_R() {
     const auto valueToAdd{ static_cast<uint8_t>(registers_m.getRegister(Register) + (registers_m.getFlag(Flags::C) ? 1 : 0)) };
 
     addOrSubstractToRegister(Registers::A, valueToAdd, true, true);
+}
+
+template <CPU::Flags Flag, bool Negative>
+inline void CPU::JP_CF_u16() {
+    pushOperationsToQueue(
+        &CPU::loadNextByteToLower,
+        &CPU::loadNextByteToUpper);
+
+    if (registers_m.getFlag(Flag) != Negative) {
+        pushOperationsToQueue(&CPU::from_addressU16_assignTo_PC);
+    }
 }
 
 #endif // !CPU_HPP
