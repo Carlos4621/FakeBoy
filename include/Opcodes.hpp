@@ -236,5 +236,7 @@ static constexpr uint8_t JP_NZ_u16_Opcode{ 0xC2 };
 static constexpr uint8_t JP_NC_u16_Opcode{ 0xD2 };
 
 static constexpr uint8_t JR_i8_Opcode{ 0x18 };
+static constexpr uint8_t JR_Z_i8_Opcode{ 0x28 };
+static constexpr uint8_t JR_NZ_i8_Opcode{ 0x20 };
 
 #endif // !OPCODES_HPP
