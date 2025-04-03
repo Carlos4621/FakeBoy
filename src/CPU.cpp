@@ -371,6 +371,7 @@ void CPU::initializeJRsOpcodes() noexcept {
     opcodeTable[JR_Z_i8_Opcode] = &CPU::JR_CF_i8<Flags::Z, false>;
     opcodeTable[JR_NZ_i8_Opcode] = &CPU::JR_CF_i8<Flags::Z, true>;
     opcodeTable[JR_C_i8_Opcode] = &CPU::JR_CF_i8<Flags::C, false>;
+    opcodeTable[JR_NC_i8_Opcode] = &CPU::JR_CF_i8<Flags::C, true>;
 }
 
 // REMINDER: colocar en su lugar correcto
