@@ -91,8 +91,6 @@ private:
     static void initializeSBCsOpcodes() noexcept;
     static void initializeADCsOpcodes() noexcept;
 
-    static void initalizeJPsOpcodes() noexcept;
-
     static void initializeMiscellaneousOpcodes() noexcept;
 
     void logicalOperation_A_R(Registers reg, LogicalOperations operation);
