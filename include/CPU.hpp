@@ -92,6 +92,8 @@ private:
     static void initializeSBCsOpcodes() noexcept;
     static void initializeADCsOpcodes() noexcept;
 
+    static void initializePUSHsOpcodes() noexcept;
+
     static void initializeMiscellaneousOpcodes() noexcept;
 
     void logicalOperation_A_R(Registers reg, LogicalOperations operation);
@@ -137,6 +139,12 @@ private:
     void incrementPC();
     void setPC(uint16_t address);
     void from_i8_addTo_PC();
+
+    template<CPU::Registers Register>
+    void from_R_assignTo_addressSP_and_decrement_SP();
+
+    void decrementSP();
+    void incrementSP();
 
     template<CPU::Registers ToRegister>
     void assignNextByteToRegister();
@@ -288,6 +296,9 @@ private:
     template <CPU::Flags Flag, bool Negative>
     void JR_CF_i8();
 
+    template <CPU::Registers UpperRegister, CPU::Registers LowerRegister>
+    void PUSH_RR();
+
     void NOP();
     
     void invalidOpcode();
@@ -310,8 +321,16 @@ inline void CPU::from_addressU16_assignTo_R() {
     registers_m.setRegister(Register, memoryBus_m->read(address));
 }
 
+template <CPU::Registers Register>
+inline void CPU::from_R_assignTo_addressSP_and_decrement_SP() {
+    decrementSP();
+    const auto address{ registers_m.getCombinedRegister(CombinedRegisters::SP) };
+    memoryBus_m->write(address, registers_m.getRegister(Register));
+}
+
 template <CPU::Registers ToRegister>
-inline void CPU::assignNextByteToRegister() {
+inline void CPU::assignNextByteToRegister()
+{
     loadNextByteToLower();
     registers_m.setRegister(ToRegister, registers_m.getRegister(Registers::AuxiliaryLow));
 }
@@ -477,6 +496,15 @@ inline void CPU::JR_CF_i8() {
     if (registers_m.getFlag(Flag) != Negative) {
         pushOperationsToQueue(&CPU::from_i8_addTo_PC);
     }
+}
+
+template <CPU::Registers UpperRegister, CPU::Registers LowerRegister>
+inline void CPU::PUSH_RR() {
+    pushOperationsToQueue(
+        &CPU::NOP,
+        &CPU::from_R_assignTo_addressSP_and_decrement_SP<UpperRegister>,
+        &CPU::from_R_assignTo_addressSP_and_decrement_SP<LowerRegister>
+    );
 }
 
 #endif // !CPU_HPP

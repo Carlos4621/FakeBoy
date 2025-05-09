@@ -73,6 +73,8 @@ void CPU::initializeOpcodeTable() noexcept {
     initializeJPsOpcodes();
     initializeJRsOpcodes();
 
+    initializePUSHsOpcodes();
+
     initializeMiscellaneousOpcodes();
 }
 
@@ -304,6 +306,13 @@ void CPU::initializeADCsOpcodes() noexcept {
 
     opcodeTable[ADC_A_u8_Opcode] = &CPU::ADC_A_u8;
     opcodeTable[ADC_A_addressHL_Opcode] = &CPU::ADC_A_addressHL;
+}
+
+void CPU::initializePUSHsOpcodes() noexcept {
+    opcodeTable[PUSH_AF_Opcode] = &CPU::PUSH_RR<Registers::A, Registers::F>;
+    opcodeTable[PUSH_BC_Opcode] = &CPU::PUSH_RR<Registers::B, Registers::C>;
+    opcodeTable[PUSH_DE_Opcode] = &CPU::PUSH_RR<Registers::D, Registers::E>;
+    opcodeTable[PUSH_HL_Opcode] = &CPU::PUSH_RR<Registers::H, Registers::L>;
 }
 
 void CPU::setZeroFlagIfRegisterIsZero(Registers reg) {
@@ -542,7 +551,16 @@ void CPU::from_i8_addTo_PC() {
         registers_m.getCombinedRegister(CombinedRegisters::PC) + signedValue);
 }
 
-void CPU::addOrSubstractToRegister(Registers Register, uint8_t valueToAdd, bool isAdd, bool detectCarry) {
+void CPU::decrementSP() {
+    registers_m.setCombinedRegister(CombinedRegisters::SP, registers_m.getCombinedRegister(CombinedRegisters::SP) - 1);
+}
+
+void CPU::incrementSP() {
+    registers_m.setCombinedRegister(CombinedRegisters::SP, registers_m.getCombinedRegister(CombinedRegisters::SP) + 1);
+}
+
+void CPU::addOrSubstractToRegister(Registers Register, uint8_t valueToAdd, bool isAdd, bool detectCarry)
+{
     setHalfCarryIfHalfCarryWillOcurr_8Bits(Register, valueToAdd, isAdd);
 
     if (detectCarry) {
