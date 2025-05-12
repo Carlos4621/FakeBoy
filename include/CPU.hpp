@@ -93,6 +93,7 @@ private:
     static void initializeADCsOpcodes() noexcept;
 
     static void initializePUSHsOpcodes() noexcept;
+    static void initializePOPsOpcodes() noexcept;
 
     static void initializeMiscellaneousOpcodes() noexcept;
 
@@ -142,6 +143,9 @@ private:
 
     template<CPU::Registers Register>
     void from_R_assignTo_addressSP_and_decrement_SP();
+
+    template<CPU::Registers Register>
+    void from_addressSp_assignTo_R_and_increment_SP();
 
     void decrementSP();
     void incrementSP();
@@ -299,6 +303,9 @@ private:
     template <CPU::Registers UpperRegister, CPU::Registers LowerRegister>
     void PUSH_RR();
 
+    template <CPU::Registers UpperRegister, CPU::Registers LowerRegister>
+    void POP_RR();
+
     void NOP();
     
     void invalidOpcode();
@@ -328,9 +335,15 @@ inline void CPU::from_R_assignTo_addressSP_and_decrement_SP() {
     memoryBus_m->write(address, registers_m.getRegister(Register));
 }
 
+template <CPU::Registers Register>
+inline void CPU::from_addressSp_assignTo_R_and_increment_SP() {
+    const auto address{ registers_m.getCombinedRegister(CombinedRegisters::SP) };
+    registers_m.setRegister(Register, memoryBus_m->read(address));
+    incrementSP();
+}
+
 template <CPU::Registers ToRegister>
-inline void CPU::assignNextByteToRegister()
-{
+inline void CPU::assignNextByteToRegister() {
     loadNextByteToLower();
     registers_m.setRegister(ToRegister, registers_m.getRegister(Registers::AuxiliaryLow));
 }
@@ -504,6 +517,14 @@ inline void CPU::PUSH_RR() {
         &CPU::NOP,
         &CPU::from_R_assignTo_addressSP_and_decrement_SP<UpperRegister>,
         &CPU::from_R_assignTo_addressSP_and_decrement_SP<LowerRegister>
+    );
+}
+
+template <CPU::Registers UpperRegister, CPU::Registers LowerRegister>
+inline void CPU::POP_RR() {
+    pushOperationsToQueue(
+        &CPU::from_addressSp_assignTo_R_and_increment_SP<LowerRegister>,
+        &CPU::from_addressSp_assignTo_R_and_increment_SP<UpperRegister>
     );
 }
 

@@ -246,4 +246,9 @@ static constexpr uint8_t PUSH_BC_Opcode{ 0xC5 };
 static constexpr uint8_t PUSH_DE_Opcode{ 0xD5 };
 static constexpr uint8_t PUSH_HL_Opcode{ 0xE5 };
 
+static constexpr uint8_t POP_AF_Opcode{ 0xF1 };
+static constexpr uint8_t POP_BC_Opcode{ 0xC1 };
+static constexpr uint8_t POP_DE_Opcode{ 0xD1 };
+static constexpr uint8_t POP_HL_Opcode{ 0xE1 };
+
 #endif // !OPCODES_HPP
