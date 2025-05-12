@@ -94,6 +94,7 @@ private:
 
     static void initializePUSHsOpcodes() noexcept;
     static void initializePOPsOpcodes() noexcept;
+    static void initializeCALLsOpcodes() noexcept;
 
     static void initializeMiscellaneousOpcodes() noexcept;
 
@@ -305,6 +306,11 @@ private:
 
     template <CPU::Registers UpperRegister, CPU::Registers LowerRegister>
     void POP_RR();
+
+    void CALL_u16();
+
+    template <CPU::Flags Flag, bool Negative>
+    void CALL_CF_u16();
 
     void NOP();
     
@@ -526,6 +532,20 @@ inline void CPU::POP_RR() {
         &CPU::from_addressSp_assignTo_R_and_increment_SP<LowerRegister>,
         &CPU::from_addressSp_assignTo_R_and_increment_SP<UpperRegister>
     );
+}
+
+template <CPU::Flags Flag, bool Negative>
+inline void CPU::CALL_CF_u16() {
+    pushOperationsToQueue(
+        &CPU::loadNextByteToLower,
+        &CPU::loadNextByteToUpper);
+
+    if (registers_m.getFlag(Flag) != Negative) {
+        pushOperationsToQueue(
+            &CPU::NOP,
+            &CPU::from_R_assignTo_addressSP_and_decrement_SP<Registers::PC_Up>,
+            &CPU::from_R_assignTo_addressSP_and_decrement_SP<Registers::PC_Low>);
+    }
 }
 
 #endif // !CPU_HPP

@@ -251,4 +251,6 @@ static constexpr uint8_t POP_BC_Opcode{ 0xC1 };
 static constexpr uint8_t POP_DE_Opcode{ 0xD1 };
 static constexpr uint8_t POP_HL_Opcode{ 0xE1 };
 
+static constexpr uint8_t CALL_u16_Opcode{ 0xCD };
+
 #endif // !OPCODES_HPP
