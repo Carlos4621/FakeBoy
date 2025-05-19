@@ -574,8 +574,14 @@ template <CPU::Flags Flag, bool Negative>
 inline void CPU::CALL_CF_u16() {
     pushOperationsToQueue(
         &CPU::loadNextByteToLower,
-        &CPU::loadNextByteToUpper,
-        &CPU::add_CALL_CC_u16_JumpOperationsIfCondition<Flag, Negative>);
+        &CPU::loadNextByteToUpper);
+
+    if (registers_m.getFlag(Flag) != Negative) {
+        pushOperationsToQueue(
+            &CPU::from_R_assignTo_addressSP_and_decrement_SP<Registers::PC_Up>,
+            &CPU::from_R_assignTo_addressSP_and_decrement_SP<Registers::PC_Low>,
+            &CPU::from_RR_assignTo_RR<CombinedRegisters::Auxiliary, CombinedRegisters::PC>);
+    }
 }
 
 #endif // !CPU_HPP

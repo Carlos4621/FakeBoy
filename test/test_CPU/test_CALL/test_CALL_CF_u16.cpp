@@ -5,7 +5,7 @@
 #include "TestingCPU.hpp"
 
 static constexpr std::string_view CartidgePath{ "test_CALL_CF_u16_ROM.gb" };
-static constexpr uint16_t MinimumTCyclesNeeded{ 1000 };
+static constexpr uint16_t MinimumTCyclesNeeded{ 708 };
 
 static constexpr std::array ExpectedValues {
     0x55, 0xAA, 0x55, 0xAA, 0x55, 0xAA, 0x55, 0xAA
