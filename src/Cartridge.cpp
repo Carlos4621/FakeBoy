@@ -18,6 +18,9 @@ void Cartridge::write(uint16_t address, uint8_t value) {
     case MemoryRange::ExternalRAM:
         writeToRAM(address, value);
         break;
+
+    default:
+        throwInvalidAddress(address);
     }
 }
 
@@ -31,9 +34,10 @@ uint8_t Cartridge::read(uint16_t address) {
 
     case MemoryRange::ExternalRAM:
         return readFromRAM(address);
-    }
 
-    std::unreachable();
+    default:
+        throwInvalidAddress(address);
+    }
 }
 
 uint8_t Cartridge::directReadToFile(uint16_t address) {
