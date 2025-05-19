@@ -18,5 +18,4 @@ Fallo:
 
 Subrutina:
     LD A, B ; 88 
-    POP HL ; 100
-    JP HL ; 104
+    ret 
