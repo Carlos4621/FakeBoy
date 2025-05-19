@@ -95,6 +95,7 @@ private:
     static void initializePUSHsOpcodes() noexcept;
     static void initializePOPsOpcodes() noexcept;
     static void initializeCALLsOpcodes() noexcept;
+    static void initializeRETsOpcodes() noexcept;
 
     static void initializeMiscellaneousOpcodes() noexcept;
 
@@ -163,8 +164,11 @@ private:
     template<CPU::CombinedRegisters FromRegisters, CPU::Registers ToRegister, bool Increment>
     void from_addressRR_assignTo_R_and_incrementOrDecrementRR();
 
-    template<CPU::CombinedRegisters ToRegisters, CPU::Registers FromRegister, bool Increment>
+    template <CPU::CombinedRegisters ToRegisters, CPU::Registers FromRegister, bool Increment>
     void from_R_assignTo_addressRR_and_incrementOrDecrementRR();
+
+    template <CPU::CombinedRegisters FromRegisters, CPU::CombinedRegisters ToRegister>
+    void from_RR_assignTo_RR();
 
     void addOrSubstractToRegister(CPU::Registers Register, uint8_t valueToAdd, bool isAdd, bool detectCarry = false);
 
@@ -176,6 +180,12 @@ private:
 
     template<CPU::CombinedRegisters Registers, bool isIncrement>
     void incrementOrDecrementCombinedRegisters();
+
+    template<CPU::Flags Flag, bool Negative>
+    void add_CALL_CC_u16_JumpOperationsIfCondition(); 
+
+    template<CPU::Flags Flag, bool Negative>
+    void setU16ToPCIfCondition();
 
     template<CPU::Registers ToRegister, CPU::Registers FromRegister>
     void LD_R_R();
@@ -312,6 +322,8 @@ private:
     template <CPU::Flags Flag, bool Negative>
     void CALL_CF_u16();
 
+    void RET();
+
     void NOP();
     
     void invalidOpcode();
@@ -376,6 +388,12 @@ inline void CPU::from_R_assignTo_addressRR_and_incrementOrDecrementRR() {
     incrementOrDecrementCombinedRegisters<ToRegisters, Increment>();
 }
 
+template <CPU::CombinedRegisters FromRegisters, CPU::CombinedRegisters ToRegister>
+inline void CPU::from_RR_assignTo_RR() {
+    const auto value{ registers_m.getCombinedRegister(FromRegisters) };
+    registers_m.setCombinedRegister(ToRegister, value);
+}
+
 template <CPU::CombinedRegisters FirstRegister, CPU::CombinedRegisters SecondRegister, bool isAdd>
 inline void CPU::addOrSubstractTwoCombinedRegister() {
     const auto secondRegisterValue{ registers_m.getCombinedRegister(SecondRegister) };
@@ -398,6 +416,24 @@ inline void CPU::addOrSubstractRegisterAndAssignToAddressRR() {
 template <CPU::CombinedRegisters Registers, bool isIncrement>
 inline void CPU::incrementOrDecrementCombinedRegisters() {
     registers_m.setCombinedRegister(Registers, registers_m.getCombinedRegister(Registers) + (isIncrement ? 1 : -1));
+}
+
+template <CPU::Flags Flag, bool Negative>
+inline void CPU::add_CALL_CC_u16_JumpOperationsIfCondition() {
+    if (registers_m.getFlag(Flag) != Negative) {
+        from_R_assignTo_addressSP_and_decrement_SP<Registers::PC_Up>();
+
+        pushOperationsToQueue(
+            &CPU::from_R_assignTo_addressSP_and_decrement_SP<Registers::PC_Low>,
+            &CPU::from_RR_assignTo_RR<CombinedRegisters::Auxiliary, CombinedRegisters::PC>);
+    }
+}
+
+template <CPU::Flags Flag, bool Negative>
+inline void CPU::setU16ToPCIfCondition() {
+    if (registers_m.getFlag(Flag) != Negative) {
+        from_addressU16_assignTo_PC();
+    }
 }
 
 template <CPU::Registers ToRegister, CPU::Registers FromRegister>
@@ -479,8 +515,8 @@ inline void CPU::SUB_A_R() {
 
 template <CPU::Registers Register>
 inline void CPU::CP_A_R() {
-    LD_R_R<Registers::AuxiliaryLow, Registers::A>();
-    addOrSubstractToRegister(Registers::AuxiliaryLow, registers_m.getRegister(Register), false, true);
+    LD_R_R<Registers::AuxiliaryUp, Registers::A>();
+    addOrSubstractToRegister(Registers::AuxiliaryUp, registers_m.getRegister(Register), false, true);
 }
 
 template <CPU::Registers Register>
@@ -538,14 +574,8 @@ template <CPU::Flags Flag, bool Negative>
 inline void CPU::CALL_CF_u16() {
     pushOperationsToQueue(
         &CPU::loadNextByteToLower,
-        &CPU::loadNextByteToUpper);
-
-    if (registers_m.getFlag(Flag) != Negative) {
-        pushOperationsToQueue(
-            &CPU::NOP,
-            &CPU::from_R_assignTo_addressSP_and_decrement_SP<Registers::PC_Up>,
-            &CPU::from_R_assignTo_addressSP_and_decrement_SP<Registers::PC_Low>);
-    }
+        &CPU::loadNextByteToUpper,
+        &CPU::add_CALL_CC_u16_JumpOperationsIfCondition<Flag, Negative>);
 }
 
 #endif // !CPU_HPP

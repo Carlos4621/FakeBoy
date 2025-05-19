@@ -76,6 +76,7 @@ void CPU::initializeOpcodeTable() noexcept {
     initializePUSHsOpcodes();
     initializePOPsOpcodes();
     initializeCALLsOpcodes();
+    initializeRETsOpcodes();
 
     initializeMiscellaneousOpcodes();
 }
@@ -326,6 +327,14 @@ void CPU::initializePOPsOpcodes() noexcept {
 
 void CPU::initializeCALLsOpcodes() noexcept {
     opcodeTable[CALL_u16_Opcode] = &CPU::CALL_u16;
+    opcodeTable[CALL_Z_u16_Opcode] = &CPU::CALL_CF_u16<Flags::Z, false>;
+    opcodeTable[CALL_NZ_u16_Opcode] = &CPU::CALL_CF_u16<Flags::Z, true>;
+    opcodeTable[CALL_C_u16_Opcode] = &CPU::CALL_CF_u16<Flags::C, false>;
+    opcodeTable[CALL_NC_u16_Opcode] = &CPU::CALL_CF_u16<Flags::C, true>;
+}
+
+void CPU::initializeRETsOpcodes() noexcept {
+    opcodeTable[RET_Opcode] = &CPU::RET;
 }
 
 void CPU::setZeroFlagIfRegisterIsZero(Registers reg) {
@@ -482,8 +491,6 @@ void CPU::logicalOperation_A_R(CPU::Registers reg, LogicalOperations operation) 
 
 void CPU::fetchOpcode() {
     const auto opcode{ read_PC_Address() };
-
-    std::clog << "Opcode: " << std::hex << static_cast<int>(opcode) << std::endl;
 
     const auto& operation{ opcodeTable[opcode] };
 
@@ -768,7 +775,16 @@ void CPU::JR_i8() {
         &CPU::from_i8_addTo_PC);
 }
 
-void CPU::NOP() {
+void CPU::RET() {
+    pushOperationsToQueue(
+        &CPU::from_addressSp_assignTo_R_and_increment_SP<Registers::PC_Low>,
+        &CPU::from_addressSp_assignTo_R_and_increment_SP<Registers::PC_Up>,
+        &CPU::NOP // Internal
+    );
+}
+
+void CPU::NOP()
+{
     // NADA
 }
 
@@ -776,9 +792,9 @@ void CPU::CALL_u16() {
     pushOperationsToQueue(
         &CPU::loadNextByteToLower,
         &CPU::loadNextByteToUpper,
-        &CPU::NOP,
+        &CPU::from_R_assignTo_addressSP_and_decrement_SP<Registers::PC_Up>,
         &CPU::from_R_assignTo_addressSP_and_decrement_SP<Registers::PC_Low>,
-        &CPU::from_R_assignTo_addressSP_and_decrement_SP<Registers::PC_Up>);
+        &CPU::from_addressU16_assignTo_PC);
 }
 
 void CPU::invalidOpcode() {
