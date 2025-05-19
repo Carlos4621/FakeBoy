@@ -18,10 +18,6 @@ void Cartridge::write(uint16_t address, uint8_t value) {
     case MemoryRange::ExternalRAM:
         writeToRAM(address, value);
         break;
-
-    default:
-        throwInvalidAddress(address);
-        break;
     }
 }
 
@@ -29,20 +25,15 @@ uint8_t Cartridge::read(uint16_t address) {
     switch (determineMemoryRange(address)) {
     case MemoryRange::Bank_0:
         return readFromBank_0(address);
-        break;
     
     case MemoryRange::SwitchableROMBanks:
         return readFromSwitchableBank(address);
-        break;
 
     case MemoryRange::ExternalRAM:
         return readFromRAM(address);
-        break;
-    
-    default:
-        throwInvalidAddress(address);
-        break;
     }
+
+    std::unreachable();
 }
 
 uint8_t Cartridge::directReadToFile(uint16_t address) {
@@ -103,7 +94,6 @@ void Cartridge::determineMBC() {
 
     default:
         throw std::runtime_error{ "MBC not supported: " + std::to_string(MBC_type) };
-        break;
     }
 }
 
@@ -132,7 +122,6 @@ void Cartridge::determineRAM() {
 
     default:
         throw std::invalid_argument{ "Invalid RAM identifier" + std::to_string(RAM_identifier) };
-        break;
     }
 }
 
