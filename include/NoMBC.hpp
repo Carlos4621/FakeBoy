@@ -9,13 +9,6 @@ class NoMBC : public MBCBase {
 public:
 
     NoMBC();
-    NoMBC(const NoMBC&) = default;
-    NoMBC(NoMBC&&) noexcept = default;
-
-    ~NoMBC() override = default;
-
-    NoMBC& operator=(const NoMBC&) = default;
-    NoMBC& operator=(NoMBC&&) noexcept = default;
 
     void writeToRegisters(uint16_t address, uint8_t value) override;
 
