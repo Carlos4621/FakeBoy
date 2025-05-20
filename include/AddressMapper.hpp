@@ -10,12 +10,12 @@ class AddressMapper {
 public:
 
     [[nodiscard]]
-    uint8_t read(uint16_t address) const;
+    constexpr uint8_t read(uint16_t address) const;
 
-    void write(uint16_t address, uint8_t value);
+    constexpr void write(uint16_t address, uint8_t value);
 
-    void enable() noexcept;
-    void disable() noexcept;
+    constexpr void enable() noexcept;
+    constexpr void disable() noexcept;
 
 private:
 
@@ -25,14 +25,14 @@ private:
 
     bool enabled_m{ true };
 
-    static void throwIfInvalidAddress(uint16_t address);
+    static constexpr void throwIfInvalidAddress(uint16_t address);
 
     [[nodiscard]]
-    static uint16_t getRedirectedAddress(uint16_t address) noexcept;
+    static constexpr uint16_t getRedirectedAddress(uint16_t address) noexcept;
 };
 
 template <uint16_t StartAddress, uint16_t EndAddress>
-inline uint8_t AddressMapper<StartAddress, EndAddress>::read(uint16_t address) const {
+constexpr uint8_t AddressMapper<StartAddress, EndAddress>::read(uint16_t address) const {
     if (!enabled_m) {
         return DisabledMemoryReadValue;
     }
@@ -43,7 +43,7 @@ inline uint8_t AddressMapper<StartAddress, EndAddress>::read(uint16_t address) c
 }
 
 template <uint16_t StartAddress, uint16_t EndAddress>
-inline void AddressMapper<StartAddress, EndAddress>::write(uint16_t address, uint8_t value) {
+constexpr void AddressMapper<StartAddress, EndAddress>::write(uint16_t address, uint8_t value) {
     throwIfInvalidAddress(address);
 
     if (enabled_m) {
@@ -52,24 +52,24 @@ inline void AddressMapper<StartAddress, EndAddress>::write(uint16_t address, uin
 }
 
 template <uint16_t StartAddress, uint16_t EndAddress>
-inline void AddressMapper<StartAddress, EndAddress>::enable() noexcept {
+constexpr void AddressMapper<StartAddress, EndAddress>::enable() noexcept {
     enabled_m = true;
 }
 
 template <uint16_t StartAddress, uint16_t EndAddress>
-inline void AddressMapper<StartAddress, EndAddress>::disable() noexcept {
+constexpr void AddressMapper<StartAddress, EndAddress>::disable() noexcept {
     enabled_m = false;
 }
 
 template <uint16_t StartAddress, uint16_t EndAddress>
-inline void AddressMapper<StartAddress, EndAddress>::throwIfInvalidAddress(uint16_t address) {
+constexpr void AddressMapper<StartAddress, EndAddress>::throwIfInvalidAddress(uint16_t address) {
     if (address < StartAddress || address > EndAddress) {
         throw std::out_of_range("Invalid address: " + std::to_string(address) + " for range: " + std::to_string(StartAddress) + " - " + std::to_string(EndAddress));
     }
 }
 
 template <uint16_t StartAddress, uint16_t EndAddress>
-inline uint16_t AddressMapper<StartAddress, EndAddress>::getRedirectedAddress(uint16_t address) noexcept {
+constexpr uint16_t AddressMapper<StartAddress, EndAddress>::getRedirectedAddress(uint16_t address) noexcept {
     return (address - StartAddress);
 }
 
