@@ -33,11 +33,11 @@ private:
 
 template <uint16_t StartAddress, uint16_t EndAddress>
 constexpr uint8_t AddressMapper<StartAddress, EndAddress>::read(uint16_t address) const {
+    throwIfInvalidAddress(address);
+
     if (!enabled_m) {
         return DisabledMemoryReadValue;
     }
-
-    throwIfInvalidAddress(address);
     
     return memory_m[getRedirectedAddress(address)];
 }
