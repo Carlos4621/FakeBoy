@@ -4,7 +4,7 @@
 #include <array>
 #include <cstdint>
 #include "MemoryMap.hpp"
-#include "AddressMaper.hpp"
+#include "AddressMapper.hpp"
 
 class WorkingRAM : public AddressMapper<Work_RAM_Start_Address, Work_RAM_End_Address> {
 };

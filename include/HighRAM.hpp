@@ -5,7 +5,7 @@
 #include <array>
 #include <string>
 #include <stdexcept>
-#include "AddressMaper.hpp"
+#include "AddressMapper.hpp"
 
 class HighRAM : public AddressMapper<High_RAM_Start_Address, High_RAM_End_Address> {
 };
