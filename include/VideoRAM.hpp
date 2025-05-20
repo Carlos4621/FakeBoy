@@ -1,4 +1,3 @@
-#pragma once
 #ifndef VIDEO_RAM_HPP
 #define VIDEO_RAM_HPP
 

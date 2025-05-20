@@ -1,4 +1,3 @@
-#pragma once
 #ifndef ADDRESS_MAPPER_HPP
 #define ADDRESS_MAPPER_HPP
 

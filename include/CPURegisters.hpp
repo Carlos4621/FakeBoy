@@ -1,4 +1,3 @@
-#pragma once
 #ifndef CPU_REGISTERS_HPP
 #define CPU_REGISTERS_HPP
 

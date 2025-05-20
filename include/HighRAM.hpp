@@ -1,4 +1,3 @@
-#pragma once
 #ifndef HIGH_RAM_HPP
 #define HIGH_RAM_HPP
 

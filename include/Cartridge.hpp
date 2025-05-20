@@ -1,4 +1,3 @@
-#pragma once
 #ifndef CARTRIDGE_HPP
 #define CARTRIDGE_HPP
 

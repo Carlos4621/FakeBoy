@@ -1,4 +1,3 @@
-#pragma once
 #ifndef WORKING_RAM_HPP
 #define WORKING_RAM_HPP
 

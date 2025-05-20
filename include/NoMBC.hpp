@@ -1,4 +1,3 @@
-#pragma once
 #ifndef NO_MBC_HPP
 #define NO_MBC_HPP
 

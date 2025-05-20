@@ -1,4 +1,3 @@
-#pragma once
 #ifndef OPCODES_HPP
 #define OPCODES_HPP
 

@@ -1,4 +1,3 @@
-#pragma once
 #ifndef MEMORY_BUS_HPP
 #define MEMORY_BUS_HPP
 

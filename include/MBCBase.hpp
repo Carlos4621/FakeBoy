@@ -1,4 +1,3 @@
-#pragma once
 #ifndef MBC_INTERFACE_HPP
 #define MBC_INTERFACE_HPP
 

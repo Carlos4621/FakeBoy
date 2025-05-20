@@ -1,4 +1,3 @@
-#pragma once
 #ifndef ECHO_RAM_HPP
 #define ECHO_RAM_HPP
 
