@@ -41,8 +41,9 @@ uint8_t Cartridge::read(uint16_t address) {
 }
 
 uint8_t Cartridge::directReadToFile(uint16_t address) {
-    uint8_t byte{};
     romFile_m.seekg(address);
+
+    uint8_t byte{};
     romFile_m.read(reinterpret_cast<char*>(&byte), sizeof(byte));
 
     return byte;
@@ -58,7 +59,7 @@ uint8_t Cartridge::readFromSwitchableBank(uint16_t address) {
     return directReadToFile(redirectedAddress);
 }
 
-uint8_t Cartridge::readFromRAM(uint16_t address) {
+uint8_t Cartridge::readFromRAM(uint16_t address) const {
     if (mbc_m->isRAM_enabled() && !RAM_m.empty()) {
         const auto redirectedAddress{ mbc_m->getRedirected_RAM_address(address) };
 

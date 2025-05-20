@@ -49,7 +49,7 @@ private:
     uint8_t readFromSwitchableBank(uint16_t address);
 
     [[nodiscard]]
-    uint8_t readFromRAM(uint16_t address);
+    uint8_t readFromRAM(uint16_t address) const;
     
     void writeToRAM(uint16_t address, uint8_t value);
 
