@@ -1,5 +1,5 @@
-#ifndef MBC_INTERFACE_HPP
-#define MBC_INTERFACE_HPP
+#ifndef MBC_BASE_HPP
+#define MBC_BASE_HPP
 
 #include <cstdint>
 
@@ -39,4 +39,4 @@ private:
 
 };
 
-#endif // !MBC_INTERFACE_HPP
+#endif // !MBC_BASE_HPP
