@@ -10,12 +10,12 @@ class AddressMapper {
 public:
 
     [[nodiscard]]
-    constexpr uint8_t read(uint16_t address) const;
+    uint8_t read(uint16_t address) const;
 
-    constexpr void write(uint16_t address, uint8_t value);
+    void write(uint16_t address, uint8_t value);
 
-    constexpr void enable() noexcept;
-    constexpr void disable() noexcept;
+    void enable() noexcept;
+    void disable() noexcept;
 
 private:
 
@@ -32,7 +32,7 @@ private:
 };
 
 template <uint16_t StartAddress, uint16_t EndAddress>
-constexpr uint8_t AddressMapper<StartAddress, EndAddress>::read(uint16_t address) const {
+inline uint8_t AddressMapper<StartAddress, EndAddress>::read(uint16_t address) const {
     throwIfInvalidAddress(address);
 
     if (!enabled_m) {
@@ -43,7 +43,7 @@ constexpr uint8_t AddressMapper<StartAddress, EndAddress>::read(uint16_t address
 }
 
 template <uint16_t StartAddress, uint16_t EndAddress>
-constexpr void AddressMapper<StartAddress, EndAddress>::write(uint16_t address, uint8_t value) {
+inline void AddressMapper<StartAddress, EndAddress>::write(uint16_t address, uint8_t value) {
     throwIfInvalidAddress(address);
 
     if (enabled_m) {
@@ -52,12 +52,12 @@ constexpr void AddressMapper<StartAddress, EndAddress>::write(uint16_t address, 
 }
 
 template <uint16_t StartAddress, uint16_t EndAddress>
-constexpr void AddressMapper<StartAddress, EndAddress>::enable() noexcept {
+inline void AddressMapper<StartAddress, EndAddress>::enable() noexcept {
     enabled_m = true;
 }
 
 template <uint16_t StartAddress, uint16_t EndAddress>
-constexpr void AddressMapper<StartAddress, EndAddress>::disable() noexcept {
+inline void AddressMapper<StartAddress, EndAddress>::disable() noexcept {
     enabled_m = false;
 }
 
