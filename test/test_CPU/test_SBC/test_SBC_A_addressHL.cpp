@@ -1,41 +1,12 @@
-#include "Cartridge.hpp"
-#include "CPU.hpp"
-#include <gtest/gtest.h>
-#include <iostream>
-#include "TestingCPU.hpp"
+#include "TestHeaders.hpp"
 
-static constexpr std::string_view CartidgePath{ "test_SBC_A_addressHL_ROM.gb" };
-static constexpr uint16_t MinimumTCyclesNeeded{ 164 };
-
-static constexpr std::array ExpectedValues {
-    3, 1
-};
-
-class CPU_SBC_A_addressHL : public ::testing::Test {
-protected:
-    Cartridge cartridge_m{ CartidgePath };
-    VideoRAM videoRAM_m;
-    WorkingRAM workingRAM_m;
-    HighRAM highRAM_m;
-    EchoRAM echoRAM_m{ &workingRAM_m };
-
-    MemoryBus memorybus_m{ &cartridge_m, &workingRAM_m, &highRAM_m, &echoRAM_m, &videoRAM_m };
-
-    TestingCPU cpu_m{ &memorybus_m };
-
-    void SetUp() override {
-        for (size_t i{ 0 }; i < MinimumTCyclesNeeded; ++i) {
-            cpu_m.processTCycle();
-        }
-    }
-};
-
-TEST_F(CPU_SBC_A_addressHL, SBC_A_addressHL_OpcodesWorks) {
-    for (size_t i{ 0 }; i < ExpectedValues.size(); ++i) {
-        const auto address{ 0xA000 + i };
-
-        const auto value{ memorybus_m.read(address) };
-
-        EXPECT_EQ(value, ExpectedValues[i]);
-    }
+namespace {
+    const CPUOpCodeTestConfig SBC_A_addressHL_Config {
+        .cartridgePath = "test_SBC_A_addressHL_ROM.gb",
+        .minimumTCyclesNeeded = 164,
+        .expectedValues = {3, 1}
+    };
 }
+
+DEFINE_OPCODE_TEST_CLASS(CPU_SBC_A_addressHL, SBC_A_addressHL_Config)
+DEFINE_BASIC_VALUE_TEST(CPU_SBC_A_addressHL, SBC_A_addressHL_OpcodesWorks)

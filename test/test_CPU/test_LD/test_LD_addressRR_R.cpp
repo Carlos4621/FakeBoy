@@ -1,40 +1,12 @@
-#include "Cartridge.hpp"
-#include "CPU.hpp"
-#include <gtest/gtest.h>
-#include <iostream>
+#include "TestHeaders.hpp"
 
-static constexpr std::string_view CartidgePath{ "test_LD_addressRR_R_ROM.gb" };
-static constexpr uint16_t MinimumTCyclesNeeded{ 292 };
-
-static constexpr std::array ExpectedValues {
-    0xBC, 0xDE, 0xEF, 0x01, 0x02, 0x03, 0x04, 0xA0, 0x08
-};
-
-class CPU_LD_AddressRR_R : public ::testing::Test {
-protected:
-    Cartridge cartridge_m{ CartidgePath };
-    VideoRAM videoRAM_m;
-    WorkingRAM workingRAM_m;
-    HighRAM highRAM_m;
-    EchoRAM echoRAM_m{ &workingRAM_m };
-
-    MemoryBus memorybus_m{ &cartridge_m, &workingRAM_m, &highRAM_m, &echoRAM_m, &videoRAM_m };
-
-    CPU cpu_m{ &memorybus_m };
-
-    void SetUp() override {
-        for (size_t i{ 0 }; i < MinimumTCyclesNeeded; ++i) {
-            cpu_m.processTCycle();
-        }
-     }
-};
-
-TEST_F(CPU_LD_AddressRR_R, LD_addressRR_R_OpcodesWorks) {
-    for (size_t i{ 0 }; i < ExpectedValues.size(); ++i) {
-        const auto address{ 0xA000 + i };
-
-        const auto value{ memorybus_m.read(address) };
-
-        EXPECT_EQ(value, ExpectedValues[i]);
-    }
+namespace {
+    const CPUOpCodeTestConfig LD_addressRR_R_Config {
+        .cartridgePath = "test_LD_addressRR_R_ROM.gb",
+        .minimumTCyclesNeeded = 292,
+        .expectedValues = {0xBC, 0xDE, 0xEF, 0x01, 0x02, 0x03, 0x04, 0xA0, 0x08}
+    };
 }
+
+DEFINE_OPCODE_TEST_CLASS(CPU_LD_addressRR_R, LD_addressRR_R_Config)
+DEFINE_BASIC_VALUE_TEST(CPU_LD_addressRR_R, LD_addressRR_R_OpcodesWorks)

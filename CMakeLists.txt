@@ -19,7 +19,7 @@ else()
     message(WARNING "clang-tidy no encontrado. Análisis estático desactivado.")
 endif()
 
-include_directories(include include/* test/test_CPU/TestingCPU)
+include_directories(include include/* test/test_CPU/TestingCPU test/test_CPU/commons)
 
 find_package(GTest REQUIRED)
 

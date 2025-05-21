@@ -1,62 +1,25 @@
-#include "Cartridge.hpp"
-#include "CPU.hpp"
-#include <gtest/gtest.h>
-#include <iostream>
-#include "TestingCPU.hpp"
+#include "TestHeaders.hpp"
 
-static constexpr std::string_view CartidgePath{ "test_DEC_addressHL_ROM.gb" };
-static constexpr uint16_t MinimumTCyclesNeeded{ 100 };
-static constexpr uint8_t TCyclesForOthersSections{ 44 };
-
-static constexpr std::array ExpectedValues {
-    0x02, 0x03
-};
-
-class CPU_DEC_addressHL : public ::testing::Test {
-protected:
-    Cartridge cartridge_m{ CartidgePath };
-    VideoRAM videoRAM_m;
-    WorkingRAM workingRAM_m;
-    HighRAM highRAM_m;
-    EchoRAM echoRAM_m{ &workingRAM_m };
-
-    MemoryBus memorybus_m{ &cartridge_m, &workingRAM_m, &highRAM_m, &echoRAM_m, &videoRAM_m };
-
-    TestingCPU cpu_m{ &memorybus_m };
-
-    void SetUp() override {
-        for (size_t i{ 0 }; i < MinimumTCyclesNeeded; ++i) {
-            cpu_m.processTCycle();
+namespace {
+    const CPUOpCodeTestConfig DEC_addressHL_Config {
+        .cartridgePath = "test_DEC_addressHL_ROM.gb",
+        .minimumTCyclesNeeded = 100,
+        .expectedValues = {0x02, 0x03},
+        .flagTests = {
+            {
+                .description = "Decrement 0x01 Sets Zero And Neg And Unsets Half",
+                .additionalCycles = 44,
+                .z = true, .h = false, .n = true, .c = true // Carry al inicio es true
+            },
+            {
+                .description = "Decrement 0x10 Activate Half And Neg And Unsets Zero",
+                .additionalCycles = 88,
+                .z = false, .h = true, .n = true, .c = true // Carry al inicio es true
+            }
         }
-    }
-};
-
-TEST_F(CPU_DEC_addressHL, DEC_addressHL_OpcodesWorks) {
-    for (size_t i{ 0 }; i < ExpectedValues.size(); ++i) {
-        const auto address{ 0xA000 + i };
-
-        const auto value{ memorybus_m.read(address) };
-
-        EXPECT_EQ(value, ExpectedValues[i]);
-    }
+    };
 }
 
-TEST_F(CPU_DEC_addressHL, Decrement0x01SetsZeroAndNegAndUnsetsHalf) {
-    for (size_t i{ 0 }; i < TCyclesForOthersSections; ++i) {
-        cpu_m.processTCycle();
-    }
-    
-    EXPECT_EQ(true, cpu_m.getRegisters().getFlag(CPURegisters::Flags::Z));
-    EXPECT_EQ(false, cpu_m.getRegisters().getFlag(CPURegisters::Flags::H));
-    EXPECT_EQ(true, cpu_m.getRegisters().getFlag(CPURegisters::Flags::N));
-}
-
-TEST_F(CPU_DEC_addressHL, Decrement0x10ActivateHalfAndNegAndUnsetsZero) {
-    for (size_t i{ 0 }; i < TCyclesForOthersSections * 2; ++i) {
-        cpu_m.processTCycle();
-    }
-    
-    EXPECT_EQ(true, cpu_m.getRegisters().getFlag(CPURegisters::Flags::H));
-    EXPECT_EQ(false, cpu_m.getRegisters().getFlag(CPURegisters::Flags::Z));
-    EXPECT_EQ(true, cpu_m.getRegisters().getFlag(CPURegisters::Flags::N));
-}
+DEFINE_OPCODE_TEST_CLASS(CPU_DEC_addressHL, DEC_addressHL_Config)
+DEFINE_BASIC_VALUE_TEST(CPU_DEC_addressHL, DEC_addressHL_OpcodesWorks)
+DEFINE_ALL_FLAG_TESTS(CPU_DEC_addressHL, DEC_addressHL_AllFlagsWork)
