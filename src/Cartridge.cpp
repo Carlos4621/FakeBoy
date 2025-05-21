@@ -126,10 +126,10 @@ void Cartridge::determineRAM() {
         break;
 
     default:
-        throw std::invalid_argument{ "Invalid RAM identifier" + std::to_string(RAM_identifier) };
+        throw std::invalid_argument{ "Invalid RAM identifier: " + std::to_string(RAM_identifier) };
     }
 }
 
 void Cartridge::throwInvalidAddress(uint16_t address) {
-    throw std::out_of_range{ "Invalid address" + std::to_string(address) };
+    throw std::out_of_range{ "Invalid address: " + std::to_string(address) };
 }
