@@ -2,7 +2,7 @@
 #define MEMORY_BUS_HPP
 
 #include "Cartridge.hpp"
-#include "WorkingRam.hpp"
+#include "WorkingRAM.hpp"
 #include "HighRAM.hpp"
 #include "EchoRAM.hpp"
 #include "VideoRAM.hpp"

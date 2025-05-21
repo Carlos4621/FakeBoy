@@ -1,7 +1,7 @@
 #ifndef ECHO_RAM_HPP
 #define ECHO_RAM_HPP
 
-#include "WorkingRam.hpp"
+#include "WorkingRAM.hpp"
 
 class EchoRAM {
 public:
