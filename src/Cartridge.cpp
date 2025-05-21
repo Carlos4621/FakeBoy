@@ -66,7 +66,7 @@ uint8_t Cartridge::readFromRAM(uint16_t address) const {
         return RAM_m[redirectedAddress];
     }
 
-    return RAM_Disabled_Read_Value;
+    return RAM_DisabledReadValue;
 }
 
 void Cartridge::writeToRAM(uint16_t address, uint8_t value) {
@@ -103,30 +103,30 @@ void Cartridge::determineMBC() {
 }
 
 void Cartridge::determineRAM() {
-    const auto RAM_identifier{ directReadToFile(RAM_Size_Address) };
+    const auto RAM_identifier{ static_cast<RAMIdentifier>(directReadToFile(RAM_Size_Address)) };
 
     switch (RAM_identifier) {
-    case No_RAM_Identifier:
+    case RAMIdentifier::No_RAM:
         break;
 
-    case RAM_8KB_Identifier:
-        RAM_m.resize(KB_8);
+    case RAMIdentifier::RAM_8KB:
+        RAM_m.resize(std::to_underlying(KB::KB_8));
         break;
 
-    case RAM_32KB_Identifier:
-        RAM_m.resize(KB_32);
+    case RAMIdentifier::RAM_32KB:
+        RAM_m.resize(std::to_underlying(KB::KB_32));
         break;
 
-    case RAM_128KB_Identifier:
-        RAM_m.resize(KB_128);
+    case RAMIdentifier::RAM_128KB:
+        RAM_m.resize(std::to_underlying(KB::KB_128));
         break;
 
-    case RAM_64KB_Identifier:
-        RAM_m.resize(KB_64);
+    case RAMIdentifier::RAM_64KB:
+        RAM_m.resize(std::to_underlying(KB::KB_64));
         break;
 
     default:
-        throw std::invalid_argument{ "Invalid RAM identifier: " + std::to_string(RAM_identifier) };
+        throw std::invalid_argument{ "Invalid RAM identifier: " + std::to_string(std::to_underlying(RAM_identifier)) };
     }
 }
 

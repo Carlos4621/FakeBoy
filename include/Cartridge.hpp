@@ -21,18 +21,22 @@ public:
     uint8_t read(uint16_t address);
 
 private:
-    static constexpr uint8_t RAM_Disabled_Read_Value{ 0xFF };
+    static constexpr uint8_t RAM_DisabledReadValue{ 0xFF };
 
-    static constexpr uint8_t No_RAM_Identifier{ 0x00 };
-    static constexpr uint8_t RAM_8KB_Identifier{ 0x02 };
-    static constexpr uint8_t RAM_32KB_Identifier{ 0x03 };
-    static constexpr uint8_t RAM_128KB_Identifier{ 0x04 };
-    static constexpr uint8_t RAM_64KB_Identifier{ 0x05 };
+    enum class RAMIdentifier : uint8_t {
+        No_RAM = 0,
+        RAM_8KB = 0x02,
+        RAM_32KB = 0x03,
+        RAM_128KB = 0x04,
+        RAM_64KB = 0x05
+    };
 
-    static constexpr uint32_t KB_8{ 8 * 1024 };
-    static constexpr uint32_t KB_32{ 32 * 1024 };
-    static constexpr uint32_t KB_128{ 128 * 1024 };
-    static constexpr uint32_t KB_64{ 64 * 1024 };
+    enum class KB : uint32_t {
+        KB_8 = 8 * 1024,
+        KB_32 = 32 * 1024,
+        KB_128 = 128 * 1024,
+        KB_64 = 64 * 1024
+    };
 
     std::ifstream romFile_m;
     std::vector<uint8_t> RAM_m;
