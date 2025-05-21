@@ -14,7 +14,7 @@ public:
 
 private:
 
-    static constexpr uint16_t Value_To_Subsctract{ 0x1000 };
+    static constexpr uint16_t ValueToSubstract{ 0x1000 };
 
     WorkingRAM* workingRAM_m;
 
