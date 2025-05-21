@@ -65,7 +65,7 @@ void CPURegisters::setLowByte(uint16_t &value, uint8_t lowByte) noexcept {
 }
 
 constexpr bool CPURegisters::isHighByteRegister(Registers reg) noexcept {
-    return (registerToIndex(reg) % 2) == 0;
+    return (registerToIndex(reg) % 2) == 0; // Los registros con valores pares son considerados como altos
 }
 
 constexpr uint8_t CPURegisters::registerToIndex(Registers reg) noexcept {

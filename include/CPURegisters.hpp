@@ -40,12 +40,13 @@ private:
     static constexpr uint8_t HalfCarryFlagMask{ 0b00100000 };
     static constexpr uint8_t CarryFlagMask{ 0b00010000 };
 
-    static constexpr uint8_t TotalRegisters{ 8 };
+    static constexpr uint8_t TotalRegisters{ 7 };
 
     static constexpr uint16_t InitialAFRegister{ 0x01B0 };
     static constexpr uint16_t InitialBCRegister{ 0x0013 };
     static constexpr uint16_t InitialDERegister{ 0x00D8 };
     static constexpr uint16_t InitialHLRegister{ 0x014D };
+    static constexpr uint16_t InitialAuxiliaryRegister{ 0 };
     
     static constexpr uint16_t InitialPCRegister{ 0x0100 };
     static constexpr uint16_t InitialSPRegister{ 0xFFFE };
@@ -54,7 +55,7 @@ private:
     static constexpr std::array<uint8_t, 14> RegisterIndexToCombinedRegisterIndex{ 0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6 };
 
     // REMINDER: Estas son las flags para el DMG, si quiero actualizar a CGB tengo que cambiar esto
-    std::array<uint16_t, TotalRegisters> registers_m{ InitialAFRegister, InitialBCRegister, InitialDERegister, InitialHLRegister, InitialPCRegister, InitialSPRegister, 0, 0 };
+    std::array<uint16_t, TotalRegisters> registers_m{ InitialAFRegister, InitialBCRegister, InitialDERegister, InitialHLRegister, InitialPCRegister, InitialSPRegister, InitialAuxiliaryRegister };
 
     [[nodiscard]]
     static constexpr uint8_t getHighByte(uint16_t value) noexcept;
