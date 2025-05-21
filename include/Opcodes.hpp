@@ -1,7 +1,7 @@
 #ifndef OPCODES_HPP
 #define OPCODES_HPP
 
-static constexpr uint8_t NOP_Opcode = 0x00;
+static constexpr uint8_t NOP_Opcode{ 0x00 };
 
 static constexpr uint8_t LD_B_B_Opcode{ 0x40 };
 static constexpr uint8_t LD_B_C_Opcode{ 0x41 };
